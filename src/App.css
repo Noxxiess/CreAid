@@ -1,0 +1,92 @@
+.login-container 
+{
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #1F0F5B;
+  font-family: Arial, sans-serif;
+}
+.login-card 
+{
+  width: 800px;
+  height: 450px;
+  display: flex;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.login-left {
+  flex: 1;
+  background: #f4f6f997;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-logo {
+  width: 150px;
+  height: auto;
+}
+
+/* ✅ RIGHT SIDE (FORM) */
+.login-right {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-right h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* ✅ INPUTS */
+.login-right input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.login-right input:focus {
+  border-color: #FA1377;
+  outline: none;
+}
+
+/* ✅ BUTTON */
+.login-right button {
+  width: 100%;
+  padding: 12px;
+  background: #FA1377;
+  border: none;
+  color: #fff;
+  font-size: 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.login-right button:hover {
+  background: #d40b62;
+}
+
+@media (max-width: 768px) 
+{
+  .login-card {
+    flex-direction: column;
+    width: 90%;
+    height: auto;
+  }
+
+  .login-left {
+    height: 150px;
+  }
+}

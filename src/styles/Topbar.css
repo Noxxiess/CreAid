@@ -1,0 +1,220 @@
+/* ========== TOPBAR ========== */
+.topbar 
+{
+  height: 64px;               
+  max-height: 64px;
+  background: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 24px 24px;
+  display: flex;
+  align-items: center;          /* ✅ FORCE vertical centering */
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+/* LEFT SIDE */
+.topbar-left 
+{
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.search-box /*search is box is self*/
+{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f3f3f3;
+  padding: 10px 16px;
+  border-radius: 999px;
+  width: 300px;
+}
+.search-box input /* Text is in is the box */
+{
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  width: 100%;
+}
+.new-patient-btn /*Patient outline box*/
+{
+  padding: 9px 16px;
+  border: 1px solid #3b82f6;
+  background: white;
+  color: #3b82f6;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.new-patient-btn:hover /*outline itself*/
+{ 
+  background: #3b82f6;
+  color: white;
+}
+/* RIGHT SIDE */
+.topbar-right 
+{
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.branch-select /*Branches*/
+{
+  min-width: 360px;
+  padding: 9px 12px;
+  border-radius: 15px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  background: white;
+}
+/* ICON WRAPPER */
+.icon-wrapper 
+{
+  position: relative;
+  margin-left: 6px;
+}
+/* ========== DROPDOWNS ========== */
+
+/* ========== NOTIFICATIONS ========== */
+.notification .dot /*litterally dot*/
+{
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 12px;
+  height: 12px;
+  background: red;
+  border-radius: 50%;
+}
+.notif-dropdown h4 
+{
+  font-size: 20px;
+  margin-bottom: 1px;
+}
+.notif-list 
+{
+  max-height: 200px;
+  overflow-y: auto;
+}
+.notif-item 
+{
+  font-size: 12px;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.notif-item:hover 
+{
+  background: #f2f2f2;
+}
+
+/* ========== PROFILE ========== */
+.profile 
+{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.profile-dropdown .dropdown-item 
+{
+  padding: 10px;
+  font-size: 13px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.profile-dropdown .dropdown-item:hover 
+{
+  background: #f2f2f2;
+}
+
+.profile-dropdown .logout 
+{
+  color: #e53935;
+  font-weight: 500;
+}
+.dropdown /*logout */
+{
+  position: absolute;
+  top: 44px;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  width: 240px;
+  padding: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  z-index: 100;
+}
+
+/* ========== MODAL ========== */
+.modal-overlay 
+{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal 
+{
+  background: white;
+  padding: 22px;
+  border-radius: 10px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+.modal h3
+{
+  margin-bottom: 8px;
+}
+
+.modal p 
+{
+  font-size: 14px;
+  color: #555;
+}
+.modal-actions 
+{
+  display: flex;
+  justify-content: center;
+  gap: 20px;        
+  margin-top: 22px;
+}
+.icon-btn 
+{
+  font-size: 16px;
+  cursor: pointer;
+  position: relative;
+}
+.btn 
+{
+  padding: 8px 30px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.btn.cancel 
+{
+  background: #e0e0e0;
+}
+.btn.confirm 
+{
+  background: #4300df;
+  color: white;
+}
+.btn:hover 
+{
+  opacity: 0.9;
+}
+.username 
+{
+  font-size: 14px;
+  font-weight: 500;
+}

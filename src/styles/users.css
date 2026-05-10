@@ -1,0 +1,228 @@
+/* ================= HEADER ================= */
+.users-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #777;
+}
+
+.users-actions button {
+  margin-left: 8px;
+}
+
+/* ================= FILTER CONTAINER ================= */
+.users-filter-container 
+{
+  background: #ffffff;
+  padding: 12px 14px;
+  border-radius: 4px;
+  margin: 16px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+/* LEFT SIDE */
+.filter-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* EACH ROW */
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* LABELS (Filter by, Patient of, Filter by Tags) */
+.filter-label {
+  font-size: 12px;
+  background: #f1f1f1;
+  padding: 6px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  border: 1px solid #ccc;
+}
+
+/* INPUTS & SELECT */
+.users-filter-container input,
+.users-filter-container select {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+  outline: none;
+}
+
+.users-filter-container input {
+  min-width: 220px;
+}
+
+.users-filter-container select {
+  min-width: 120px;
+}
+
+/* RIGHT SIDE */
+.filter-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ================= BUTTONS ================= */
+.btn-go {
+  background: #17a2b8;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btn-go:hover {
+  background: #138496;
+}
+
+.btn-clear {
+  background: #f1f1f1;
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btn-clear:hover {
+  background: #e0e0e0;
+}
+
+/* ================= TABLE ================= */
+.users-table {
+  background: white;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.users-table-header,
+.users-table-row {
+  display: grid;
+  grid-template-columns:
+    0.6fr
+    1fr
+    2fr
+    2fr
+    1.5fr
+    1.5fr
+    1.5fr
+    1fr;
+  padding: 10px;
+  align-items: center;
+}
+
+.users-table-header {
+  font-weight: 600;
+  background: #f5f5f5;
+}
+
+.users-table-row {
+  border-top: 1px solid #eee;
+  font-size: 14px;
+}
+
+.users-table-row:hover {
+  background: #fafafa;
+}
+
+/* ACTIONS */
+.row-actions {
+  cursor: pointer;
+}
+
+/* NAME LINK */
+.link {
+  color: #1e88e5;
+  cursor: pointer;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* ================= FOOTER ================= */
+.users-footer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+/* ================= PAGE BACKGROUND ================= */
+.dashboard-content {
+  background: #f4f6f8;   /* light gray like screenshot */
+  min-height: 100vh;
+  padding: 16px;
+}
+
+/* ================= MAIN WHITE CONTAINER ================= */
+.users-page-container {
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 16px;
+
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* give spacing between sections */
+.users-page-container > * + * {
+  margin-top: 16px;
+}
+
+/* ================= MEDICAL ================= */
+.medical-form {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 32px;
+  width: 100%;
+}
+
+.medical-left > div {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.medical-right > div {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.conditions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px 24px;
+  margin-top: 10px;
+}
+
+.condition-item {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 14px;
+}
+
+
+
+.form-row > div {
+  display: flex;
+  flex-direction: column;
+}

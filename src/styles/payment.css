@@ -1,0 +1,71 @@
+/* PAGE CONTAINER */
+.payment-page-container {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* TITLE */
+.payment-title {
+  margin-bottom: 16px;
+}
+
+/* TABLE */
+.payment-table {
+  width: 100%;
+}
+
+/* HEADER */
+.payment-header,
+.payment-row {
+  display: grid;
+  grid-template-columns:
+    2fr
+    1.2fr
+    1.2fr
+    1.5fr
+    1fr
+    0.8fr;
+  align-items: center;
+  padding: 10px;
+}
+
+.payment-header {
+  font-weight: bold;
+  color: #ff2d6d;
+  border-bottom: 3px solid #5a4cff;
+}
+
+/* ROW */
+.payment-row {
+  border-bottom: 2px solid #5a4cff;
+  font-size: 14px;
+}
+
+.payment-row:hover {
+  background: #fafafa;
+}
+
+/* STATUS */
+.status {
+  font-weight: 500;
+}
+
+.status.paid {
+  color: green;
+}
+
+.status.pending {
+  color: orange;
+}
+
+.status.cancelled {
+  color: red;
+}
+
+/* ACTIONS */
+.actions {
+  cursor: pointer;
+  text-align: right;
+}
