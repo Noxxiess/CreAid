@@ -3,36 +3,55 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import logo from "../assets/logo.png";
 import "../App.css";
+import { supabase } from "../lib/supabase";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { setRole } = useAuth();
+  const handleLogout = () => {
+  localStorage.removeItem("role");
+  localStorage.removeItem("user");
 
-  const handleLogin = (e) => {
-    e.preventDefault();
+  navigate("/");
+};
+const handleLogin = async (e) => {
+  e.preventDefault();
 
-    let role = null;
+  try {
 
-    if (username === "admin" && password === "admin123") {
-      role = "admin";
-    } else if (username === "staff" && password === "staff123") {
-      role = "staff";
-    } else if (username === "tester" && password === "tester123") {
-      role = "tester";
-    }
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", username)
+      .eq("password", password)
+      .single();
 
-    if (role) {
-      // ✅ SET ROLE HERE (ONLY HERE)
-      localStorage.setItem("role", role);
-      setRole(role);
-
-      navigate("/dashboard");
-    } else {
+    if (error || !data) {
       alert("Invalid username or password");
+      return;
     }
-  };
+
+    console.log("Logged in user:", data);
+
+    // SAVE ROLE
+    localStorage.setItem("role", data.role);
+
+    // OPTIONAL: SAVE USER
+    localStorage.setItem("user", JSON.stringify(data));
+
+    // UPDATE CONTEXT
+    setRole(data.role);
+
+    // REDIRECT
+    navigate("/dashboard");
+
+  } catch (err) {
+    console.error(err);
+    alert("Login failed");
+  }
+};
 
   return (
     <div className="login-container">
