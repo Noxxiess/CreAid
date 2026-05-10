@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import "../styles/newpatient.css";
+import { supabase } from "../lib/supabase";
 
 function NewPatient() 
 {   
@@ -10,28 +11,69 @@ function NewPatient()
   const [photo, setPhoto] = useState(null);
   const [showCamera, setShowCamera] = useState(false);
 
-  const [personal, setPersonal] = useState
-  ({
+  const [personal, setPersonal] = useState({
     lastname: "",
     firstname: "",
     middlename: "",
-    suffix: "",
-    nickname: "",
-    birthdate: "",
-    sex: "",
-    mobile: "",
-    email: "",
-    address: "",
-    school: "",
-    hmo: "",
-    referredBy: "",
-    bloodType: "",
-    weight: "",
-    height: "",
-    civilStatus: "",
-    occupation: "",
-    company: "",
   });
+  const handleSubmit = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("users")
+      .insert([
+        {
+          first_name: personal.firstname,
+          middle_name: personal.middlename,
+          last_name: personal.lastname,
+          email: personal.email,
+          contact_number: personal.mobile,
+          address: personal.address,
+          role: "patient",
+
+          // temporary testing password
+          password: "default123"
+        }
+      ])
+      .select();
+
+    if (error) {
+      console.error("Insert error:", error);
+      alert(error.message);
+      return;
+    }
+
+    console.log("Inserted:", data);
+
+    alert("Patient successfully added!");
+
+    // OPTIONAL: clear form
+    setPersonal({
+      lastname: "",
+      firstname: "",
+      middlename: "",
+      suffix: "",
+      nickname: "",
+      birthdate: "",
+      sex: "",
+      mobile: "",
+      email: "",
+      address: "",
+      school: "",
+      hmo: "",
+      referredBy: "",
+      bloodType: "",
+      weight: "",
+      height: "",
+      civilStatus: "",
+      occupation: "",
+      company: "",
+    });
+
+  } catch (err) {
+  console.error("Full error:", err);
+  alert(err.message);
+}
+};
 
   const [guardian, setGuardian] = useState
   ({
@@ -484,7 +526,7 @@ function NewPatient()
                     <button className="btn-cancel" onClick={() => setStep(1)}>
                       ← Previous
                     </button>
-                    <button className="btn-next">
+                    <button className="btn-next"  onClick={handleSubmit}>
                       Finish
                     </button>
                   </div>
