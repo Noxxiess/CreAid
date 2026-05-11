@@ -5,18 +5,21 @@ import logo from "../assets/logo.png";
 import "../App.css";
 import { supabase } from "../lib/supabase";
 
-function Login() 
-{
+function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { setRole } = useAuth();
 
-  const handleLogin = async (e) => 
-  {
+  const handleLogout = () => {
+    localStorage.removeItem("role");
+    localStorage.removeItem("user");
+  };
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    try 
-    {
+
+    try {
       const { data, error } = await supabase
         .from("users")
         .select("*")
@@ -24,17 +27,19 @@ function Login()
         .eq("password", password)
         .single();
 
-      if (error || !data) 
-      {
+      if (error || !data) {
         alert("Invalid username or password");
-        return; // ← stops here, no redirect
+        return;
       }
 
       console.log("Logged in user:", data);
+
       localStorage.setItem("role", data.role);
       localStorage.setItem("user", JSON.stringify(data));
       setRole(data.role);
-      navigate("/dashboard"); // ← only runs if login succeeded
+
+      navigate("/dashboard");
+
     } catch (err) {
       console.error(err);
       alert("Login failed");
@@ -44,11 +49,14 @@ function Login()
   return (
     <div className="login-container">
       <div className="login-card split">
+
         <div className="login-left">
           <img src={logo} alt="Logo" className="login-logo" />
         </div>
+
         <div className="login-right">
           <h2>Login</h2>
+
           <form onSubmit={handleLogin}>
             <input
               type="text"
@@ -57,6 +65,7 @@ function Login()
               onChange={(e) => setUsername(e.target.value)}
               required
             />
+
             <input
               type="password"
               placeholder="Password"
@@ -64,9 +73,12 @@ function Login()
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+
             <button type="submit">Login</button>
           </form>
+
         </div>
+
       </div>
     </div>
   );
