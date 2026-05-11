@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import "../styles/users.css";
+import { supabase } from "../lib/supabase";
 
 function Userlist() {
 
@@ -19,31 +20,35 @@ function Userlist() {
   });
 
   // ✅ API PLACEHOLDER
-  useEffect(() => {
-    /*
-    getUsers({ page, filters }).then(res => {
-      setUsers(res.data);
-      setTotalUsers(res.total);
-    }); 
+ useEffect(() => {
+  fetchUsers();
+}, [page, filters]);
 
-    Custom Private IP Address
-    */
+async function fetchUsers() {
+  const { data, error } = await supabase
+    .from("users")
+    .select("*");
 
-    // TEMP placeholder row
-    setUsers([
-      {
-        id: "--",
-        name: "— — —",
-        address: "— — —",
-        mobile: "— — —",
-        created: "— — —",
-        lastOnline: "— — —",
-        balance: "₱0.00"
-      }
-    ]);
+  if (error) {
+    console.error("Supabase error:", error);
+    return;
+  }
 
-    setTotalUsers(0);
-  }, [page, filters]);
+  console.log(data);
+
+  const formattedUsers = data.map((u) => ({
+    id: u.id,
+    name: `${u.last_name}, ${u.first_name} ${u.middle_name || ""}`,
+    address: u.address,
+    mobile: u.contact_number,
+    created: new Date(u.created_at).toLocaleDateString(),
+    lastOnline: "Online",
+    balance: "₱0.00"
+  }));
+
+  setUsers(formattedUsers);
+  setTotalUsers(data.length);
+}
 
   return (
     <div className="admin-container">
