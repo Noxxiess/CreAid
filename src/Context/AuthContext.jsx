@@ -8,7 +8,8 @@ export const AuthProvider = ({ children }) =>
 
   const permissions = 
   {
-    tester: {
+    tester: 
+    {
       dashboard: ["view"],
       calendar: ["view", "manage"],
       users: ["view", "add", "edit", "delete"],
@@ -17,7 +18,8 @@ export const AuthProvider = ({ children }) =>
       system: ["view", "edit", "configure"],
       inbox: ["view", "send"],
     },
-    admin: {
+    admin: 
+    {
       dashboard: ["view"],
       calendar: ["view", "manage"],
       users: ["view", "add", "edit", "delete"],
@@ -26,7 +28,8 @@ export const AuthProvider = ({ children }) =>
       system: ["view", "edit"],
       inbox: ["view", "send"],
     },
-    staff: {
+    staff: 
+    {
       dashboard: ["view"],
       calendar: ["view"],
       users: ["view"],

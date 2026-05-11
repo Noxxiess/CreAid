@@ -1,5 +1,6 @@
 /* MAIN CONTAINER */
-.reports-container {
+.reports-container 
+{
   background: white;
   border-radius: 6px;
   padding: 20px;
@@ -103,3 +104,5 @@
 .btn-print:hover {
   background: #1a1040;
 }
+
+

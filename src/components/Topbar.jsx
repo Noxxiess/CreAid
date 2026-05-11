@@ -9,17 +9,24 @@ function Topbar() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const navigate = useNavigate();
+  const role = localStorage.getItem("role");
 
+  // Close dropdowns when clicking outside
   useEffect(() => {
-    // future API call
+    const handleClickOutside = (e) => {
+      if (!e.target.closest(".icon-wrapper")) {
+        setShowNotif(false);
+        setShowProfile(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("role"); // ✅ FIX
+    localStorage.removeItem("role");
     navigate("/");
   };
-
-  const role = localStorage.getItem("role");
 
   return (
     <>
@@ -27,10 +34,9 @@ function Topbar() {
 
         <div className="topbar-left">
           <div className="search-box">
-            🔍
+            <span className="search-icon">🔍</span>
             <input type="text" placeholder="Search Patient Here" />
           </div>
-
           <button
             className="new-patient-btn"
             onClick={() => navigate("/patients/new")}
@@ -47,10 +53,10 @@ function Topbar() {
             <option>Hagonoy Branch</option>
           </select>
 
-          {/* 🔔 NOTIFICATIONS */}
+          {/* NOTIFICATIONS */}
           <div className="icon-wrapper">
-            <span
-              className="icon-btn notification"
+            <button
+              className="icon-btn notif-btn"
               onClick={() => {
                 setShowNotif(!showNotif);
                 setShowProfile(false);
@@ -58,36 +64,51 @@ function Topbar() {
             >
               🔔
               <span className="dot"></span>
-            </span>
+            </button>
 
             {showNotif && (
               <div className="dropdown notif-dropdown">
                 <h4>Notifications</h4>
                 <div className="notif-list">
-                  <div className="notif-item">Notification placeholder</div>
+                  <div className="notif-item">No new notifications</div>
                 </div>
               </div>
             )}
           </div>
 
-          {/* 👤 PROFILE */}
+          {/* PROFILE */}
           <div className="icon-wrapper">
-            <div
-              className="profile"
+            <button
+              className="profile-btn"
               onClick={() => {
                 setShowProfile(!showProfile);
                 setShowNotif(false);
               }}
             >
+              <span className="avatar-chip">{role?.charAt(0).toUpperCase()}</span>
               <span className="username">{role}</span>
-              <span className="icon-btn">👤</span>
-            </div>
+              <span className="chevron">{showProfile ? "▲" : "▼"}</span>
+            </button>
 
             {showProfile && (
               <div className="dropdown profile-dropdown">
-                <div className="dropdown-item">Edit Profile</div>
-                <div className="dropdown-item">Settings</div>
-
+                <div className="dropdown-user-info">
+                  <span className="avatar-chip large">{role?.charAt(0).toUpperCase()}</span>
+                  <div>
+                    <p className="dropdown-role">{role}</p>
+                    <p className="dropdown-sub">Logged in</p>
+                  </div>
+                </div>
+                <hr className="dropdown-divider" />
+                <div
+                  className="dropdown-item"
+                  onClick={() => {
+                    setShowProfile(false);
+                    navigate("/myaccount");
+                  }}
+                >
+                  👤 My Account
+                </div>
                 <div
                   className="dropdown-item logout"
                   onClick={() => {
@@ -95,7 +116,7 @@ function Topbar() {
                     setShowLogoutConfirm(true);
                   }}
                 >
-                  Logout
+                  🚪 Logout
                 </div>
               </div>
             )}
@@ -104,26 +125,29 @@ function Topbar() {
         </div>
       </header>
 
-      {/* ✅ MODAL */}
+      {/* LOGOUT MODAL — rendered outside header via fragment */}
       {showLogoutConfirm && (
-        <div className="modal-overlay">
+        <div
+          className="modal-overlay"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowLogoutConfirm(false);
+          }}
+        >
           <div className="modal">
             <h3>Log Out</h3>
             <p>Are you sure you want to log out?</p>
-
             <div className="modal-actions">
               <button
                 className="btn cancel"
                 onClick={() => setShowLogoutConfirm(false)}
               >
-                No
+                Cancel
               </button>
-
               <button
                 className="btn confirm"
                 onClick={handleLogout}
               >
-                Yes
+                Yes, Log Out
               </button>
             </div>
           </div>

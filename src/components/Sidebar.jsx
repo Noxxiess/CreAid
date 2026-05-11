@@ -4,11 +4,11 @@ import { useAuth } from "../context/AuthContext";
 import logo from "../assets/logo.png";
 import "../styles/Sidebar.css";
 
-function Sidebar() {
+function Sidebar() 
+{
   const { permissions = {} } = useAuth(); 
   const [openUsers, setOpenUsers] = useState(false);
   const [openReports, setOpenReports] = useState(false);
-  
 
   const navClass = ({ isActive }) =>
     isActive ? "nav-item active" : "nav-item";

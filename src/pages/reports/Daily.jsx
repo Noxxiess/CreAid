@@ -1,9 +1,10 @@
 
 import Sidebar from "../../components/Sidebar";
 import Topbar from "../../components/Topbar";
-import "../../styles/reports.css";
+//import "../../styles/daily.css";
 
-function Daily() {
+function Daily() 
+{
   return (
     <div className="admin-container">
       <Sidebar />
@@ -12,28 +13,28 @@ function Daily() {
         <Topbar />
 
         <div className="dashboard-content">
-          <div className="reports-container">
+          <div className="daily-container">
 
             {/* HEADER */}
-            <h2 className="reports-title">
+            <h2 className="daily-title">
               Daily Sales Report
             </h2>
 
             {/* FILTERS */}
-            <div className="reports-filters">
-              <div className="filter-item">
+            <div className="daily-filters">
+              <div className="daily-item">
                 <label>Clinic</label>
                 <select>
                   <option>All Clinics</option>
                 </select>
               </div>
 
-              <div className="filter-item">
+              <div className="daily-item">
                 <label>Date From</label>
                 <input type="date" />
               </div>
 
-              <div className="filter-item">
+              <div className="daily-item">
                 <label>Date To</label>
                 <input type="date" />
               </div>
@@ -42,7 +43,7 @@ function Daily() {
             </div>
 
             {/* TOP CARDS */}
-            <div className="reports-charts">
+            <div className="daily-charts">
 
               <div className="chart-card">
                 <p>Appointments</p>
@@ -57,7 +58,7 @@ function Daily() {
             </div>
 
             {/* APPOINTMENTS TABLE */}
-            <div className="report-table">
+            <div className="daily-table">
               <h3>Patient Appointments</h3>
               <table className="users-table">
                 <thead>
@@ -81,7 +82,7 @@ function Daily() {
             </div>
 
             {/* PROCEDURES */}
-            <div className="report-table">
+            <div className="daily-table">
               <h3>Patient Procedures</h3>
               <table className="users-table">
                 <thead>
@@ -105,7 +106,7 @@ function Daily() {
             </div>
 
             {/* COLLECTIONS */}
-            <div className="report-table">
+            <div className="daily-table">
               <h3>Collections</h3>
               <table className="users-table">
                 <thead>
@@ -128,7 +129,7 @@ function Daily() {
             </div>
 
             {/* EXPENSES */}
-            <div className="report-table">
+            <div className="daily-table">
               <h3>Expenses & Bills</h3>
               <table className="users-table">
                 <thead>
@@ -152,10 +153,9 @@ function Daily() {
             </div>
 
             {/* FOOTER */}
-            <div className="reports-footer">
+            <div className="daily-footer">
               <button className="btn-print">Print</button>
             </div>
-
           </div>
         </div>
       </div>

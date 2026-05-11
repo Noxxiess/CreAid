@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
-import "../styles/daily.css";
+import "../styles/reports.css";
 
 
-function Reports() {
+function Reports() 
+{
 
   // ✅ backend-ready filters
   const [filters, setFilters] = useState({

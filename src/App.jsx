@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
+import Myaccount from "./pages/settings/Myaccount";
 import Calendar from "./pages/Calendar";
 import Userlist from "./pages/Userlist";
 import Payments from "./pages/Payments";
@@ -10,17 +11,7 @@ import NewPatient from "./pages/NewPatient";
 import Dashboard from "./pages/Dashboard";
 import Logs from "./pages/users/Logs";
 import Daily from "./pages/reports/Daily"
-
 import { supabase } from './lib/supabase'
-
-async function testConnection() {
-  const { data, error } = await supabase.auth.getSession()
-  console.log('SESSION:', data)
-  console.log('ERROR:', error)
-}
-
-testConnection()
-
 
 function App() 
 {
@@ -28,6 +19,7 @@ function App()
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/myaccount" element={<Myaccount />} />
       <Route path="/calendar" element={<Calendar />} />
       <Route path="/users" element={<Userlist />} /> 
       <Route path="/payments" element={<Payments />} />
