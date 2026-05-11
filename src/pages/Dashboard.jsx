@@ -6,100 +6,86 @@ import "../styles/admin.css";
 
 function Dashboard() {
   const { permissions = {} } = useAuth();
-
-  const [period, setPeriod] = useState("Day");
+  const [period, setPeriod] = useState("Week");
   const [patientsWithBalance, setPatientsWithBalance] = useState([]);
 
   useEffect(() => {
     setPatientsWithBalance([]);
   }, [period]);
 
-  const can = (module, action) => {
-    return permissions[module]?.includes(action);
-  };
+  const can = (module, action) => permissions[module]?.includes(action);
 
   return (
     <div className="admin-container">
       <Sidebar />
-
       <div className="admin-main">
         <Topbar />
-
         <div className="dashboard-content">
 
-          {/* ✅ STATS */}
-          <div className="stats-grid">
-
-            {/* SHOW CARD ONLY IF USER CAN VIEW DASHBOARD */}
-            {can("dashboard", "view") && (
-              <>
-                <div className="stat-card">
-                  <div className="stat-title">Scheduled</div>
-                  <div className="stat-value">-- ({period})</div>
-                </div>
-
-                <div className="stat-card">
-                  <div className="stat-title">Completed</div>
-                  <div className="stat-value">-- ({period})</div>
-                </div>
-
-                <div className="stat-card">
-                  <div className="stat-title">Reschedule</div>
-                  <div className="stat-value">-- ({period})</div>
-                </div>
-
-                <div className="stat-card">
-                  <div className="stat-title">No-shows</div>
-                  <div className="stat-value">-- ({period})</div>
-                </div>
-              </>
-            )}
-
-          </div>
+          {/* STATS */}
+          {can("dashboard", "view") && (
+            <div className="stats-grid">
+              <div className="stat-card">
+                <div className="stat-title">Scheduled</div>
+                <div className="stat-value">-- ({period})</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-title">Completed</div>
+                <div className="stat-value">-- ({period})</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-title">Reschedule</div>
+                <div className="stat-value">-- ({period})</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-title">No-shows</div>
+                <div className="stat-value">-- ({period})</div>
+              </div>
+            </div>
+          )}
 
           <div className="main-grid">
 
-            {/* ✅ SHOW CARD BASED ON PERMISSION */}
+            {/* BALANCE TABLE */}
             {can("payments", "view") && (
               <div className="balance-card">
                 <div className="balance-card-header">
-                  <h3>PATIENTS W/ BALANCE</h3>
+                  <h3>Patients w/ Balance</h3>
                   <span className="see-all">See All</span>
                 </div>
-
-                <div className="empty-placeholder">
-                  No data available yet
-                </div>
+                {patientsWithBalance.length === 0 ? (
+                  <div className="empty-placeholder">No data available yet</div>
+                ) : (
+                  <div className="balance-list">
+                    {patientsWithBalance.map((p, i) => (
+                      <div className="balance-item" key={i}>
+                        <div>
+                          <span className="patient-name">{p.name}</span>
+                          <span className="last-visit">{p.lastVisit}</span>
+                        </div>
+                        <span className="balance-amount">₱{p.balance}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
-            {/* ✅ RIGHT SIDE */}
+            {/* RIGHT COLUMN */}
             <div className="right-column">
-
               <div className="chart-card">
-                <div className="chart-title">
-                  {period} Number of Treatments
-                </div>
-
-                <div className="chart-placeholder">
-                  Pie Chart Placeholder ({period})
-                </div>
+                <div className="chart-title">{period} Number of Treatments</div>
+                <div className="chart-placeholder">Pie Chart Placeholder ({period})</div>
               </div>
 
-              {/* ✅ SALES */}
               <div className="sales-card">
                 <h4>Total Sales for the {period}</h4>
                 <p className="amount">₱ ---.--</p>
-
-                {/* ✅ SHOW BUTTON ONLY IF ALLOWED */}
                 {can("reports", "view") && (
-                  <span className="report-link">
-                    Click Here for reports &gt;
-                  </span>
+                  <span className="report-link">Click Here for reports →</span>
                 )}
               </div>
 
-              {/* ✅ FILTER */}
               <div className="filter-buttons">
                 {["Month", "Week", "Day"].map((p) => (
                   <button
@@ -111,8 +97,8 @@ function Dashboard() {
                   </button>
                 ))}
               </div>
-
             </div>
+
           </div>
         </div>
       </div>

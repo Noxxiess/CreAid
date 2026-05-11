@@ -1,65 +1,85 @@
+/* ── SIDEBAR ── */
 .sidebar {
-  width: 240px;
-  min-height: 100vh; /* ✅ important */
-  background: linear-gradient(180deg, #2d1b73, #1a1040);
+  width: 220px;
+  min-width: 220px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  background: #150e43;
   color: white;
-  padding: 20px;
+  padding: 20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.sidebar-logo {
+  width: 120px;
+  display: block;
+  margin: 0 auto 24px;
 }
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 2px;
+  flex: 1;
 }
 
-.sidebar-logo {
-  width: auto;
-  display: block;
-  margin: 0 auto 15px;
-}
-
+/* ── NAV ITEMS ── */
 .nav-item {
-  padding: 12px 20px;
-  margin-right: 20px;
-  color: #ddd;
-  border-radius: 10px;
-  font-size: 16px;
+  padding: 10px 16px;
+  color: #9890c4;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
   text-decoration: none;
-  transition: 0.25s;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
+  display: block;
+  letter-spacing: 0.1px;
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  transform: translateX(3px);
 }
 
 .nav-item.active {
-  background: #ff2d6d;
+  background: #D4537E;
   color: white;
+  font-weight: 600;
 }
 
+/* ── SUBMENU ── */
+.submenu-toggle {
+  cursor: pointer;
+  user-select: none;
+}
 
-/* submenu container */
 .submenu {
   display: flex;
   flex-direction: column;
-  margin-left: 10px;
+  gap: 1px;
+  margin: 2px 0 2px 8px;
+  padding-left: 10px;
+  border-left: 1px solid rgba(255,255,255,0.08);
 }
 
-/* smaller nested links */
 .submenu .nav-item {
-  font-size: 14px;
-  padding: 10px 20px;
-  margin-right: 20px;
-  color: #bbb;
+  font-size: 13px;
+  padding: 8px 14px;
+  color: #7a72a8;
 }
 
-/* hover effect */
 .submenu .nav-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  background: rgba(255,255,255,0.06);
 }
 
-/* toggle header */
-.submenu-toggle {
-  cursor: pointer;
+.submenu .nav-item.active {
+  background: rgba(212, 83, 126, 0.25);
+  color: #f093b0;
 }
