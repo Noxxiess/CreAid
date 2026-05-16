@@ -4,27 +4,21 @@ import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import "../styles/reports.css";
 
-
-function Reports() 
-{
-
-  // ✅ backend-ready filters
+function Reports() {
   const [filters, setFilters] = useState({
     clinic: "All",
     from: "",
-    to: ""
+    to: "",
   });
 
-  // ✅ backend-ready summary
   const [summary, setSummary] = useState({
     netIncome: "₱ 0.00",
     collectionAmount: "₱ 0.00",
     collectionCount: 0,
     expenseAmount: "₱ 0.00",
-    expenseCount: 0
+    expenseCount: 0,
   });
-  
-  
+
   const [reportType, setReportType] = useState("Summary");
   const location = useLocation();
 
@@ -42,7 +36,6 @@ function Reports()
     }
   }, [location.pathname]);
 
-
   useEffect(() => {
     /*
     getReports(filters).then(res => {
@@ -51,15 +44,11 @@ function Reports()
     */
   }, [filters]);
 
-  
-
   return (
     <div className="admin-container">
       <Sidebar />
-
       <div className="admin-main">
         <Topbar />
-
         <div className="dashboard-content">
           <div className="reports-container">
 
@@ -72,54 +61,44 @@ function Reports()
                 <label>Clinic</label>
                 <select
                   value={filters.clinic}
-                  onChange={(e) =>
-                    setFilters({ ...filters, clinic: e.target.value })
-                  }
+                  onChange={(e) => setFilters({ ...filters, clinic: e.target.value })}
                 >
                   <option>All</option>
                   <option>Hagonoy</option>
                   <option>Paombong</option>
                 </select>
               </div>
-
               <div className="filter-item">
                 <label>Date From</label>
                 <input
                   type="date"
                   value={filters.from}
-                  onChange={(e) =>
-                    setFilters({ ...filters, from: e.target.value })
-                  }
+                  onChange={(e) => setFilters({ ...filters, from: e.target.value })}
                 />
               </div>
-
               <div className="filter-item">
                 <label>Date To</label>
                 <input
                   type="date"
                   value={filters.to}
-                  onChange={(e) =>
-                    setFilters({ ...filters, to: e.target.value })
-                  }
+                  onChange={(e) => setFilters({ ...filters, to: e.target.value })}
                 />
               </div>
-
               <button className="btn-show">Show</button>
             </div>
 
             {/* SUMMARY */}
             <div className="reports-summary">
-              <h3>Net Income: {summary.netIncome}</h3>
+              <h2 className="net-income-heading">Net Income: {summary.netIncome}</h2>
 
               <div className="summary-row">
-                <div>
-                  <span className="blue">Collection</span>
+                <div className="summary-block">
+                  <span className="summary-label blue">Collection</span>
                   <p>Total Amount: {summary.collectionAmount}</p>
                   <p>Transactions: {summary.collectionCount}</p>
                 </div>
-
-                <div>
-                  <span className="red">Expenses</span>
+                <div className="summary-block">
+                  <span className="summary-label red">Expenses</span>
                   <p>Total Amount: {summary.expenseAmount}</p>
                   <p>Transactions: {summary.expenseCount}</p>
                 </div>
@@ -129,17 +108,15 @@ function Reports()
             {/* CHARTS */}
             <div className="reports-charts">
               <div className="chart-card">
-                <p>Type of Patient</p>
+                <p className="chart-label">Type of Patient</p>
                 <div className="chart-circle"></div>
               </div>
-
               <div className="chart-card">
-                <p>Expense Categories</p>
+                <p className="chart-label">Expense Categories</p>
                 <div className="chart-circle"></div>
               </div>
-
               <div className="chart-card">
-                <p>Payment Methods</p>
+                <p className="chart-label">Payment Methods</p>
                 <div className="chart-circle"></div>
               </div>
             </div>

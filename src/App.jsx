@@ -11,27 +11,32 @@ import NewPatient from "./pages/NewPatient";
 import Dashboard from "./pages/Dashboard";
 import Logs from "./pages/users/Logs";
 import Daily from "./pages/reports/Daily"
-import { supabase } from './lib/supabase'
+import Collections from "./pages/reports/Collections";
+import Appointments from "./pages/reports/Appointments";
+import Layout from "./components/Layout";
+import { supabase } from './lib/supabase';
 
 function App() 
 {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/myaccount" element={<Myaccount />} />
-      <Route path="/calendar" element={<Calendar />} />
-      <Route path="/users" element={<Userlist />} /> 
-      <Route path="/payments" element={<Payments />} />
-      <Route path="/system" element={<SystemData />} />
-      <Route path="/inbox" element={<Inbox />} />
-      <Route path="/patients/new" element={<NewPatient />} />
-      <Route path="/users/logs" element={<Logs />} />
-      <Route path="/reports" element={<Reports />} />
-      <Route path="/reports/daily" element={<Daily />} />
-      <Route path="/reports/collections" element={<Reports />} />
-      <Route path="/reports/expenses" element={<Reports />} />
-      <Route path="/reports/appointments" element={<Reports />} />
+      <Route element={<Layout />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/myaccount" element={<Myaccount />} />
+        <Route path="/calendar" element={<Calendar />} />
+        <Route path="/users" element={<Userlist />} /> 
+        <Route path="/payments" element={<Payments />} />
+        <Route path="/system" element={<SystemData />} />
+        <Route path="/inbox" element={<Inbox />} />
+        <Route path="/patients/new" element={<NewPatient />} />
+        <Route path="/users/logs" element={<Logs />} />
+        <Route path="/reports" element={<Reports />} />
+        <Route path="/reports/daily" element={<Daily />} />
+        <Route path="/reports/collections" element={<Collections />} />
+        <Route path="/reports/expenses" element={<Reports />} />
+        <Route path="/reports/appointments" element={<Reports />} />
+      </Route>
     </Routes>
   );
 }

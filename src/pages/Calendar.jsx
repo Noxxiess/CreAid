@@ -1,17 +1,12 @@
 import { useState, useEffect } from "react";
-import Sidebar from "../components/Sidebar";
-import Topbar from "../components/Topbar";
 import "../styles/calendar.css";
 
-// API later:
-// import { getAppointments } from "../api/appointments";
-
-function Calendar() {
-  const [view, setView] = useState("month"); // year | month | week | day
+function Calendar() 
+{
+  const [view, setView] = useState("month"); 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [appointments, setAppointments] = useState([]);
 
-  // ✅ API HOOK (READY)
   useEffect(() => {
     /*
     getAppointments({
@@ -19,21 +14,19 @@ function Calendar() {
       date: currentDate,
     }).then(res => setAppointments(res.data));
     */
-    setAppointments([]); // frontend only
+    setAppointments([]);
   }, [view, currentDate]);
 
   const year = currentDate.getFullYear();
   const monthIndex = currentDate.getMonth();
   const dayNumber = currentDate.getDate();
-
   const monthName = currentDate.toLocaleString("default", { month: "long" });
   const weekdayName = currentDate.toLocaleString("default", { weekday: "long" });
-
-  // ✅ MONTH CALCULATIONS
-  const firstDayOfMonth = new Date(year, monthIndex, 1).getDay(); // 0 = Sunday
+  const firstDayOfMonth = new Date(year, monthIndex, 1).getDay();
   const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
 
-  const weekDays = [
+  const weekDays = 
+  [
     "Sunday",
     "Monday",
     "Tuesday",
@@ -45,16 +38,9 @@ function Calendar() {
 
   return (
     <div className="admin-container">
-      <Sidebar />
       <div className="admin-main">
-        <Topbar />
-
         <div className="calendar-content">
-
-          {/* ✅ FLOATING CONTAINER */}
           <div className="calendar-card">
-
-            {/* HEADER */}
             <div className="calendar-header">
               <h2 className="calendar-title">
                 {view === "year" && year}
@@ -65,11 +51,7 @@ function Calendar() {
 
               <div className="calendar-filters">
                 {["year", "month", "week", "day"].map(v => (
-                  <button
-                    key={v}
-                    className={view === v ? "active" : ""}
-                    onClick={() => setView(v)}
-                  >
+                  <button key={v} className={view === v ? "active" : ""} onClick={() => setView(v)}>
                     {v.charAt(0).toUpperCase() + v.slice(1)}
                   </button>
                 ))}
@@ -79,25 +61,17 @@ function Calendar() {
             {/* ✅ YEAR VIEW */}
             {view === "year" && (
               <div className="year-grid">
-                {Array.from({ length: 12 }, (_, i) => (
-                  <div
-                    key={i}
-                    className="month-card"
-                    onClick={() => {
-                      setCurrentDate(new Date(year, i, 1));
-                      setView("month");
-                    }}
-                  >
-                    {new Date(year, i).toLocaleString("default", {
+                {Array.from({ length: 12 }, (_, i) => ( key={i} className="month-card" onClick={() => { setCurrentDate(new Date(year, i, 1)); setView("month");}}>
+                    {new Date(year, i).toLocaleString("default", 
+                    {
                       month: "long",
                     })}
                   </div>
                 ))}
               </div>
             )}
-
-            {/* ✅ MONTH VIEW */}
-            {view === "month" && (
+            
+             {view === "month" && (
               <div className="month-calendar">
 
                 <div className="weekday-row">

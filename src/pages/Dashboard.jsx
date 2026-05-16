@@ -1,28 +1,23 @@
 import { useState, useEffect } from "react";
-import Sidebar from "../components/Sidebar";
-import Topbar from "../components/Topbar";
 import { useAuth } from "../context/AuthContext";
-import "../styles/admin.css";
+import "../styles/dashboard.css";
 
-function Dashboard() {
+function Dashboard() 
+{
   const { permissions = {} } = useAuth();
   const [period, setPeriod] = useState("Week");
   const [patientsWithBalance, setPatientsWithBalance] = useState([]);
+  const can = (module, action) => permissions[module]?.includes(action);
 
-  useEffect(() => {
+  useEffect(() => 
+  {
     setPatientsWithBalance([]);
   }, [period]);
 
-  const can = (module, action) => permissions[module]?.includes(action);
-
   return (
     <div className="admin-container">
-      <Sidebar />
       <div className="admin-main">
-        <Topbar />
         <div className="dashboard-content">
-
-          {/* STATS */}
           {can("dashboard", "view") && (
             <div className="stats-grid">
               <div className="stat-card">
@@ -45,8 +40,6 @@ function Dashboard() {
           )}
 
           <div className="main-grid">
-
-            {/* BALANCE TABLE */}
             {can("payments", "view") && (
               <div className="balance-card">
                 <div className="balance-card-header">
@@ -71,7 +64,6 @@ function Dashboard() {
               </div>
             )}
 
-            {/* RIGHT COLUMN */}
             <div className="right-column">
               <div className="chart-card">
                 <div className="chart-title">{period} Number of Treatments</div>
@@ -98,7 +90,6 @@ function Dashboard() {
                 ))}
               </div>
             </div>
-
           </div>
         </div>
       </div>
