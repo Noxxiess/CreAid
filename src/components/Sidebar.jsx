@@ -55,8 +55,8 @@ function Sidebar({ collapsed, onToggle, mobileClose, isMobileDrawer })
             </div>
             {openUsers && !collapsed && (
               <div className="submenu">
-                <NavLink to="/users"      className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>All Users</NavLink>
-                <NavLink to="/users/logs" className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>User Logs</NavLink>
+                <NavLink to="/users"      end className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>All Users</NavLink>
+                <NavLink to="/users/logs" end className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>User Logs</NavLink>
               </div>
             )}
           </>
@@ -78,11 +78,11 @@ function Sidebar({ collapsed, onToggle, mobileClose, isMobileDrawer })
             </div>
             {openReports && !collapsed && (
               <div className="submenu">
-                <NavLink to="/reports"              className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>Summary</NavLink>
-                <NavLink to="/reports/daily"        className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>Daily Sales</NavLink>
-                <NavLink to="/reports/collections"  className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>Collections</NavLink>
-                <NavLink to="/reports/expenses"     className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>Expenses & Bills</NavLink>
-                <NavLink to="/reports/appointments" className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>Patient Appointments</NavLink>
+                <NavLink to="/reports"              end className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>Summary</NavLink>
+                <NavLink to="/reports/daily"        end className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>Daily Sales</NavLink>
+                <NavLink to="/reports/collections"  end className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>Collections</NavLink>
+                <NavLink to="/reports/expenses"     end className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>Expenses & Bills</NavLink>
+                <NavLink to="/reports/appointments" end className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>Patient Appointments</NavLink>
               </div>
             )}
           </>

@@ -1,6 +1,4 @@
 import { useState } from "react";
-import Sidebar from "../components/Sidebar";
-import Topbar from "../components/Topbar";
 import "../styles/systemdata.css";
 
 const CATEGORIES = 
@@ -87,7 +85,8 @@ const CATEGORIES =
   },
 ];
 
-function MasterfileTable({ category, onBack }) {
+function MasterfileTable({ category, onBack }) 
+{
   const [search, setSearch] = useState("");
   const [rows] = useState([]); 
 
@@ -160,9 +159,7 @@ function SystemData()
     
     return (
       <div className="admin-container">
-        <Sidebar />
         <div className="admin-main">
-          <Topbar />
           <div className="dashboard-content">
             <div className="systemdata-container">
               <MasterfileTable category={category} onBack={() => setActive(null)} />
@@ -175,9 +172,7 @@ function SystemData()
 
   return (
     <div className="admin-container">
-      <Sidebar />
       <div className="admin-main">
-        <Topbar />
         <div className="dashboard-content">
           <div className="systemdata-container">
             <h2 className="systemdata-title">Masterfiles</h2>

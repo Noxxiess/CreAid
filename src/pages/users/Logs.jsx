@@ -1,82 +1,83 @@
-
 import { useEffect, useState } from "react";
-import Sidebar from "../../components/Sidebar";
-import Topbar from "../../components/Topbar";
 import "../../styles/users.css";
 
-function Logs() {
+const PAGE_SIZE = 10;
+
+function Logs() 
+{
   const [logs, setLogs] = useState([]);
+  const [totalLogs, setTotalLogs] = useState(0);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    // ✅ PLACEHOLDER FOR BACKEND API
-    // setLoading(true);
-    // fetch("/api/logs")
-    //   .then(res => res.json())
-    //   .then(data => setLogs(data))
-    //   .catch(err => console.error(err))
-    //   .finally(() => setLoading(false));
-  }, []);
+  useEffect(() => 
+  {
+    fetchLogs();
+  }, [page]);
+
+  async function fetchLogs() 
+  {
+    setLoading(true);
+    //waiting sa backend
+    setLoading(false);
+  }
+
+  const totalPages = Math.ceil(totalLogs / PAGE_SIZE);
 
   return (
-    <div className="admin-container">
-      <Sidebar />
+    <div className="users-content">
+      <div className="users-page-header">
+        <h2>User Logs</h2>
+      </div>
 
-      <div className="admin-main">
-        <Topbar />
-
-        <div className="users-container">
-          <div className="users-header">
-            <h2>User Logs</h2>
+      <div className="users-page-container">
+        <div className="users-table">
+          <div className="logs-table-header">
+            <span>#</span>
+            <span>Username</span>
+            <span>Role</span>
+            <span>IP Address</span>
+            <span>Action</span>
+            <span>Date / Time</span>
           </div>
 
-          <div className="users-table-container">
-            <table className="users-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Username</th>
-                  <th>Role</th>
-                  <th>IP Address</th>
-                  <th>Action</th>
-                  <th>Date / Time</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan="6" style={{ textAlign: "center" }}>
-                      Loading logs...
-                    </td>
-                  </tr>
-                ) : logs.length === 0 ? (
-                  <tr>
-                    <td colSpan="6" style={{ textAlign: "center" }}>
-                      No logs found
-                    </td>
-                  </tr>
-                ) : (
-                  logs.map((log, index) => (
-                    <tr key={log.id}>
-                      <td>{index + 1}</td>
-                      <td>{log.username}</td>
-                      <td>{log.role}</td>
-                      <td>{log.ip}</td>
-                      <td>{log.action}</td>
-                      <td>{log.date}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+          {loading ? (
+            <div className="users-empty">Loading logs...</div>
+          ) : logs.length === 0 ? (
+            <div className="users-empty">No logs found.</div>
+          ) : (
+            logs.map((log, i) => (
+              <div key={log.id} className="logs-table-row">
+                <span>{log.id}</span>
+                <span className="link">{log.username}</span>
+                <span>{log.role}</span>
+                <span className="log-ip">{log.ip}</span>
+                <span>
+                  <span className={`log-badge log-badge-${log.action?.toLowerCase()}`}>
+                    {log.action}
+                  </span>
+                </span>
+                <span>{new Date(log.created_at).toLocaleString()}</span>
+              </div>
+            ))
+          )}
         </div>
 
+        <div className="users-footer">
+          <div className="pagination">
+            <span className={page === 1 ? "pagination-disabled" : "pagination-btn"} onClick={() => page > 1 && setPage(page - 1)}>
+              « Previous
+            </span>
+            <strong>{page}</strong>
+            <span className={page >= totalPages ? "pagination-disabled" : "pagination-btn"} onClick={() => page < totalPages && setPage(page + 1)}>
+              Next »
+            </span>
+          </div>
+          <div>Total Logs: {totalLogs}</div>
+        </div>
       </div>
     </div>
   );
 }
 
 export default Logs;
-``

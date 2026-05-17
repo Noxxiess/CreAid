@@ -1,308 +1,231 @@
 import { useState } from "react";
-import Sidebar from "../../components/Sidebar";
-import Topbar from "../../components/Topbar";
-import "../../styles/reports.css";
+import "../../styles/daily.css";
+
+const stats        = { appointments: 0, recalls: 0, patients: 0 };
+const appointments = [];
+const procedures   = [];
+const overPayment  = [];
+const collections  = [];
+const expenses     = [];
+const income = {
+  netIncome:     "---",
+  billingAmount: "---",
+  billingCount:  "---",
+  expenseAmount: "---",
+  expenseCount:  "---",
+};
 
 function Daily() 
 {
-  const [filters, setFilters] = useState({
-    clinic: "All Clinics",
-    laboratory: "All Laboratories",
-    from: "",
-    to: "",
-  });
-
-  const [stats] = useState({ appointments: 0, recalls: 0, patients: 0 });
-  const [appointments] = useState([]);
-  const [procedures] = useState([]);
-  const [overPayment] = useState([]);
-  const [collections] = useState([]);
-  const [expenses] = useState([]);
-  const [income] = useState({
-    netIncome: "₱0.00",
-    billingAmount: "₱0.00",
-    billingCount: 0,
-    expenseAmount: "₱0.00",
-    expenseCount: 0,
-  });
+  const [filters, setFilters] = useState({ from: "", to: "" });
 
   return (
-    <div className="admin-container">
-      <Sidebar />
-      <div className="admin-main">
-        <Topbar />
-        <div className="dashboard-content">
-          <div className="reports-container">
-            <div className="page-title-row">
-              <h2 className="page-main-title">Daily Sales Report</h2>
-              <p className="page-subtitle">Detailed Income Sales Report</p>
-            </div>
+    <div className="users-content">
+      <div className="users-page-header">
+        <h2>Daily Sales Report</h2>
+      </div>
 
-            <div className="reports-filters">
-              <div className="filter-item wide">
-                <label>Clinic</label>
-                <select value={filters.clinic} onChange={(e) => setFilters({ ...filters, clinic: e.target.value })}>
-                  <option>All Clinics</option>
-                  <option>Hagonoy</option>
-                  <option>Paombong</option>
-                </select>
-              </div>
-              <div className="filter-item wide">
-                <label>Laboratory</label>
-                <select value={filters.laboratory} onChange={(e) => setFilters({ ...filters, laboratory: e.target.value })}>
-                  <option>All Laboratories</option>
-                </select>
-              </div>
-              <div className="filter-item">
-                <label>Date From</label>
-                <input type="date" value={filters.from} onChange={(e) => setFilters({ ...filters, from: e.target.value })}/>
-              </div>
-              <div className="filter-item">
-                <label>Date To</label>
-                <input type="date" value={filters.to} onChange={(e) => setFilters({ ...filters, to: e.target.value })}/>
-              </div>
-              <button className="btn-show">Show</button>
-            </div>
+      <div className="users-page-container">
+        <div className="users-filter-container">
+          <div className="filter-row">
+            <span className="filter-label">Date From</span>
+            <input type="date" value={filters.from} onChange={(e) => setFilters({ ...filters, from: e.target.value })}/>
+            <span className="filter-label">Date To</span>
+            <input type="date" value={filters.to} onChange={(e) => setFilters({ ...filters, to: e.target.value })}/>
+            <button className="btn-go">Show</button>
+          </div>
+        </div>
 
-            <div className="daily-stats">
-              <div className="daily-stat-card teal">
-                <span className="daily-stat-icon">🦷</span>
-                <div className="daily-stat-info">
-                  <span className="daily-stat-value">{stats.appointments}</span>
-                  <span className="daily-stat-label">Appointments</span>
-                </div>
-              </div>
-              <div className="daily-stat-card purple">
-                <span className="daily-stat-icon">🔁</span>
-                <div className="daily-stat-info">
-                  <span className="daily-stat-value">{stats.recalls}</span>
-                  <span className="daily-stat-label">Rebooked</span>
-                </div>
-              </div>
-              <div className="daily-stat-card amber">
-                <span className="daily-stat-icon">👤</span>
-                <div className="daily-stat-info">
-                  <span className="daily-stat-value">{stats.patients}</span>
-                  <span className="daily-stat-label">Patient Invoices</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="daily-tables-grid">
-              <div className="daily-table-card full-width">
-                <div className="daily-table-header">
-                  <span>Patient Appointments</span>
-                </div>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Patient Name</th>
-                      <th>Clinic</th>
-                      <th>Associate</th>
-                      <th>Appointment Reason</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {appointments.length === 0 ? (
-                      <tr className="empty-row">
-                        <td colSpan={6}>No data available</td>
-                      </tr>
-                    ) : (
-                      appointments.map((row, i) => (
-                        <tr key={i}>
-                          <td>{row.date}</td>
-                          <td>{row.patientName}</td>
-                          <td>{row.clinic}</td>
-                          <td>{row.associate}</td>
-                          <td>{row.reason}</td>
-                          <td>{row.status}</td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-                <div className="show-more-row"><a>Show more</a></div>
-              </div>
-
-              <div className="daily-table-card">
-                <div className="daily-table-header">
-                  <span>Patient Procedures</span>
-                </div>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Patient Name</th>
-                      <th>Clinic</th>
-                      <th>Procedure</th>
-                      <th>Total Bill</th>
-                      <th>Total Paid</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {procedures.length === 0 ? (
-                      <tr className="empty-row">
-                        <td colSpan={6}>No data available</td>
-                      </tr>
-                    ) : (
-                      procedures.map((row, i) => (
-                        <tr key={i}>
-                          <td>{row.date}</td>
-                          <td>{row.patientName}</td>
-                          <td>{row.clinic}</td>
-                          <td>{row.procedure}</td>
-                          <td>{row.totalBill}</td>
-                          <td>{row.totalPaid}</td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-                <div className="show-more-row"><a>Show more</a></div>
-              </div>
-
-              <div className="daily-table-card">
-                <div className="daily-table-header">
-                  <span>Over Payment</span>
-                </div>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Patient</th>
-                      <th>Credit Amount</th>
-                      <th>Used Amount</th>
-                      <th>Balance Amount</th>
-                      <th>Remarks</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {overPayment.length === 0 ? (
-                      <tr className="empty-row">
-                        <td colSpan={6}>No data available</td>
-                      </tr>
-                    ) : (
-                      overPayment.map((row, i) => (
-                        <tr key={i}>
-                          <td>{row.date}</td>
-                          <td>{row.patient}</td>
-                          <td>{row.creditAmount}</td>
-                          <td>{row.usedAmount}</td>
-                          <td>{row.balanceAmount}</td>
-                          <td>{row.remarks}</td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-                <div className="show-more-row"><a>Show more</a></div>
-              </div>
-
-              <div className="daily-table-card">
-                <div className="daily-table-header">
-                  <span>Collections</span>
-                </div>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Patient</th>
-                      <th>Clinic / Laboratory</th>
-                      <th>Payment Type</th>
-                      <th>Reference #</th>
-                      <th>Amount</th>
-                      <th>Remarks</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {collections.length === 0 ? (
-                      <tr className="empty-row">
-                        <td colSpan={7}>No data available</td>
-                      </tr>
-                    ) : (
-                      collections.map((row, i) => (
-                        <tr key={i}>
-                          <td>{row.date}</td>
-                          <td>{row.patient}</td>
-                          <td>{row.clinic}</td>
-                          <td>{row.paymentType}</td>
-                          <td>{row.referenceNo}</td>
-                          <td>{row.amount}</td>
-                          <td>{row.remarks}</td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-                <div className="show-more-row"><a>Add more</a></div>
-              </div>
-
-              <div className="daily-table-card">
-                <div className="daily-table-header">
-                  <span>Expenses and Bills</span>
-                </div>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Expense Date</th>
-                      <th>Clinic</th>
-                      <th>Description</th>
-                      <th>Category</th>
-                      <th>Account</th>
-                      <th>Method</th>
-                      <th>Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {expenses.length === 0 ? (
-                      <tr className="empty-row">
-                        <td colSpan={7}>No data available</td>
-                      </tr>
-                    ) : (
-                      expenses.map((row, i) => (
-                        <tr key={i}>
-                          <td>{row.date}</td>
-                          <td>{row.clinic}</td>
-                          <td>{row.description}</td>
-                          <td>{row.category}</td>
-                          <td>{row.account}</td>
-                          <td>{row.method}</td>
-                          <td>{row.amount}</td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-                <div className="show-more-row"><a>Show more</a></div>
-              </div>
-            </div>
-
-            <div className="daily-bottom">
-              <div className="daily-income-block">
-                <h4>Net Income: {income.netIncome}</h4>
-                <div className="daily-income-label">Billing</div>
-                <p>TOTAL AMOUNT: {income.billingAmount}  TRANSACTIONS: {income.billingCount}</p>
-                <div className="daily-income-label expenses-label">Expenses</div>
-                <p>TOTAL AMOUNT: {income.expenseAmount}  TRANSACTIONS: {income.expenseCount}</p>
-              </div>
-
-              <div className="daily-chart-card">
-                <h4>Sales Comparison</h4>
-                <div className="chart-legend">
-                  <span className="legend-item"><span className="legend-dot" style={{ background: "#e53935" }}></span>Net Income</span>
-                  <span className="legend-item"><span className="legend-dot" style={{ background: "#1e88e5" }}></span>Billing</span>
-                  <span className="legend-item"><span className="legend-dot" style={{ background: "#ff9800" }}></span>Collection</span>
-                  <span className="legend-item"><span className="legend-dot" style={{ background: "#43a047" }}></span>Expenses</span>
-                </div>
-                <div className="chart-area-placeholder">Sales Comparison Chart</div>
-              </div>
-            </div>
-            <div className="reports-footer" style={{ marginTop: "20px" }}>
-              <button className="btn-print">Print</button>
+        <div className="daily-stat-cards">
+          <div className="daily-stat-card daily-stat-pink">
+            <div className="daily-stat-icon">🦷</div>
+            <div className="daily-stat-info">
+              <div className="daily-stat-value">{stats.appointments}</div>
+              <div className="daily-stat-label">Appointments</div>
             </div>
           </div>
+
+          <div className="daily-stat-card daily-stat-purple">
+            <div className="daily-stat-icon">🔁</div>
+            <div className="daily-stat-info">
+              <div className="daily-stat-value">{stats.recalls}</div>
+              <div className="daily-stat-label">Rebooked</div>
+            </div>
+          </div>
+
+          <div className="daily-stat-card daily-stat-navy">
+            <div className="daily-stat-icon">👤</div>
+            <div className="daily-stat-info">
+              <div className="daily-stat-value">{stats.patients}</div>
+              <div className="daily-stat-label">Patient Invoices</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="daily-tables-grid">
+          <div className="daily-table-card full-width">
+            <div className="daily-table-title">Patient Appointments</div>
+            <div className="users-table">
+              <div className="daily-th daily-cols-appointments">
+                <span>Date</span><span>Patient Name</span><span>Clinic</span>
+                <span>Associate</span><span>Reason</span><span>Status</span>
+              </div>
+              {appointments.length === 0
+                ? <div className="users-empty">No data available</div>
+                : appointments.map((r, i) => (
+                    <div key={i} className="daily-td daily-cols-appointments">
+                      <span>{r.date}</span>
+                      <span>{r.patientName}</span>
+                      <span>{r.clinic}</span>
+                      <span>{r.associate}</span>
+                      <span>{r.reason}</span>
+                      <span>{r.status}</span>
+                    </div>
+                  ))
+              }
+            </div>
+            <div className="daily-show-more">Show more</div>
+          </div>
+
+          <div className="daily-table-card">
+            <div className="daily-table-title">Patient Procedures</div>
+            <div className="users-table">
+              <div className="daily-th daily-cols-procedures">
+                <span>Date</span><span>Patient Name</span><span>Clinic</span>
+                <span>Procedure</span><span>Total Bill</span><span>Total Paid</span>
+              </div>
+              {procedures.length === 0
+                ? <div className="users-empty">No data available</div>
+                : procedures.map((r, i) => (
+                    <div key={i} className="daily-td daily-cols-procedures">
+                      <span>{r.date}</span>
+                      <span>{r.patientName}</span>
+                      <span>{r.clinic}</span>
+                      <span>{r.procedure}</span>
+                      <span>{r.totalBill}</span>
+                      <span>{r.totalPaid}</span>
+                    </div>
+                  ))
+              }
+            </div>
+            <div className="daily-show-more">Show more</div>
+          </div>
+
+          <div className="daily-table-card">
+            <div className="daily-table-title">Over Payment</div>
+            <div className="users-table">
+              <div className="daily-th daily-cols-6-even">
+                <span>Date</span>
+                <span>Patient</span>
+                <span>Credit</span>
+                <span>Used</span>
+                <span>Balance</span>
+                <span>Remarks</span>
+              </div>
+              {overPayment.length === 0
+                ? <div className="users-empty">No data available</div>
+                : overPayment.map((r, i) => (
+                    <div key={i} className="daily-td daily-cols-6-even">
+                      <span>{r.date}</span>
+                      <span>{r.patient}</span>
+                      <span>{r.creditAmount}</span>
+                      <span>{r.usedAmount}</span>
+                      <span>{r.balanceAmount}</span>
+                      <span>{r.remarks}</span>
+                    </div>
+                  ))
+              }
+            </div>
+            <div className="daily-show-more">Show more</div>
+          </div>
+
+          <div className="daily-table-card">
+            <div className="daily-table-title">Collections</div>
+            <div className="users-table">
+              <div className="daily-th daily-cols-6-even">
+                <span>Date</span>
+                <span>Patient</span>
+                <span>Clinic</span>
+                <span>Payment Type</span>
+                <span>Amount</span>
+                <span>Remarks</span>
+              </div>
+              {collections.length === 0
+                ? <div className="users-empty">No data available</div>
+                : collections.map((r, i) => (
+                    <div key={i} className="daily-td daily-cols-6-even">
+                      <span>{r.date}</span>
+                      <span>{r.patient}</span>
+                      <span>{r.clinic}</span>
+                      <span>{r.paymentType}</span>
+                      <span>{r.amount}</span>
+                      <span>{r.remarks}</span>
+                    </div>
+                  ))
+              }
+            </div>
+            <div className="daily-show-more">Show more</div>
+          </div>
+
+          <div className="daily-table-card">
+            <div className="daily-table-title">Expenses and Bills</div>
+            <div className="users-table">
+              <div className="daily-th daily-cols-expenses">
+                <span>Date</span>
+                <span>Clinic</span>
+                <span>Description</span>
+                <span>Category</span>
+                <span>Method</span>
+                <span>Amount</span>
+              </div>
+              {expenses.length === 0
+                ? <div className="users-empty">No data available</div>
+                : expenses.map((r, i) => (
+                    <div key={i} className="daily-td daily-cols-expenses">
+                      <span>{r.date}</span>
+                      <span>{r.clinic}</span>
+                      <span>{r.description}</span>
+                      <span>{r.category}</span>
+                      <span>{r.method}</span>
+                      <span>{r.amount}</span>
+                    </div>
+                  ))
+              }
+            </div>
+            <div className="daily-show-more">Show more</div>
+          </div>
+        </div>
+
+        <div className="daily-chart-card">
+          <div className="daily-income-card daily-income-card-mb">
+            <div className="daily-income-title">Net Income</div>
+            <div className="daily-income-value">{income.netIncome}</div>
+            <div className="daily-income-divider"/>
+            <div className="daily-income-grid">
+              <div>
+                <div className="daily-income-section-label collection">Billing</div>
+                <div className="daily-income-row"><span>Total Amount</span><strong>{income.billingAmount}</strong></div>
+                <div className="daily-income-row"><span>Transactions</span><strong>{income.billingCount}</strong></div>
+              </div>
+              <div>
+                <div className="daily-income-section-label expenses">Expenses</div>
+                <div className="daily-income-row"><span>Total Amount</span><strong>{income.expenseAmount}</strong></div>
+                <div className="daily-income-row"><span>Transactions</span><strong>{income.expenseCount}</strong></div>
+              </div>
+            </div>
+          </div>
+          <div className="daily-chart-title">Sales Comparison</div>
+          <div className="daily-chart-legend">
+            <span className="daily-legend-item"><span className="daily-legend-dot daily-legend-pink"></span>Net Income</span>
+            <span className="daily-legend-item"><span className="daily-legend-dot daily-legend-purple"></span>Billing</span>
+            <span className="daily-legend-item"><span className="daily-legend-dot daily-legend-orange"></span>Collection</span>
+            <span className="daily-legend-item"><span className="daily-legend-dot daily-legend-green"></span>Expenses</span>
+          </div>
+          <div className="daily-chart-placeholder">Chart coming soon</div>
+        </div>
+
+        <div className="reports-footer">
+          <button className="btn-print">🖨️ Print</button>
         </div>
       </div>
     </div>
