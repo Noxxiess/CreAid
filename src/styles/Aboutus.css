@@ -1,0 +1,264 @@
+.about-page {
+  position: relative;
+  min-height: 100vh;
+}
+.about-page::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url('../assets/background.png');
+  background-size: cover;
+  background-position: center;
+  filter: grayscale(100%);
+  opacity: 0.2;
+}
+.about-page > * {
+  position: relative;
+  z-index: 1;
+}
+
+.about-section {
+  color: #2f2f2f;
+  margin-bottom: 0px;
+}
+.about-image {
+  position: relative;
+  overflow: hidden;
+  border-radius: 3px;
+  width: 100vw;        /* full viewport width */
+  margin-left: calc(-50vw + 50%); /* center + remove container limit */
+}
+
+.about-image img {
+  width: 100%;
+  height: 50vh;
+  object-fit: cover;
+  display: block;
+  object-position: 55% 35%;
+}
+
+
+
+/* QUOTE */
+.about-quote {
+  position: relative;
+}
+
+.quote-mark {
+  font-size: 3rem;
+  color: #FA1377; /* 💗 accent */
+}
+
+/* QUOTE TEXT */
+.about-quote h4 {
+  font-style: italic;
+  margin: 10px 0;
+  color: #1F0F5B; /* 🔵 brand */
+}
+
+/* AUTHOR */
+.about-quote small {
+  color: #6b6b6b;
+}
+
+/* SMALL IMAGE */
+.small-img {
+  width: 100%;
+  height: 80vh;
+  border-radius: 6px;
+}
+
+.container-about{
+    padding: 6% 4% 6% 4%;
+}
+.about-us-desc{
+    text-align: center;
+}
+.about-us-desc h1{
+    color: #FA1377;
+    font-weight: bold;
+}
+.about-us-desc p{
+      padding: 10px 50px 0px 50px;
+        color:  rgb(57, 56, 56);
+}
+
+.card-img-right {
+  width: 40%;
+  min-height: 100%;
+}
+
+.card > div:first-child {
+  width: 60%;
+}
+
+.mission-vision-section {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-top: 30px;
+}
+.mission-vision-section h6{
+  color: #FA1377;
+}
+
+/* Shared block style */
+.mv-block {
+  width: 100%;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  padding: 60px 80px;
+  color: white;
+}
+
+/* Text container */
+.mv-content {
+  max-width: 93%;
+  margin: 0 auto;        /* keeps it centered inside container */
+  text-align: left;      /* ensures consistent alignment */
+}
+.mv-block .mv-content {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.mv-content h6 {
+  font-weight: bold;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
+}
+
+.mv-content p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Mission (blue background) */
+.mission-block {
+  background-color: #1e1e1e; /* adjust to match your image */
+}
+
+/* Vision (image background with overlay) */
+.vision-block {
+  background: 
+    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+    url('../assets/clinic3.jpg'); /* change if needed */
+  background-size: cover;
+  background-position: center;
+}
+/* TEAM SECTION */
+.team-section {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-top: 0; /* removes space above */
+  
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  overflow: hidden;
+}
+
+.team-card {
+  position: relative;
+  height: 260px;
+  overflow: hidden;
+}
+
+.team-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(100%);
+  transition: 0.4s ease;
+}
+
+.team-card:hover img {
+  transform: scale(1.05);
+  filter: grayscale(0%);
+}
+
+.team-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.85),
+    rgba(0, 0, 0, 0.1)
+  );
+  color: #fff;
+}
+
+.team-overlay h5 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.team-overlay span {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+  .team-section {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .team-section {
+    grid-template-columns: 1fr;
+  }
+
+  .team-card {
+    height: 220px;
+  }
+}
+
+/* FOOTER */
+.custom-footer {
+  background-color: #1F0F5B;
+}
+
+.footer-link {
+  color: white;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 5px;
+  transition: 0.3s;
+}
+
+.footer-link:hover {
+  color: #FA1377;
+}
+
+/* LEFT PARAGRAPH IMPROVEMENT */
+.footer-desc {
+  font-size: 16px;
+  line-height: 1.8;
+  max-width: 95%;
+}
+
+/* RIGHT ALIGNMENT */
+@media (min-width: 768px) {
+  .text-md-end {
+    text-align: right;
+  }
+}
+.signup-btn {
+  display: inline-block;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  border: none;
+  background-color: transparent;
+}
+.signup-btn:hover{
+  color: #FA1377;
+  font-weight: bold;
+}
