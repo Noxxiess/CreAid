@@ -1,8 +1,10 @@
 import { useState } from "react";
+import Sidebar from "../components/Sidebar";
+import Topbar from "../components/Topbar";
 import "../styles/inbox.css";
 
-function Inbox() 
-{
+function Inbox() {
+  // ✅ backend-ready conversation state
   const [conversations] = useState([
     {
       id: 1,
@@ -26,9 +28,15 @@ function Inbox()
 
   return (
     <div className="admin-container">
+      <Sidebar />
+
       <div className="admin-main">
+        <Topbar />
+
         <div className="dashboard-content">
           <div className="inbox-container">
+
+            {/* LEFT PANEL */}
             <div className="inbox-sidebar">
               <h2 className="inbox-title">Inbox</h2>
 
@@ -54,16 +62,19 @@ function Inbox()
               </div>
             </div>
 
+            {/* RIGHT PANEL */}
             <div className="chat-panel">
               <div className="chat-empty">
                 Select a conversation to view messages
               </div>
 
+              {/* INPUT */}
               <div className="chat-input">
                 <input placeholder="Type a message..." />
                 <button className="send-btn">➤</button>
               </div>
             </div>
+
           </div>
         </div>
       </div>
