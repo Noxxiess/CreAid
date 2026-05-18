@@ -1,0 +1,142 @@
+.about-page {
+  position: relative;
+  min-height: 100vh;
+}
+.about-page::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url('../assets/bg3.png');
+  background-size: cover;
+  background-position: center;
+  filter: grayscale(100%);
+  opacity: 0.2;
+}
+.about-page > * {
+  position: relative;
+  z-index: 1;
+}
+.bi {
+  color: #FA1377;
+}
+.branch-img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 0px;
+}
+
+.branch-card {
+  transition: transform 0.3s ease;
+}
+
+.branch-card:hover {
+  transform: translateY(-5px);
+}
+
+
+.clinic-img {
+  width: 100%;
+  height: 250px;        /* controls landscape shape */
+  object-fit: cover;    /* crops image nicely */
+  border-radius: 10px;  /* optional but makes it cleaner */
+  border-radius: 0px;
+}
+
+.contact-hero {
+  height: 500px; /* adjust height here */
+
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.5),
+    rgba(0, 0, 0, 0.5)),
+    url('../assets/clinic2.jpg');
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  color: white;
+}
+.contact-hero h1 {
+  font-size: 70px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: #FA1377 !important;
+}
+.dots {
+  letter-spacing: 5px;
+  color: #ccc;
+}
+
+.contact-box {
+  padding: 40px 20px;
+}
+
+.divider {
+  border-left: 1px solid rgba(0,0,0,0.2);
+}
+
+.map-section {
+  width: 100%;
+}
+
+.contact-hero p{
+  padding: 0px 20px 0px 20px;
+}
+.container-branches h1{
+  color:#FA1377;
+  font-size: 60px;
+}
+.contact-container h5{
+  font-weight: bold;
+}
+.contact-container h6{
+color: rgb(84, 84, 84);
+font-weight: 400;
+}
+.contact-box p{
+  color: #FA1377;
+  font-weight: 600;
+}
+/* FOOTER */
+.custom-footer {
+  background-color: #1F0F5B;
+}
+
+.footer-link {
+  color: white;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 5px;
+  transition: 0.3s;
+}
+
+.footer-link:hover {
+  color: #FA1377;
+}
+
+/* LEFT PARAGRAPH IMPROVEMENT */
+.footer-desc {
+  font-size: 16px;
+  line-height: 1.8;
+  max-width: 95%;
+}
+
+/* RIGHT ALIGNMENT */
+@media (min-width: 768px) {
+  .text-md-end {
+    text-align: right;
+  }
+}
+.signup-btn {
+  display: inline-block;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  border: none;
+  background-color: transparent;
+}
+.signup-btn:hover{
+  color: #FA1377;
+  font-weight: bold;
+}
