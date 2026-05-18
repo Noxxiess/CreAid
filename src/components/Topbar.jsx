@@ -1,179 +1,574 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Topbar.css";
+import { supabase } from "../lib/supabase";
 
-const BRANCHES = ["All", "Paombong Branch", "Hagonoy Branch"];
+const BRANCHES = [
+  "All",
+  "Paombong Branch",
+  "Hagonoy Branch"
+];
 
-function useWindowWidth() 
-{
-  const [width, setWidth] = useState(window.innerWidth);
+function useWindowWidth() {
 
-  useEffect(() => 
-  {
-    const handler = () => setWidth(window.innerWidth);
-    window.addEventListener("resize", handler);
-    return () => window.removeEventListener("resize", handler);
+  const [width, setWidth] =
+    useState(window.innerWidth);
+
+  useEffect(() => {
+
+    const handler = () =>
+      setWidth(window.innerWidth);
+
+    window.addEventListener(
+      "resize",
+      handler
+    );
+
+    return () =>
+      window.removeEventListener(
+        "resize",
+        handler
+      );
+
   }, []);
 
   return width;
 }
 
-function Topbar({ onMobileMenuClick, isMobile }) 
-{
-  const [showNotif, setShowNotif] = useState(false);
-  const [showProfile, setShowProfile] = useState(false);
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [showOverflow, setShowOverflow] = useState(false);
-  const [branch, setBranch] = useState("All");
-  const navigate = useNavigate();
-  const role = localStorage.getItem("role");
-  const width = useWindowWidth();
-  const branchHidden = width <= 900;
-  const notifHidden  = width <= 600;
-  const showOverflowBtn = branchHidden;
+function Topbar({
+  onMobileMenuClick,
+  isMobile
+}) {
 
-  useEffect(() => 
-  {
-    const handleClickOutside = (e) => 
-    {
-      if (!e.target.closest(".icon-wrapper")) 
-      {
+  const [showNotif, setShowNotif]
+    = useState(false);
+
+  const [showProfile, setShowProfile]
+    = useState(false);
+
+  const [
+    showLogoutConfirm,
+    setShowLogoutConfirm
+  ] = useState(false);
+
+  const [showOverflow, setShowOverflow]
+    = useState(false);
+
+  const [branch, setBranch]
+    = useState("All");
+
+  const [avatarUrl, setAvatarUrl]
+    = useState("");
+  
+  const [fullName, setFullName]
+   = useState("");
+
+  const navigate = useNavigate();
+
+  const role =
+    localStorage.getItem("role");
+
+  const width = useWindowWidth();
+
+  const branchHidden = width <= 900;
+
+  const notifHidden = width <= 600;
+
+  const showOverflowBtn =
+    branchHidden;
+
+  // FETCH AVATAR
+  useEffect(() => {
+
+    async function fetchAvatar() {
+
+      try {
+
+        const {
+          data: { user }
+        } = await supabase.auth.getUser();
+
+        if (!user) return;
+
+        const { data, error }
+          = await supabase
+            .from("users")
+            .select("avatar_url, full_name")
+            .eq("id", user.id)
+            .single();
+
+        console.log(
+          "TOPBAR AVATAR:",
+          data
+        );
+
+        if (error) {
+
+          console.log(error);
+
+          return;
+        }
+
+        setAvatarUrl(
+          data.avatar_url || ""
+        );
+
+        setFullName(
+          data.full_name || role || "User"
+        );
+
+      } catch (err) {
+
+        console.log(err);
+      }
+    }
+
+    fetchAvatar();
+
+  }, []);
+
+  // CLOSE DROPDOWNS
+  useEffect(() => {
+
+    const handleClickOutside = (e) => {
+
+      if (
+        !e.target.closest(".icon-wrapper")
+      ) {
+
         setShowNotif(false);
+
         setShowProfile(false);
+
         setShowOverflow(false);
       }
     };
-    
-    document.addEventListener("mousedown", handleClickOutside);
-      
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+
+    document.addEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+
+    return () =>
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
+
   }, []);
 
-  const handleLogout = () => 
-  {
+  // LOGOUT
+  const handleLogout = async () => {
+
+    await supabase.auth.signOut();
+
     localStorage.removeItem("role");
+
     navigate("/");
   };
 
-  const closeAll = () => 
-  {
+  // CLOSE ALL MENUS
+  const closeAll = () => {
+
     setShowNotif(false);
+
     setShowProfile(false);
+
     setShowOverflow(false);
   };
 
   return (
     <>
+
       <header className="topbar">
+
+        {/* LEFT */}
         <div className="topbar-left">
-        
+
           {isMobile && (
-            <button className="hamburger-btn" onClick={onMobileMenuClick} title="Menu">
-              <span /><span /><span />
+
+            <button
+              className="hamburger-btn"
+              onClick={onMobileMenuClick}
+              title="Menu"
+            >
+              <span />
+              <span />
+              <span />
             </button>
+
           )}
+
+          {/* SEARCH */}
           <div className="search-box">
-            <span className="search-icon">🔍</span>
-            <input type="text" placeholder="Search Patient Here" />
+
+            <span className="search-icon">
+              🔍
+            </span>
+
+            <input
+              type="text"
+              placeholder="Search Patient Here"
+            />
+
           </div>
-          <button className="new-patient-btn" onClick={() => navigate("/patients/new")}>
+
+          {/* NEW PATIENT */}
+          <button
+            className="new-patient-btn"
+            onClick={() =>
+              navigate("/patients/new")
+            }
+          >
             <span>+ </span>
-            <span className="btn-label">New Patient</span>
+
+            <span className="btn-label">
+              New Patient
+            </span>
+
           </button>
+
         </div>
 
+        {/* RIGHT */}
         <div className="topbar-right">
+
+          {/* BRANCH */}
           {!branchHidden && (
-            <select className="branch-select" value={branch} onChange={(e) => setBranch(e.target.value)}>
-              {BRANCHES.map(b => <option key={b}>{b}</option>)}
+
+            <select
+              className="branch-select"
+              value={branch}
+              onChange={(e) =>
+                setBranch(e.target.value)
+              }
+            >
+              {BRANCHES.map((b) => (
+
+                <option key={b}>
+                  {b}
+                </option>
+
+              ))}
             </select>
+
           )}
 
+          {/* NOTIFICATIONS */}
           {!notifHidden && (
+
             <div className="icon-wrapper notif-btn-wrapper">
-              <button className="icon-btn notif-btn" onClick={() => { setShowNotif(!showNotif); setShowProfile(false); setShowOverflow(false); }}>
+
+              <button
+                className="icon-btn notif-btn"
+                onClick={() => {
+
+                  setShowNotif(!showNotif);
+
+                  setShowProfile(false);
+
+                  setShowOverflow(false);
+                }}
+              >
                 🔔
+
                 <span className="dot"></span>
+
               </button>
+
               {showNotif && (
+
                 <div className="dropdown notif-dropdown">
+
                   <h4>Notifications</h4>
+
                   <div className="notif-list">
-                    <div className="notif-item">No new notifications</div>
+
+                    <div className="notif-item">
+                      No new notifications
+                    </div>
+
                   </div>
+
                 </div>
+
               )}
+
             </div>
+
           )}
 
+          {/* PROFILE */}
           <div className="icon-wrapper">
-            <button className="profile-btn" onClick={() => { setShowProfile(!showProfile); setShowNotif(false); setShowOverflow(false); }}>
-              <span className="avatar-chip">{role?.charAt(0).toUpperCase()}</span>
-              <span className="username">{role}</span>
-              <span className="chevron">{showProfile ? "▲" : "▼"}</span>
+
+            <button
+              className="profile-btn"
+              onClick={() => {
+
+                setShowProfile(
+                  !showProfile
+                );
+
+                setShowNotif(false);
+
+                setShowOverflow(false);
+              }}
+            >
+
+              {/* AVATAR */}
+              <span className="avatar-chip">
+
+                {avatarUrl ? (
+
+                  <img
+                    src={avatarUrl}
+                    alt="avatar"
+                    className="topbar-avatar-image"
+                  />
+
+                ) : (
+
+                  role
+                    ?.charAt(0)
+                    .toUpperCase()
+
+                )}
+
+              </span>
+
+              <span className="username">
+                {fullName}
+              </span>
+
+              <span className="chevron">
+
+                {showProfile
+                  ? "▲"
+                  : "▼"}
+
+              </span>
+
             </button>
+
+            {/* DROPDOWN */}
             {showProfile && (
+
               <div className="dropdown profile-dropdown">
+
                 <div className="dropdown-user-info">
-                  <span className="avatar-chip large">{role?.charAt(0).toUpperCase()}</span>
+
+                  <span className="avatar-chip large">
+
+                    {avatarUrl ? (
+
+                      <img
+                        src={avatarUrl}
+                        alt="avatar"
+                        className="topbar-avatar-image"
+                      />
+
+                    ) : (
+
+                      role
+                        ?.charAt(0)
+                        .toUpperCase()
+
+                    )}
+
+                  </span>
+
                   <div>
-                    <p className="dropdown-role">{role}</p>
-                    <p className="dropdown-sub">Logged in</p>
+
+                    <p className="dropdown-role">
+                      {fullName}
+                    </p>
+
+                    <p className="dropdown-sub">
+                      Logged in
+                    </p>
+
                   </div>
+
                 </div>
+
                 <hr className="dropdown-divider" />
-                <div className="dropdown-item" onClick={() => { closeAll(); navigate("/myaccount"); }}>
+
+                <div
+                  className="dropdown-item"
+                  onClick={() => {
+
+                    closeAll();
+
+                    navigate("/myaccount");
+                  }}
+                >
                   👤 My Account
                 </div>
-                <div className="dropdown-item logout" onClick={() => { closeAll(); setShowLogoutConfirm(true); }}>
+
+                <div
+                  className="dropdown-item logout"
+                  onClick={() => {
+
+                    closeAll();
+
+                    setShowLogoutConfirm(
+                      true
+                    );
+                  }}
+                >
                   🚪 Logout
                 </div>
+
               </div>
+
             )}
+
           </div>
 
+          {/* OVERFLOW */}
           {showOverflowBtn && (
+
             <div className="icon-wrapper">
-              <button className="overflow-btn" onClick={() => { const next = !showOverflow; setShowNotif(false); setShowProfile(false); setShowOverflow(next);}} title="More options">
+
+              <button
+                className="overflow-btn"
+                onClick={() => {
+
+                  const next =
+                    !showOverflow;
+
+                  setShowNotif(false);
+
+                  setShowProfile(false);
+
+                  setShowOverflow(next);
+                }}
+                title="More options"
+              >
                 •••
               </button>
 
               {showOverflow && (
+
                 <div className="overflow-dropdown">
+
                   {branchHidden && (
+
                     <div className="overflow-item">
+
                       🏥
-                      <select value={branch} onChange={(e) => setBranch(e.target.value)}>
-                        {BRANCHES.map(b => <option key={b}>{b}</option>)}
+
+                      <select
+                        value={branch}
+                        onChange={(e) =>
+                          setBranch(
+                            e.target.value
+                          )
+                        }
+                      >
+                        {BRANCHES.map((b) => (
+
+                          <option key={b}>
+                            {b}
+                          </option>
+
+                        ))}
                       </select>
+
                     </div>
+
                   )}
 
                   {notifHidden && (
-                    <div className="overflow-item" onClick={() => { setShowOverflow(false); setShowNotif(true); }}>
+
+                    <div
+                      className="overflow-item"
+                      onClick={() => {
+
+                        setShowOverflow(
+                          false
+                        );
+
+                        setShowNotif(true);
+                      }}
+                    >
                       🔔 Notifications
-                      <span className="overflow-notif-dot">!</span>
+
+                      <span className="overflow-notif-dot">
+                        !
+                      </span>
+
                     </div>
+
                   )}
+
                 </div>
+
               )}
+
             </div>
+
           )}
+
         </div>
+
       </header>
 
+      {/* LOGOUT MODAL */}
       {showLogoutConfirm && (
-        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowLogoutConfirm(false); }}>
+
+        <div
+          className="modal-overlay"
+          onClick={(e) => {
+
+            if (
+              e.target === e.currentTarget
+            ) {
+
+              setShowLogoutConfirm(
+                false
+              );
+            }
+          }}
+        >
+
           <div className="modal">
+
             <h3>Log Out</h3>
-            <p>Are you sure you want to log out?</p>
+
+            <p>
+              Are you sure you want
+              to log out?
+            </p>
+
             <div className="modal-actions">
-              <button className="btn cancel" onClick={() => setShowLogoutConfirm(false)}>Cancel</button>
-              <button className="btn confirm" onClick={handleLogout}>Yes, Log Out</button>
+
+              <button
+                className="btn cancel"
+                onClick={() =>
+                  setShowLogoutConfirm(
+                    false
+                  )
+                }
+              >
+                Cancel
+              </button>
+
+              <button
+                className="btn confirm"
+                onClick={handleLogout}
+              >
+                Yes, Log Out
+              </button>
+
             </div>
+
           </div>
+
         </div>
+
       )}
+
     </>
   );
 }
