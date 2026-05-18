@@ -1,18 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 import Topbar from "../../components/Topbar";
 import "../../styles/myAccount.css";
+import { supabase } from "../../lib/supabase";
 
 function MyAccount() {
+
   const [form, setForm] = useState({
     email: "",
     password: "",
+
+    firstName: "",
+    middleName: "",
+    lastName: "",
+
     fullName: "",
+
     createdAt: "",
+
     contact: "",
+
     role: "",
+
     address: "",
-    sex: ""
+
+    sex: "",
+
+    avatarUrl: ""
   });
 
   const [settings, setSettings] = useState({
@@ -20,138 +34,605 @@ function MyAccount() {
     darkMode: false
   });
 
+  const [loading, setLoading] = useState(true);
+
+  // FETCH USER DATA
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  async function fetchUserData() {
+
+    try {
+
+      const { data: sessionData } =
+        await supabase.auth.getSession();
+
+      console.log("SESSION:", sessionData);
+
+      const user = sessionData?.session?.user;
+
+      console.log("USER:", user);
+
+      if (!user) {
+
+        console.log("No user found");
+
+        setLoading(false);
+
+        return;
+      }
+
+      // FETCH USER INFO
+      const { data, error } = await supabase
+        .from("users")
+        .select(`
+          first_name,
+          middle_name,
+          last_name,
+          full_name,
+          contact_number,
+          role,
+          address,
+          sex,
+          avatar_url,
+          created_at
+        `)
+        .eq("id", user.id)
+        .single();
+
+      console.log("USER ID:", user.id);
+      console.log("PROFILE DATA:", data);
+      console.log("PROFILE ERROR:", error);
+
+      if (error) {
+
+        console.log(error);
+
+        return;
+      }
+
+      // SET FORM
+      setForm({
+        email: user.email || "",
+
+        password: "",
+
+        firstName: data.first_name || "",
+
+        middleName: data.middle_name || "",
+
+        lastName: data.last_name || "",
+
+        fullName: data.full_name || "",
+
+        createdAt: data.created_at
+          ? new Date(data.created_at)
+              .toLocaleDateString()
+          : "",
+
+        contact: data.contact_number || "",
+
+        role: data.role || "",
+
+        address: data.address || "",
+
+        sex: data.sex || "",
+
+        avatarUrl: data.avatar_url || ""
+      });
+
+    } catch (err) {
+
+      console.log("FETCH ERROR:", err);
+
+    } finally {
+
+      setLoading(false);
+    }
+  }
+
+  // HANDLE INPUT CHANGES
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
   };
+
+  async function handleAvatarUpload(e) {
+
+  try {
+
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+    
+    const fileExt =
+      file.name.split(".").pop();
+      
+    const filePath =
+      `${user.id}-${Date.now()}.${fileExt}`;
+
+    // UPLOAD
+    const { error: uploadError }
+      = await supabase.storage
+        .from("avatars")
+        .upload(filePath, file, {
+          upsert: true
+        });
+
+    if (uploadError) {
+
+      console.log(uploadError);
+
+      alert("Upload failed");
+
+      return;
+    }
+
+    // GET PUBLIC URL
+    const { data } = supabase.storage
+      .from("avatars")
+      .getPublicUrl(filePath);
+
+    const publicUrl =
+      data.publicUrl;
+
+    console.log("PUBLIC URL:", publicUrl);
+
+    // SAVE TO DATABASE
+    const { error: dbError }
+      = await supabase
+        .from("users")
+        .update({
+          avatar_url: publicUrl
+        })
+        .eq("id", user.id);
+
+    if (dbError) {
+
+      console.log(dbError);
+
+      alert("Database update failed");
+
+      return;
+    }
+
+    // UPDATE UI
+    setForm((prev) => ({
+      ...prev,
+      avatarUrl: publicUrl
+    }));
+
+    alert("Avatar updated!");
+
+  } catch (err) {
+
+    console.log(err);
+  }
+}
+  // SAVE CHANGES
+  async function handleSave() {
+
+    try {
+
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
+
+      // UPDATE USER TABLE
+      const { error } = await supabase
+        .from("users")
+        .update({
+
+          first_name: form.firstName,
+
+          middle_name: form.middleName,
+
+          last_name: form.lastName,
+
+          contact_number: form.contact,
+
+          address: form.address,
+
+          sex: form.sex
+
+        })
+        .eq("id", user.id);
+
+      console.log("UPDATE ERROR:", error);
+
+      if (error) {
+
+        alert("Failed to update profile");
+
+        return;
+      }
+
+      // UPDATE PASSWORD
+      if (form.password.trim() !== "") {
+
+        const { error: passwordError }
+          = await supabase.auth.updateUser({
+            password: form.password
+          });
+
+        if (passwordError) {
+
+          alert(passwordError.message);
+
+          return;
+        }
+      }
+
+      // REFRESH DATA
+      await fetchUserData();
+
+      alert("Profile updated successfully!");
+
+    } catch (err) {
+
+      console.log(err);
+
+      alert("Something went wrong");
+    }
+  }
+
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
 
   return (
     <div className="admin-container">
+
       <Sidebar />
+
       <div className="admin-main">
+
         <Topbar />
+
         <div className="dashboard-content">
+
           <div className="account-container">
 
             <div className="account-card">
+
               <div className="account-card-header">
-                <span className="account-card-icon">👤</span>
+
+                <span className="account-card-icon">
+                  👤
+                </span>
+
                 <h2>My Account</h2>
+
               </div>
 
               <div className="account-card-body">
 
-                {/* TOP GRID */}
                 <div className="account-grid">
 
-                  {/* AVATAR COL */}
+                  {/* AVATAR */}
                   <div className="avatar-col">
-                    <div className="avatar-circle">JD</div>
-                    <button className="btn-photo">📷 Change</button>
-                  </div>
+                    <div className="avatar-circle">
+                      {form.avatarUrl ? (
+                        <img
+                        src={form.avatarUrl}
+                        alt="avatar"
+                       className="avatar-image"
+                        />
+                      ) : (
+                        form.fullName
+                        ? form.fullName
+                        .substring(0, 2)
+                        .toUpperCase()
+                        : "JD"
+                        )}
+                      </div>
+                        {/* HIDDEN FILE INPUT */}
+                        <input
+                        type="file"
+                       accept="image/*"
+                       capture="environment"
+                        id="avatar-upload"
+                        hidden
+                        onChange={handleAvatarUpload}
+                        />
+                        {/* BUTTON */}
+                        <label
+                        htmlFor="avatar-upload"
+                        className="btn-photo"
+                        >
+                          📷 Change
+                          </label>
+                          </div>
 
-                  {/* FORM COL */}
+                  {/* FORM */}
                   <div className="profile-form">
 
-                    <p className="section-title">Personal Info</p>
+                    <p className="section-title">
+                      Personal Info
+                    </p>
+
                     <div className="form-grid">
+
                       <div className="form-group">
-                        <label>Full Name</label>
-                        <input name="fullName" placeholder="Juan dela Cruz" onChange={handleChange} />
+
+                        <label>First Name</label>
+
+                        <input
+                          name="firstName"
+                          value={form.firstName}
+                          onChange={handleChange}
+                        />
+
                       </div>
+
                       <div className="form-group">
+
+                        <label>Middle Name</label>
+
+                        <input
+                          name="middleName"
+                          value={form.middleName}
+                          onChange={handleChange}
+                        />
+
+                      </div>
+
+                      <div className="form-group">
+
+                        <label>Last Name</label>
+
+                        <input
+                          name="lastName"
+                          value={form.lastName}
+                          onChange={handleChange}
+                        />
+
+                      </div>
+
+                      <div className="form-group">
+
                         <label>Email</label>
-                        <input name="email" type="email" placeholder="juan@email.com" onChange={handleChange} />
+
+                        <input
+                          name="email"
+                          type="email"
+                          value={form.email}
+                          readOnly
+                        />
+
                       </div>
+
                       <div className="form-group">
+
                         <label>Contact</label>
-                        <input name="contact" placeholder="+63 912 345 6789" onChange={handleChange} />
+
+                        <input
+                          name="contact"
+                          value={form.contact}
+                          onChange={handleChange}
+                        />
+
                       </div>
+
                       <div className="form-group">
+
                         <label>Sex</label>
-                        <select name="sex" onChange={handleChange}>
-                          <option value="" disabled>Select</option>
-                          <option>Male</option>
-                          <option>Female</option>
-                          <option>Prefer not to say</option>
+
+                        <select
+                          name="sex"
+                          value={form.sex}
+                          onChange={handleChange}
+                        >
+                          <option value="">
+                            Select
+                          </option>
+
+                          <option value="Male">
+                            Male
+                          </option>
+
+                          <option value="Female">
+                            Female
+                          </option>
+
+                          <option value="Prefer not to say">
+                            Prefer not to say
+                          </option>
+
                         </select>
+
                       </div>
+
                       <div className="form-group full-width">
+
                         <label>Address</label>
-                        <input name="address" placeholder="Street, City, Province" onChange={handleChange} />
+
+                        <input
+                          name="address"
+                          value={form.address}
+                          onChange={handleChange}
+                        />
+
                       </div>
+
                     </div>
 
                     <hr className="section-divider" />
-                    <p className="section-title">Account</p>
+
+                    <p className="section-title">
+                      Account
+                    </p>
+
                     <div className="form-grid">
+
                       <div className="form-group">
+
                         <label>Password</label>
-                        <input name="password" type="password" onChange={handleChange} />
+
+                        <input
+                          name="password"
+                          type="password"
+                          placeholder="New password"
+                          value={form.password}
+                          onChange={handleChange}
+                        />
+
                       </div>
+
                       <div className="form-group">
-                        <label>Role <span className="readonly-badge">Read-only</span></label>
-                        <input name="role" value={form.role} readOnly />
+
+                        <label>
+                          Full Name
+                          <span className="readonly-badge">
+                            Auto-generated
+                          </span>
+                        </label>
+
+                        <input
+                          value={form.fullName}
+                          readOnly
+                        />
+
                       </div>
+
                       <div className="form-group">
-                        <label>Member Since <span className="readonly-badge">Read-only</span></label>
-                        <input name="createdAt" value={form.createdAt} readOnly />
+
+                        <label>
+                          Role
+                          <span className="readonly-badge">
+                            Read-only
+                          </span>
+                        </label>
+
+                        <input
+                          value={form.role}
+                          readOnly
+                        />
+
                       </div>
+
+                      <div className="form-group">
+
+                        <label>
+                          Member Since
+                          <span className="readonly-badge">
+                            Read-only
+                          </span>
+                        </label>
+
+                        <input
+                          value={form.createdAt}
+                          readOnly
+                        />
+
+                      </div>
+
                     </div>
 
-                    <button className="btn-save">💾 Save Changes</button>
+                    <button
+                      className="btn-save"
+                      onClick={handleSave}
+                    >
+                      💾 Save Changes
+                    </button>
+
                   </div>
+
                 </div>
 
                 {/* PREFERENCES */}
                 <hr className="section-divider" />
-                <p className="section-title">Preferences</p>
+
+                <p className="section-title">
+                  Preferences
+                </p>
+
                 <div className="settings-row">
+
                   <div className="toggle-card">
+
                     <div className="toggle-label">
-                      <span className="toggle-icon notif-icon">🔔</span>
+
+                      <span className="toggle-icon notif-icon">
+                        🔔
+                      </span>
+
                       Notifications
+
                     </div>
+
                     <label className="switch">
+
                       <input
                         type="checkbox"
                         checked={settings.notification}
-                        onChange={() => setSettings({ ...settings, notification: !settings.notification })}
+                        onChange={() =>
+                          setSettings({
+                            ...settings,
+                            notification:
+                              !settings.notification
+                          })
+                        }
                       />
+
                       <span className="slider"></span>
+
                     </label>
+
                   </div>
+
                   <div className="toggle-card">
+
                     <div className="toggle-label">
-                      <span className="toggle-icon dark-icon">🌙</span>
+
+                      <span className="toggle-icon dark-icon">
+                        🌙
+                      </span>
+
                       Dark Mode
+
                     </div>
+
                     <label className="switch">
+
                       <input
                         type="checkbox"
                         checked={settings.darkMode}
-                        onChange={() => setSettings({ ...settings, darkMode: !settings.darkMode })}
+                        onChange={() =>
+                          setSettings({
+                            ...settings,
+                            darkMode:
+                              !settings.darkMode
+                          })
+                        }
                       />
-                      <span className="slider"></span>
-                    </label>
-                  </div>
-                </div>
 
-                {/* EXTRA MENU */}
-                <hr className="section-divider" />
-                <p className="section-title">More</p>
-                <div className="extra-settings">
-                  <div className="extra-item"><span>🔒 Privacy Policy</span><span className="chevron">›</span></div>
-                  <div className="extra-item"><span>📄 Terms and Conditions</span><span className="chevron">›</span></div>
-                  <div className="extra-item"><span>📞 Contacts</span><span className="chevron">›</span></div>
-                  <div className="extra-item"><span>💬 Feedback</span><span className="chevron">›</span></div>
+                      <span className="slider"></span>
+
+                    </label>
+
+                  </div>
+
                 </div>
 
               </div>
+
             </div>
 
           </div>
+
         </div>
+
       </div>
+
     </div>
   );
 }
