@@ -12,33 +12,66 @@ function Login()
   const navigate = useNavigate();
   const { setRole } = useAuth();
 
-  const handleLogin = async (e) => 
-  {
-    e.preventDefault();
-    try 
-    {
-      const { data, error } = await supabase
-        .from("users")
-        .select("*")
-        .eq("email", username)
-        .eq("password", password)
-        .single();
+const handleLogin = async (e) => {
 
-      if (error || !data) 
-      {
-        alert("Invalid username or password");
-        return;
-      }
+  e.preventDefault();
 
-      localStorage.setItem("role", data.role);
-      localStorage.setItem("user", JSON.stringify(data));
-      setRole(data.role);
-      navigate("/dashboard");
-    } catch (err) {
-      console.error(err);
-      alert("Login failed");
+  try {
+
+    // LOGIN USING SUPABASE AUTH
+    const { data, error } =
+      await supabase.auth.signInWithPassword({
+        email: username,
+        password: password
+      });
+
+    console.log("AUTH RESPONSE:", data);
+    console.log("AUTH ERROR:", error);
+
+    if (error) {
+      alert(error.message);
+      return;
     }
-  };
+
+    // GET AUTH USER
+    const user = data.user;
+
+    // GET USER INFO FROM USERS TABLE
+    const {
+      data: userData,
+      error: userError
+    } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", user.id)
+      .single();
+
+    console.log("USER DATA:", userData);
+    console.log("USER ERROR:", userError);
+
+    if (userError || !userData) {
+      alert("User profile not found");
+      return;
+    }
+
+    localStorage.setItem("role", userData.role);
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify(userData)
+    );
+
+    setRole(userData.role);
+
+    navigate("/dashboard");
+
+  } catch (err) {
+
+    console.error(err);
+
+    alert("Login failed");
+  }
+};
 
   return (
     <div className="login-container">
