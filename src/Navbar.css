@@ -1,0 +1,31 @@
+.custom-navbar {
+  background-color: #1F0F5B;
+}
+
+.nav-link {
+  padding: 0 !important;
+  margin: 0 !important;
+  font-weight: 500;
+  font-size: 15px !important;
+}
+
+.nav-link {
+  padding: 0 !important;
+  margin: 0 !important;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  color: #FA1377 !important;
+}
+
+.navbar-nav {
+  margin-left: auto;
+  gap: 55px;
+  padding: 0;
+}
+
+.nav-item {
+  padding: 0;
+  margin: 0;
+}
