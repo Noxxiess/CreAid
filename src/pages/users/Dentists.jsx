@@ -103,19 +103,8 @@ function Dentists()
         });
     }
 
-    const STATUS_COLOR = 
-    { 
-        Available: "status-available", 
-        Busy: "status-busy", "Off-Duty": "status-off" 
-    };
-    
-    const LEAVE_ICON   = 
-    { 
-        "Sick Leave": 
-        "🤒", "Vacation Leave": "🏖️", 
-        "Emergency Leave": "🚨", 
-        "Maternity / Paternity Leave": "👶"
-    };
+    const STATUS_COLOR = { Available: "status-available", Busy: "status-busy", "Off-Duty": "status-off" };
+    const LEAVE_ICON   = { "Sick Leave": "🤒", "Vacation Leave": "🏖️", "Emergency Leave": "🚨", "Maternity / Paternity Leave": "👶" };
 
     return (
         <div className="dentists-root">
@@ -343,7 +332,6 @@ function Dentists()
                                         </div>
                                     </div>
                                 </div>
-
                                 <div className="leave-section-card" style={{ marginBottom: 16 }}>
                                     <div className="leave-section-header">
                                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -365,7 +353,6 @@ function Dentists()
                                                         {l.remark && <span className="leave-remark-display">💬 <em>{l.remark}</em></span>}
                                                         <span className="leave-submitted-on">Filed {l.submittedOn}</span>
                                                     </div>
-
                                                     <div className="leave-actions-col">
                                                         <span className={`leave-status-pill leave-status-${l.status.toLowerCase()}`}>
                                                             {l.status === "Pending" ? "⏳ Pending" : l.status === "Approved" ? "✅ Approved" : "❌ Declined"}
@@ -447,7 +434,6 @@ function Dentists()
                                         <div className="doc-field mt"><label>Clinical Indication:</label><div className="doc-input-line long" /></div>
                                     </div>
                                 )}
-
                                 {showFormModal.id === "referral" && (
                                     <div className="doc-content">
                                         <h4 className="doc-title">REFERRAL LETTER</h4>
@@ -460,7 +446,6 @@ function Dentists()
                                         </div>
                                     </div>
                                 )}
-
                                 {showFormModal.id === "medcert" && (
                                     <div className="doc-content">
                                         <h4 className="doc-title">MEDICAL CERTIFICATE</h4>
@@ -497,7 +482,6 @@ function Dentists()
                                     )}
                                 </div>
                             </div>
-
                             <div className="form-doc-actions">
                                 <button className="btn-print">🖨️ Print</button>
                                 <button className="btn-download">⬇️ Download PDF</button>
@@ -515,7 +499,6 @@ function Dentists()
                             <h3>➕ Add Dentist</h3>
                             <button className="dentists-modal-close" onClick={() => setShowAddModal(false)}>✕</button>
                         </div>
-
                         <div className="dact-modal-body">
                             <div className="dact-form-grid">
                                 <div className="dact-form-group"><label>Full Name *</label><input value={addForm.name} onChange={(e) => setAddForm((f) => ({ ...f, name: e.target.value }))} placeholder="Dr. Full Name" /></div>
@@ -530,7 +513,6 @@ function Dentists()
                                     </select>
                                 </div>
                             </div>
-
                             <div className="dact-modal-actions">
                                 <button className="dact-btn dact-secondary" onClick={() => setShowAddModal(false)}>Cancel</button>
                                 <button className="dact-btn dact-primary" onClick={handleAddDentist}>Add Dentist</button>
@@ -547,7 +529,6 @@ function Dentists()
                             <h3>✏️ Edit Dentist</h3>
                             <button className="dentists-modal-close" onClick={() => setShowEditModal(false)}>✕</button>
                         </div>
-
                         <div className="dact-modal-body">
                             <div className="dact-form-grid">
                                 <div className="dact-form-group"><label>Full Name</label><input defaultValue={selectedDentist?.name} placeholder="Dr. Full Name" /></div>
@@ -562,7 +543,6 @@ function Dentists()
                                     </select>
                                 </div>
                             </div>
-
                             <div className="dact-modal-actions">
                                 <button className="dact-btn dact-secondary" onClick={() => setShowEditModal(false)}>Cancel</button>
                                 <button className="dact-btn dact-primary" onClick={() => setShowEditModal(false)}>Save Changes</button>
@@ -579,7 +559,6 @@ function Dentists()
                             <h3>🗃️ Archive Dentist</h3>
                             <button className="dentists-modal-close" onClick={() => setShowArchiveConfirm(false)}>✕</button>
                         </div>
-
                         <div className="dact-modal-body">
                             <p>Are you sure you want to archive <strong>{selectedDentist?.name}</strong>? They will be hidden from active listings.</p>
                             <div className="dact-modal-actions">
@@ -598,7 +577,6 @@ function Dentists()
                             <h3>📋 Review Leave Request</h3>
                             <button className="dentists-modal-close" onClick={() => { setShowRemarkModal(null); setRemarkInput(""); }}>✕</button>
                         </div>
-
                         <div className="dact-modal-body">
                             <div className="leave-review-summary">
                                 <div className="leave-review-icon">{LEAVE_ICON[showRemarkModal.type] || "📋"}</div>
@@ -608,7 +586,6 @@ function Dentists()
                                     <span className="leave-review-filed">Filed on {showRemarkModal.submittedOn}</span>
                                 </div>
                             </div>
-
                             {showRemarkModal.reason && (
                                 <div className="leave-review-reason-box">
                                     <span className="leave-review-reason-label">Reason from dentist</span>
@@ -619,7 +596,6 @@ function Dentists()
                                 <label>Your Remark (optional)</label>
                                 <input placeholder="e.g. Approved. Please arrange a replacement for those days." value={remarkInput} onChange={(e) => setRemarkInput(e.target.value)} autoFocus />
                             </div>
-
                             <div className="leave-review-actions">
                                 <button className="dact-btn dact-secondary" onClick={() => { setShowRemarkModal(null); setRemarkInput(""); }}>Cancel</button>
                                 <button className="leave-btn-decline" onClick={() => { handleLeaveAction(showRemarkModal.dentistId, showRemarkModal.id, "Declined", remarkInput); setShowRemarkModal(null); setRemarkInput(""); }}>✗ Decline Leave</button>
@@ -629,6 +605,7 @@ function Dentists()
                     </div>
                 </div>
             )}
+
         </div>
     );
 }
