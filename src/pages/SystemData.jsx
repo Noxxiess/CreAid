@@ -251,25 +251,24 @@ async function handleAddDentalHabit() {
       },
     ]);
 
-  if (error) {
+  if (error) 
+  {
     console.log(error);
     alert("Failed to add dental habit");
-  } else {
-
+  } 
+  else 
+  {
     alert("Dental habit added successfully");
-
     setName("");
     setDescription("");
     setRiskLevel("Low");
-
     setShowModal(false);
-
     fetchRows();
   }
 }
 
-async function handleAddMedicalCondition() {
-
+async function handleAddMedicalCondition() 
+{
   const { error } = await supabase
     .from("medical_conditions")
     .insert([
@@ -280,10 +279,14 @@ async function handleAddMedicalCondition() {
       },
     ]);
 
-  if (error) {
+  if (error) 
+  {
     console.log(error);
     alert("Failed to add medical condition");
-  } else {
+  } 
+  
+  else 
+  {
 
     alert("Medical condition added successfully");
 
@@ -297,33 +300,33 @@ async function handleAddMedicalCondition() {
   }
 }
 
-async function handleAddToothItem() {
-
+async function handleAddToothItem() 
+{
   const { error } = await supabase
     .from("tooth_items")
     .insert([
-      {
-        name: name,
-        abbreviation: abbreviation,
-        color_tag: colorTag,
-        category: toothCategory,
-      },
+    {
+      name: name,
+      abbreviation: abbreviation,
+      color_tag: colorTag,
+      category: toothCategory,
+    },
     ]);
 
-  if (error) {
+  if (error) 
+  {
     console.log(error);
     alert("Failed to add tooth item");
-  } else {
-
+  } 
+  
+  else 
+  {
     alert("Tooth item added successfully");
-
     setName("");
     setAbbreviation("");
     setColorTag("");
     setToothCategory("");
-
     setShowModal(false);
-
     fetchRows();
   }
 }

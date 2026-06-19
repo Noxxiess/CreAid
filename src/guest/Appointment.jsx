@@ -9,13 +9,14 @@ import {
  Phone,
  Clock,
 } from 'lucide-react'
-import '../styles/appointment.css'
+import './styles/appointment.css'
 import { supabase } from '../lib/supabase'
 import { MOCK_DENTISTS } from '../data/mockDentists'
 import {
   createAppointmentApi
 } from "../api/appointments";
-
+import Navbar from './Navbar'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 const branches = [
  {
@@ -486,6 +487,8 @@ if (receiptFile) {
  // =========================
 return (
 <div className="appointment-page">
+
+  <Navbar />
 <div className="appointment-form-container">
 <div className="appointment-header-section">
 <h1>Book Appointment</h1>

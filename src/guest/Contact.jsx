@@ -1,15 +1,22 @@
-import '../styles/Contact.css'
+import { Link } from 'react-router-dom'
+import Navbar from './Navbar'
+import './styles/contact.css'
 import logo from '../assets/logoD.png'
 import clinic1 from '../assets/clinic1.png'
 import clinic2 from '../assets/clinic2.jpg'
 import bg3 from '../assets/bg3.png'
 import "bootstrap-icons/font/bootstrap-icons.css"
-import { Link } from 'react-router-dom'
+import 'bootstrap/dist/css/bootstrap.min.css'
+
 
 export default function Contact() {
   return (
-    <div className="contact-page">
+   
+   <div>
+          <Navbar />
 
+
+    <div className="contact-page">
       <section className="contact-hero-section">
 
   <div className="contact-hero-overlay">
@@ -272,5 +279,6 @@ export default function Contact() {
   </div>
 </footer>
 </div>
+    </div>
   )
 }

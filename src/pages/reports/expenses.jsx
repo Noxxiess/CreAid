@@ -10,7 +10,7 @@ function Expenses()
     const [filters, setFilters] = useState({
         clinic:          "All Clinics",
         expenseCategory: "All Expense",
-        paymentMethod:     "All Payment Method",
+        paymentMethod:   "All Payment Types",
         from:            "",
         to:              "",
     });
@@ -41,7 +41,11 @@ function Expenses()
             }
             
             pages.push(
-                <button key={page} className={`page-btn ${currentPage === page ? "active" : ""}`} onClick={() => setCurrentPage(page)}>
+                <button
+                    key={page}
+                    className={`page-btn ${currentPage === page ? "active" : ""}`}
+                    onClick={() => setCurrentPage(page)}
+                >
                     {page}
                 </button>
             );
@@ -60,15 +64,24 @@ function Expenses()
             <div className="users-page-container">
                 <div className="users-filter-container">
                     <div className="filter-left">
-                        <div className="filter-row">
+
+                        {/* Row 1: Clinic, Category, Payment Type */}
+                        <div className="filter-row-top">
                             <span className="filter-label">Clinic</span>
-                            <select value={filters.clinic} onChange={(e) => setFilters({ ...filters, clinic: e.target.value })}>
+                            <select
+                                value={filters.clinic}
+                                onChange={(e) => setFilters({ ...filters, clinic: e.target.value })}
+                            >
                                 <option>All Clinics</option>
                                 <option>Hagonoy</option>
                                 <option>Paombong</option>
                             </select>
+
                             <span className="filter-label">Expense Category</span>
-                            <select value={filters.expenseCategory} onChange={(e) => setFilters({ ...filters, expenseCategory: e.target.value })}>
+                            <select
+                                value={filters.expenseCategory}
+                                onChange={(e) => setFilters({ ...filters, expenseCategory: e.target.value })}
+                            >
                                 <option>All Expense</option>
                                 <option>Rental</option>
                                 <option>Electric / Water / Mineral</option>
@@ -77,21 +90,40 @@ function Expenses()
                                 <option>Dental Supplies</option>
                                 <option>Miscellanous</option>
                             </select>
+
                             <span className="filter-label">Payment Type</span>
-                            <select value={filters.paymentMethod} onChange={(e) => setFilters({ ...filters, paymentMethod: e.target.value })}>
+                            <select
+                                value={filters.paymentMethod}
+                                onChange={(e) => setFilters({ ...filters, paymentMethod: e.target.value })}
+                            >
                                 <option>All Payment Types</option>
                                 <option>Cash</option>
                                 <option>GCash</option>
                                 <option>Card</option>
                                 <option>Bank Transfer</option>
                             </select>
+                        </div>
+
+                        {/* Row 2: Date From, Date To, Show Report, Export Report */}
+                        <div className="filter-row-bottom">
                             <span className="filter-label">Date From</span>
-                            <input type="date" value={filters.from} onChange={(e) => setFilters({ ...filters, from: e.target.value })}/>
+                            <input
+                                type="date"
+                                value={filters.from}
+                                onChange={(e) => setFilters({ ...filters, from: e.target.value })}
+                            />
+
                             <span className="filter-label">Date To</span>
-                            <input type="date" value={filters.to} onChange={(e) => setFilters({ ...filters, to: e.target.value })}/>
+                            <input
+                                type="date"
+                                value={filters.to}
+                                onChange={(e) => setFilters({ ...filters, to: e.target.value })}
+                            />
+
                             <button className="btn-go">Show Report</button>
                             <button className="btn-export">Export Report</button>
                         </div>
+
                     </div>
                 </div>
 
@@ -108,7 +140,7 @@ function Expenses()
                                 <th>Clinic</th>
                                 <th>Description</th>
                                 <th>Category</th>
-                                <th>Payment Method</th>                                
+                                <th>Payment Method</th>
                                 <th>Amount</th>
                             </tr>
                         </thead>
@@ -118,15 +150,15 @@ function Expenses()
                                     <td colSpan={6} className="table-empty">No records found</td>
                                 </tr>
                             ) : (
-                            rows.map((row, i) => (
-                                <tr key={i}>
-                                    <td>{row.date}</td>
-                                    <td>{row.clinic}</td>
-                                    <td>{row.description}</td>
-                                    <td>{row.expenseCategory}</td>
-                                    <td>{row.paymentMethod}</td>
-                                    <td>{row.amount}</td>
-                                </tr>
+                                rows.map((row, i) => (
+                                    <tr key={i}>
+                                        <td>{row.date}</td>
+                                        <td>{row.clinic}</td>
+                                        <td>{row.description}</td>
+                                        <td>{row.expenseCategory}</td>
+                                        <td>{row.paymentMethod}</td>
+                                        <td>{row.amount}</td>
+                                    </tr>
                                 ))
                             )}
                         </tbody>
@@ -134,13 +166,21 @@ function Expenses()
                 </div>
 
                 <div className="report-pagination">
-                    <button className="page-btn" disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)}>
+                    <button
+                        className="page-btn"
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage((p) => p - 1)}
+                    >
                         « Previous
                     </button>
-                    
+
                     {renderPagination()}
 
-                    <button className="page-btn" disabled={currentPage === totalPages} onClick={() => setCurrentPage((p) => p + 1)}>
+                    <button
+                        className="page-btn"
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage((p) => p + 1)}
+                    >
                         Next »
                     </button>
                 </div>

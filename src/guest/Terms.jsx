@@ -1,9 +1,12 @@
-import '../styles/Terms.css'
-import Navbar from '../Navbar'
+import './styles/terms.css'
+import Navbar from './Navbar'
+
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 export default function Terms() {
   return (
     <div className="terms-page">
+              <Navbar />
 
       <div className="terms-container container py-5">
 

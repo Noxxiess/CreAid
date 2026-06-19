@@ -1,7 +1,9 @@
 import { useState } from 'react'
-import './Navbar.css'
-import logo from './assets/logoD.png'
+import './navbar.css'
+import logo from '../assets/logoD.png'
 import { Link } from 'react-router-dom'
+import 'bootstrap/dist/css/bootstrap.min.css'
+
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)

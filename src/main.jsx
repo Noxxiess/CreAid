@@ -4,7 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { AuthProvider } from "./context/AuthContext";
 import "./index.css";
-import Scroll from "./Scroll";
+import Scroll from "./guest/Scroll";
 
 
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';

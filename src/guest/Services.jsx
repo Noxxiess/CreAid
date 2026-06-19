@@ -1,4 +1,4 @@
-import '../styles/Services.css'
+import './styles/services.css'
 import logo from '../assets/logoD.png'
 import clinic1 from '../assets/clinic1.png'
 import clinic2 from '../assets/clinic2.jpg'
@@ -17,10 +17,16 @@ import canal from '../assets/canal.png'
 import { FaHeart } from "react-icons/fa";
 import { NavLink } from 'react-router-dom'
 import { Link } from 'react-router-dom'
+import Navbar from './Navbar'
+
+import 'bootstrap/dist/css/bootstrap.min.css'
+
 
 export default function Services() {
   return (    
+    
     <div>
+      <Navbar />
         <div className="services-about-page">
 
 

@@ -10,7 +10,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url('../assets/background.png');
+  background-image: url('../../assets/background.png');
   background-size: cover;
   background-position: center;
   filter: grayscale(100%);
@@ -57,7 +57,7 @@
 .hero2 {
   position: relative;
   height: 90vh;
-  background-image: url('../assets/clinic1.png'); 
+  background-image: url('../../assets/clinic1.png'); 
   background-size: cover;
   background-position: center;
   display: flex;

@@ -1,4 +1,6 @@
-import '../styles/Home.css'
+import { NavLink } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import './styles/home.css'
 import logo from '../assets/logoD.png'
 import creaid from '../assets/creaid.jpg'
 import background from '../assets/background.png'
@@ -6,12 +8,13 @@ import clinic1 from '../assets/clinic1.png'
 import Contact from '../assets/Contact.png'
 import Appointment from '../assets/Appointment.png'
 import Services from '../assets/Services.png'
-import { NavLink } from 'react-router-dom'
-import { Link } from 'react-router-dom'
+import Navbar from './Navbar'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 export default function Home() {
   return (
     <div className="hero">
+      <Navbar />
 
       {/* HERO SECTION */}
       <div className="hero-content container px-4 py-5">
@@ -51,7 +54,7 @@ export default function Home() {
 
       {/*CLINIC*/}
       <div className="hero2 mt-5">
-  < div className="hero2-overlay">
+  <div className="hero2-overlay">
   <div className="container px-5 hero2-inner">
       <h1>Juana Smile Dental Clinic</h1>
 

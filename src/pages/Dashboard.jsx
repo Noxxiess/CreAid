@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import "../styles/dashboard.css";
-import 
-{
-  getAppointmentStatsApi, 
-  getTreatmentStatsApi, 
+import {
+  getAppointmentStatsApi,
+  getTreatmentStatsApi,
   getBalancesApi
-} 
-from "../api/appointments";
+} from "../api/appointments";
 import { useNavigate } from "react-router-dom";
 
 function Dashboard()
@@ -76,6 +74,22 @@ function Dashboard()
     fetchBalances();
   }, [period]);
 
+  const getInitials = (name = "") =>
+    name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
+
+  const avatarColors = [
+    { bg: "#EEEDFE", color: "#3C3489" },
+    { bg: "#FBEAF0", color: "#993556" },
+    { bg: "#F4C0D1", color: "#72243E" },
+    { bg: "#CECBF6", color: "#26215C" },
+  ];
+
+  const getAvatarColor = (index) => avatarColors[index % avatarColors.length];
+
+  const maxCount = treatments.length > 0
+    ? Math.max(...treatments.map((t) => t.count), 1)
+    : 1;
+
   return (
     <div className="admin-container">
       <div className="admin-main">
@@ -83,21 +97,25 @@ function Dashboard()
 
           {can("dashboard", "view") && (
             <div className="stats-grid">
-              <div className="stat-card">
+              <div className="stat-card stat-purple">
                 <div className="stat-title">Scheduled</div>
                 <div className="stat-value">{stats.scheduled}</div>
+                <div className="stat-sub">appointments today</div>
               </div>
-              <div className="stat-card">
+              <div className="stat-card stat-pink">
                 <div className="stat-title">Completed</div>
                 <div className="stat-value">{stats.completed}</div>
+                <div className="stat-sub">procedures done</div>
               </div>
-              <div className="stat-card">
+              <div className="stat-card stat-lpink">
                 <div className="stat-title">Cancelled</div>
                 <div className="stat-value">{stats.cancelled}</div>
+                <div className="stat-sub">this period</div>
               </div>
-              <div className="stat-card">
+              <div className="stat-card stat-lpurp">
                 <div className="stat-title">No-shows</div>
                 <div className="stat-value">{stats.noShow}</div>
+                <div className="stat-sub">missed visits</div>
               </div>
             </div>
           )}
@@ -113,26 +131,57 @@ function Dashboard()
                   </div>
 
                   {patientsWithBalance.length === 0 ? (
-                    <div className="empty-placeholder">No data available yet</div>
+                    <div className="empty-placeholder">No balance data yet</div>
                   ) : (
                     <div className="balance-list">
-                      {patientsWithBalance.slice(0, 3).map((p) => (
-                        <div className="balance-item" key={p.id} onClick={() => setSelectedBalance(p)}>
-                          <div>
-                            <span className="patient-name">{p.guest_name}</span>
-                            <span className="last-visit">Remaining Balance</span>
+                      {patientsWithBalance.slice(0, 3).map((p, index) =>
+                      {
+                        const ac = getAvatarColor(index);
+                        return (
+                          <div
+                            className="balance-item"
+                            key={p.id}
+                            onClick={() => setSelectedBalance(p)}
+                          >
+                            <div className="bal-left">
+                              <div
+                                className="bal-avatar"
+                                style={{ background: ac.bg, color: ac.color }}
+                              >
+                                {getInitials(p.guest_name)}
+                              </div>
+                              <div>
+                                <span className="patient-name">{p.guest_name}</span>
+                                <span className="last-visit">Remaining Balance</span>
+                              </div>
+                            </div>
+                            <span className="balance-amount">
+                              ₱{Number(p.remaining_balance).toLocaleString()}
+                            </span>
                           </div>
-                          <span className="balance-amount">₱{Number(p.remaining_balance).toLocaleString()}</span>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </div>
               )}
 
               <div className="pending-verification-card">
-                <div className="pending-header">Pending Payment Verification</div>
-                <div className="pending-count">{stats.pendingVerification}</div>
+                <div className="pending-icon-wrap">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FA1377" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                </div>
+                <div className="pending-info">
+                  <div className="pending-header">Pending Payment Verification</div>
+                  <div className="pending-count">{stats.pendingVerification}</div>
+                </div>
+                <button
+                  className="pending-review-btn"
+                  onClick={() => navigate("/payments")}
+                >
+                  Review →
+                </button>
               </div>
 
             </div>
@@ -140,39 +189,49 @@ function Dashboard()
             <div className="right-column">
 
               <div className="chart-card">
-                <div className="chart-title">{period} Number of Treatments</div>
-                <div className="chart-placeholder">
-                  {treatments.length === 0 ? (
-                    <p>No treatment data yet</p>
-                  ) : (
-                    treatments.map((treatment, index) => (
-                      <div key={index} className="treatment-row">
-                        <span>{treatment.name}</span>
-                        <strong>{treatment.count}</strong>
+                <div className="chart-title">{period} — Treatments</div>
+
+                {treatments.length === 0 ? (
+                  <div className="chart-empty">No treatment data yet</div>
+                ) : (
+                  <div className="css-bar-chart">
+                    {treatments.map((t, i) => (
+                      <div className="bar-col" key={i}>
+                        <div className="bar-tooltip">{t.count}</div>
+                        <div
+                          className="bar-fill"
+                          style={{ height: `${(t.count / maxCount) * 100}%` }}
+                        />
+                        <div className="bar-label">{t.name}</div>
                       </div>
-                    ))
-                  )}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="sales-card">
                 <h4>Total Sales for the {period}</h4>
                 <p className="amount">₱{stats.revenue?.toLocaleString()}</p>
                 {can("reports", "view") && (
-                  <span className="report-link">Click Here for reports →</span>
+                  <span className="report-link" onClick={() => navigate("/reports")}>
+                    Click here for reports →
+                  </span>
                 )}
               </div>
 
               <div className="filter-buttons">
                 {["Month", "Week", "Day"].map((p) => (
-                  <button key={p} className={period === p ? "active" : ""} onClick={() => setPeriod(p)}>
+                  <button
+                    key={p}
+                    className={period === p ? "active" : ""}
+                    onClick={() => setPeriod(p)}
+                  >
                     {p}
                   </button>
                 ))}
               </div>
 
             </div>
-
           </div>
 
           {showAllBalances && (
@@ -183,19 +242,37 @@ function Dashboard()
                   <button className="close-modal" onClick={() => setShowAllBalances(false)}>✕</button>
                 </div>
                 <div className="balance-modal-list">
-                  {patientsWithBalance.map((p) => (
-                    <div key={p.id} className="balance-modal-item" onClick={() =>
-                    {
-                      setShowAllBalances(false);
-                      setSelectedBalance(p);
-                    }}>
-                      <div>
-                        <div className="patient-name">{p.guest_name}</div>
-                        <div className="last-visit">Remaining Balance</div>
+                  {patientsWithBalance.map((p, index) =>
+                  {
+                    const ac = getAvatarColor(index);
+                    return (
+                      <div
+                        key={p.id}
+                        className="balance-modal-item"
+                        onClick={() =>
+                        {
+                          setShowAllBalances(false);
+                          setSelectedBalance(p);
+                        }}
+                      >
+                        <div className="bal-left">
+                          <div
+                            className="bal-avatar"
+                            style={{ background: ac.bg, color: ac.color }}
+                          >
+                            {getInitials(p.guest_name)}
+                          </div>
+                          <div>
+                            <div className="patient-name">{p.guest_name}</div>
+                            <div className="last-visit">Remaining Balance</div>
+                          </div>
+                        </div>
+                        <div className="balance-amount">
+                          ₱{Number(p.remaining_balance).toLocaleString()}
+                        </div>
                       </div>
-                      <div className="balance-amount">₱{Number(p.remaining_balance).toLocaleString()}</div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -226,14 +303,19 @@ function Dashboard()
                   </div>
                 </div>
                 <div className="modal-footer">
-                  <button className="btn-save" onClick={() =>
-                  {
-                    localStorage.setItem("highlightPaymentId", selectedBalance.id);
-                    navigate("/payments");
-                  }}>
+                  <button
+                    className="btn-save"
+                    onClick={() =>
+                    {
+                      localStorage.setItem("highlightPaymentId", selectedBalance.id);
+                      navigate("/payments");
+                    }}
+                  >
                     Go To Payment List
                   </button>
-                  <button className="btn-cancel-edit" onClick={() => setSelectedBalance(null)}>Close</button>
+                  <button className="btn-cancel-edit" onClick={() => setSelectedBalance(null)}>
+                    Close
+                  </button>
                 </div>
               </div>
             </div>

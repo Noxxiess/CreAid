@@ -9,7 +9,7 @@
   position: absolute;
   inset: 0;
 
-  background-image: url('../assets/bg3.png');
+  background-image: url('../../assets/bg3.png');
   background-size: cover;
   background-position: center;
 
@@ -31,7 +31,7 @@
 /* CONTACT HERO */
 
 .contact-hero-section{
-  background-image: url('../assets/clinic2.jpg');
+  background-image: url('../../assets/clinic2.jpg');
   background-size: cover;
   background-position: center;
 
@@ -206,7 +206,7 @@
   background:
     linear-gradient(rgba(0, 0, 0, 0.5),
     rgba(0, 0, 0, 0.5)),
-    url('../assets/clinic2.jpg');
+    url('../../assets/clinic2.jpg');
 
   background-size: cover;
   background-position: center;

@@ -299,7 +299,6 @@ function NewPatient()
       <h2 className="page-title">New Patient Information</h2>
 
       <div className="new-patient-container">
-
         <div className="stepper">
           {stepLabels.map((label, index) => (
             <div key={index} className={`step ${activeDisplayIndex === index ? "active" : ""}`}>
@@ -310,7 +309,6 @@ function NewPatient()
         </div>
 
         <div className="form-content">
-
           {step === 0 && (
             <>
               <p className="form-note">Please fill in all required information.</p>
@@ -321,7 +319,9 @@ function NewPatient()
                     <button onClick={() => document.getElementById("photoUpload").click()}>Upload</button>
                     <button onClick={() => setShowCamera(true)}>Capture</button>
                   </div>
+
                   <input id="photoUpload" type="file" accept="image/*" hidden onChange={(e) => e.target.files[0] && setPhoto(URL.createObjectURL(e.target.files[0]))}/>
+                  
                   <div className="photo-box">
                     {photo ? <img src={photo} alt="Patient" className="photo-preview" /> : "No Photo"}
                   </div>
@@ -333,18 +333,22 @@ function NewPatient()
                       <label>Lastname <span className="req">*</span></label>
                       <input name="lastname" placeholder="Lastname" value={personal.lastname} onChange={handleChange} />
                     </div>
+
                     <div>
                       <label>Firstname <span className="req">*</span></label>
                       <input name="firstname" placeholder="Firstname" value={personal.firstname} onChange={handleChange} />
                     </div>
+
                     <div>
                       <label>Middlename</label>
                       <input name="middlename" placeholder="Middlename" value={personal.middlename} onChange={handleChange} />
                     </div>
+
                     <div>
                       <label>Suffix</label>
                       <input name="suffix" placeholder="Suffix" value={personal.suffix} onChange={handleChange} />
                     </div>
+
                     <div>
                       <label>Nickname</label>
                       <input name="nickname" placeholder="Nickname" value={personal.nickname} onChange={handleChange} />
@@ -356,10 +360,12 @@ function NewPatient()
                       <label>Birthdate <span className="req">*</span></label>
                       <input type="date" name="birthdate" value={personal.birthdate} onChange={handleChange} />
                     </div>
+
                     <div>
                       <label>Age</label>
                       <input name="age" placeholder="Age" value={personal.age} onChange={handleChange} />
                     </div>
+                    
                     <div>
                       <label>Sex <span className="req">*</span></label>
                       <select name="sex" value={personal.sex} onChange={handleChange}>
@@ -368,10 +374,12 @@ function NewPatient()
                         <option value="female">Female</option>
                       </select>
                     </div>
+
                     <div>
                       <label>Religion <span className="req">*</span></label>
                       <input name="religion" placeholder="Religion" value={personal.religion} onChange={handleChange} />
                     </div>
+
                     <div>
                       <label>Nationality <span className="req">*</span></label>
                       <input name="nationality" placeholder="Nationality" value={personal.nationality} onChange={handleChange} />
@@ -383,10 +391,12 @@ function NewPatient()
                       <label>Home Address <span className="req">*</span></label>
                       <input name="homeAddress" placeholder="Home Address" value={personal.homeAddress} onChange={handleChange} />
                     </div>
+
                     <div>
                       <label>Home No.</label>
                       <input name="homeNo" placeholder="Home No." value={personal.homeNo} onChange={handleChange} />
                     </div>
+                    
                     <div>
                       <label>Fax No.</label>
                       <input name="faxNo" placeholder="Fax No." value={personal.faxNo} onChange={handleChange} />
@@ -398,14 +408,17 @@ function NewPatient()
                       <label>Occupation <span className="req">*</span></label>
                       <input name="occupation" placeholder="Occupation" value={personal.occupation} onChange={handleChange} />
                     </div>
+
                     <div>
                       <label>Mobile No. <span className="req">*</span></label>
                       <input name="mobile" placeholder="Mobile Number" value={personal.mobile} onChange={handleChange} />
                     </div>
+
                     <div>
                       <label>Email <span className="req">*</span></label>
                       <input name="email" placeholder="Email" value={personal.email} onChange={handleChange} />
                     </div>
+
                     <div>
                       <label>Civil Status <span className="req">*</span></label>
                       <select name="civilStatus" value={personal.civilStatus} onChange={handleChange}>
@@ -422,14 +435,17 @@ function NewPatient()
                       <label>Blood Type</label>
                       <input name="bloodType" placeholder="Blood Type" value={personal.bloodType} onChange={handleChange} />
                     </div>
+
                     <div>
                       <label>Blood Pressure</label>
                       <input name="bloodPressure" placeholder="Blood Pressure" value={personal.bloodPressure} onChange={handleChange} />
                     </div>
+
                     <div>
                       <label>Weight</label>
                       <input name="weight" placeholder="Weight" value={personal.weight} onChange={handleChange} />
                     </div>
+
                     <div>
                       <label>Height</label>
                       <input name="height" placeholder="Height" value={personal.height} onChange={handleChange} />
@@ -441,10 +457,12 @@ function NewPatient()
                       <label>School / Company</label>
                       <input name="school" placeholder="School / Company" value={personal.school} onChange={handleChange} />
                     </div>
+
                     <div>
                       <label>HMO</label>
                       <input name="hmo" placeholder="HMO" value={personal.hmo} onChange={handleChange} />
                     </div>
+
                     <div>
                       <label>Referred By</label>
                       <input name="referredBy" placeholder="Referred By" value={personal.referredBy} onChange={handleChange} />
@@ -478,10 +496,12 @@ function NewPatient()
                     <label>Physician's Name <span className="req">*</span></label>
                     <input name="physicianName" placeholder="Physician's Name" value={guardian.physicianName} onChange={handleGuardianChange} />
                   </div>
+
                   <div>
                     <label>Specialty</label>
                     <input name="physicianSpecialty" placeholder="Specialty" value={guardian.physicianSpecialty} onChange={handleGuardianChange} />
                   </div>
+
                   <div>
                     <label>Office Number</label>
                     <input name="physicianOfficeNumber" placeholder="Office Number" value={guardian.physicianOfficeNumber} onChange={handleGuardianChange} />
@@ -501,14 +521,17 @@ function NewPatient()
                     <label>Father's Name <span className="req">*</span></label>
                     <input name="fatherName" placeholder="Father's Name" value={guardian.fatherName} onChange={handleGuardianChange} />
                   </div>
+
                   <div>
                     <label>Occupation</label>
                     <input name="fatherOccupation" placeholder="Occupation" value={guardian.fatherOccupation} onChange={handleGuardianChange} />
                   </div>
+
                   <div>
                     <label>Employer</label>
                     <input name="fatherEmployer" placeholder="Employer" value={guardian.fatherEmployer} onChange={handleGuardianChange} />
                   </div>
+
                   <div>
                     <label>Contact No.</label>
                     <input name="fatherContact" placeholder="Contact Number" value={guardian.fatherContact} onChange={handleGuardianChange} />
@@ -521,14 +544,17 @@ function NewPatient()
                     <label>Mother's Name <span className="req">*</span></label>
                     <input name="motherName" placeholder="Mother's Name" value={guardian.motherName} onChange={handleGuardianChange} />
                   </div>
+
                   <div>
                     <label>Occupation</label>
                     <input name="motherOccupation" placeholder="Occupation" value={guardian.motherOccupation} onChange={handleGuardianChange} />
                   </div>
+
                   <div>
                     <label>Employer</label>
                     <input name="motherEmployer" placeholder="Employer" value={guardian.motherEmployer} onChange={handleGuardianChange} />
                   </div>
+
                   <div>
                     <label>Contact No.</label>
                     <input name="motherContact" placeholder="Contact Number" value={guardian.motherContact} onChange={handleGuardianChange} />
@@ -541,10 +567,12 @@ function NewPatient()
                     <label>Guardian's Name</label>
                     <input name="guardianName" placeholder="Guardian's Name" value={guardian.guardianName} onChange={handleGuardianChange} />
                   </div>
+
                   <div>
                     <label>Occupation</label>
                     <input name="guardianOccupation" placeholder="Occupation" value={guardian.guardianOccupation} onChange={handleGuardianChange} />
                   </div>
+
                   <div>
                     <label>Contact No.</label>
                     <input name="guardianContact" placeholder="Contact Number" value={guardian.guardianContact} onChange={handleGuardianChange} />
@@ -619,6 +647,7 @@ function NewPatient()
                             {label}
                           </label>
                         ))}
+                        
                         <div className="allergy-others">
                           <label>Others:</label>
                           <input name="allergyOthers" value={medical.allergyOthers}

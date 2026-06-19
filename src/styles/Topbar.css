@@ -334,7 +334,7 @@ border: none;
 border-top: 1px solid #f0edf9;
 margin: 4px 0;
 }
-.dropdown-item
+.topbar-dropdown-item
 {
   padding: 10px 12px;
   font-size: 13px;
@@ -344,21 +344,21 @@ margin: 4px 0;
   transition: background 0.12s;
   font-family: 'DM Sans', sans-serif;
 }
-.dropdown-item:hover
+.topbar-dropdown-item:hover
 {
   background: #f5f3fc;
   color: #150e43;
 }
-.dropdown-item.logout
+.topbar-dropdown-item.logout
 {
   color: #FA1377;
   font-weight: 500;
 }
-.dropdown-item.logout:hover
+.topbar-dropdown-item.logout:hover
 {
   background: rgba(250,19,119,0.07);
 }
-.modal-overlay
+.topbar-modal-overlay
 {
   position: fixed;
   inset: 0;
@@ -369,7 +369,7 @@ margin: 4px 0;
   justify-content: center;
   z-index: 9999;
 }
-.modal
+.topbar-modal
 {
   background: white;
   padding: 32px 28px;
@@ -380,7 +380,7 @@ margin: 4px 0;
   animation: modalPop 0.2s cubic-bezier(0.22, 1, 0.36, 1);
   border: 1px solid rgba(250,19,119,0.1);
 }
-.modal h3
+.topbar-modal h3
 {
   font-size: 18px;
   font-weight: 700;
@@ -388,13 +388,13 @@ margin: 4px 0;
   color: #150e43;
   font-family: 'Playfair Display', serif;
 }
-.modal p
+.topbar-modal p
 {
   font-size: 14px;
   color: #9e9bba;
   margin: 0;
 }
-.modal-actions
+.topbar-modal-actions
 {
   display: flex;
   gap: 10px;
@@ -472,7 +472,7 @@ margin: 4px 0;
   to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes modalPop
-{
+{ 
   from { transform: scale(0.9); opacity: 0; }
   to   { transform: scale(1);   opacity: 1; }
 }

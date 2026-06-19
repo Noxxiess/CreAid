@@ -151,12 +151,12 @@ function Topbar({ onMobileMenuClick, isMobile }) {
 
                 <hr className="dropdown-divider" />
 
-                <div className="dropdown-item" onClick={() => { closeAll(); navigate("/myaccount"); }}>
+                <div className="topbar-dropdown-item" onClick={() => { closeAll(); navigate("/myaccount"); }}>
                   👤 My Account
                 </div>
 
                 {/* Same pattern as doc3's working logout */}
-                <div className="dropdown-item logout" onClick={() => { closeAll(); setShowLogoutConfirm(true); }}>
+                <div className="topbar-dropdown-item logout" onClick={() => { closeAll(); setShowLogoutConfirm(true); }}>
                   🚪 Logout
                 </div>
               </div>
@@ -190,11 +190,11 @@ function Topbar({ onMobileMenuClick, isMobile }) {
       </header>
 
       {showLogoutConfirm && (
-        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowLogoutConfirm(false); }}>
-          <div className="modal">
+        <div className="topbar-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowLogoutConfirm(false); }}>
+          <div className="topbar-modal">
             <h3>Log Out</h3>
             <p>Are you sure you want to log out?</p>
-            <div className="modal-actions">
+            <div className="topbar-modal-actions">
               <button className="btn cancel" onClick={() => setShowLogoutConfirm(false)}>Cancel</button>
               <button className="btn confirm" onClick={handleLogout}>Yes, Log Out</button>
             </div>
