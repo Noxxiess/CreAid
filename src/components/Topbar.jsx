@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import "../styles/Topbar.css";
 import { supabase } from "../lib/supabase";
 import { getProfileApi } from "../api/profile";
+import { Icon } from "@iconify/react";
 
-function useWindowWidth() 
+function useWindowWidth()
 {
   const [width, setWidth] = useState(window.innerWidth);
 
-  useEffect(() => {
+  useEffect(() =>
+  {
     const handler = () => setWidth(window.innerWidth);
     window.addEventListener("resize", handler);
     return () => window.removeEventListener("resize", handler);
@@ -17,42 +19,46 @@ function useWindowWidth()
   return width;
 }
 
-function Topbar({ onMobileMenuClick, isMobile }) {
-  const [showNotif, setShowNotif]             = useState(false);
-  const [showProfile, setShowProfile]         = useState(false);
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [showOverflow, setShowOverflow]       = useState(false);
-  const [avatarUrl, setAvatarUrl]             = useState("");
-  const [fullName, setFullName]               = useState("");
+function Topbar({ onMobileMenuClick, isMobile })
+{
+  const [showNotif,        setShowNotif]        = useState(false);
+  const [showProfile,      setShowProfile]      = useState(false);
+  const [showLogout,       setShowLogout]       = useState(false);
+  const [showOverflow,     setShowOverflow]     = useState(false);
+  const [avatarUrl,        setAvatarUrl]        = useState("");
+  const [fullName,         setFullName]         = useState("");
 
   const navigate = useNavigate();
   const role     = localStorage.getItem("role");
   const width    = useWindowWidth();
 
-  const notifHidden    = width <= 600;
+  const notifHidden     = width <= 600;
   const showOverflowBtn = width <= 900;
 
-  // FETCH AVATAR & NAME
-  useEffect(() => {
-    async function fetchAvatar() {
-      try {
+  useEffect(() =>
+  {
+    async function fetchAvatar()
+    {
+      try
+      {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
         const result = await getProfileApi(user.id);
         const data   = result.user;
         setAvatarUrl(data.avatar_url || "");
         setFullName(data.full_name || role || "User");
-      } catch (err) {
-        console.log(err);
       }
+      catch (err) { console.log(err); }
     }
     fetchAvatar();
   }, []);
 
-  // CLOSE DROPDOWNS ON OUTSIDE CLICK
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (!e.target.closest(".icon-wrapper")) {
+  useEffect(() =>
+  {
+    const handleClickOutside = (e) =>
+    {
+      if (!e.target.closest(".topnav-profile-wrapper") && !e.target.closest(".topnav-icon-wrapper"))
+      {
         setShowNotif(false);
         setShowProfile(false);
         setShowOverflow(false);
@@ -62,14 +68,14 @@ function Topbar({ onMobileMenuClick, isMobile }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // LOGOUT — same pattern as working version (from doc3), plus supabase signOut
-  const handleLogout = async () => 
+  const handleLogout = () =>
   {
     localStorage.removeItem("role");
     navigate("/");
   };
 
-  const closeAll = () => {
+  const closeAll = () =>
+  {
     setShowNotif(false);
     setShowProfile(false);
     setShowOverflow(false);
@@ -77,126 +83,74 @@ function Topbar({ onMobileMenuClick, isMobile }) {
 
   return (
     <>
-      <header className="topbar">
-        <div className="topbar-left">
-          {isMobile && (
-            <button className="hamburger-btn" onClick={onMobileMenuClick} title="Menu">
-              <span /><span /><span />
-            </button>
-          )}
+      <header className="topnav-topbar">
 
-          <div className="search-box">
-            <span className="search-icon">🔍</span>
+        <div className="topnav-topbar-left">
+          {isMobile && <button className="topnav-hamburger-btn" onClick={onMobileMenuClick} title="Menu"><span /><span /><span /></button>}
+          <div className="topnav-search-box">
+            <span className="topnav-search-icon"><Icon icon="glyphs-poly:search-1" width="25" height="25" /></span>
             <input type="text" placeholder="Search Patient Here" />
           </div>
-
-          <button className="new-patient-btn" onClick={() => navigate("/patients/new")}>
-            <span>+ </span>
-            <span className="btn-label">New Patient</span>
-          </button>
+          <button className="topnav-new-patient-btn" onClick={() => navigate("/patients/new")}><span>+</span><span className="topnav-btn-label"> New Patient</span></button>
         </div>
 
-        {/* RIGHT */}
-        <div className="topbar-right">
+        <div className="topnav-topbar-right">
+
           {!notifHidden && (
-            <div className="icon-wrapper notif-btn-wrapper">
-              <button
-                className="icon-btn notif-btn"
-                onClick={() => { setShowNotif(!showNotif); setShowProfile(false); setShowOverflow(false); }}
-              >
-                🔔
-                <span className="dot"></span>
-              </button>
+            <div className="topnav-icon-wrapper topnav-notif-btn-wrapper">
+              <button className="topnav-notif-btn" onClick={() => { setShowNotif(!showNotif); setShowProfile(false); setShowOverflow(false); }}><Icon icon="glyphs-poly:bell" width="35" height="30" /><span className="topnav-dot" /></button>
               {showNotif && (
-                <div className="dropdown notif-dropdown">
+                <div className="topnav-notif-dropdown">
                   <h4>Notifications</h4>
-                  <div className="notif-list">
-                    <div className="notif-item">No new notifications</div>
+                  <div className="topnav-notif-list">
+                    <div className="topnav-notif-item">No new notifications</div>
                   </div>
                 </div>
               )}
             </div>
           )}
 
-          {/* PROFILE */}
-          <div className="icon-wrapper">
-            <button
-              className="profile-btn"
-              onClick={() => { setShowProfile(!showProfile); setShowNotif(false); setShowOverflow(false); }}
-            >
-              <span className="avatar-chip">
-                {avatarUrl
-                  ? <img src={avatarUrl} alt="avatar" className="topbar-avatar-image" />
-                  : role?.charAt(0).toUpperCase()
-                }
-              </span>
-              <span className="username">{fullName}</span>
-              <span className="chevron">{showProfile ? "▲" : "▼"}</span>
+          <div className="topnav-profile-wrapper">
+            <button className={`topnav-profile-btn${showProfile ? " active" : ""}`} onClick={() => { setShowProfile(!showProfile); setShowNotif(false); setShowOverflow(false); }}>
+              <span className="topnav-avatar-chip">{avatarUrl ? <img src={avatarUrl} alt="avatar" className="topnav-avatar-image" /> : role?.charAt(0).toUpperCase()}</span>
+              <span className="topnav-username">{fullName || role || "..."}</span>
+              <span className="topnav-chevron">{showProfile ? "▲" : "▼"}</span>
             </button>
 
             {showProfile && (
-              <div className="dropdown profile-dropdown">
-                <div className="dropdown-user-info">
-                  <span className="avatar-chip large">
-                    {avatarUrl
-                      ? <img src={avatarUrl} alt="avatar" className="topbar-avatar-image" />
-                      : role?.charAt(0).toUpperCase()
-                    }
-                  </span>
-                  <div>
-                    <p className="dropdown-role">{fullName}</p>
-                    <p className="dropdown-sub">{role || "User"}</p>
-                  </div>
+              <div className="topnav-profile-dropdown">
+                <hr className="topnav-dropdown-divider" />
+                <div className="topnav-dropdown-item" onClick={() => { closeAll(); navigate("/myaccount"); }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width={15} height={15} viewBox="0 0 80 80"><g fill="none" strokeLinejoin="round" strokeWidth={4}><path fill="#27014f" stroke="#27014f" strokeLinecap="square" d="M60 70H20a4 4 0 0 1-4-4a15.87 15.87 0 0 1 10.3-14.86l1.23-.462a35.53 35.53 0 0 1 24.94 0l1.23.462A15.87 15.87 0 0 1 64 66a4 4 0 0 1-4 4Z" /><path fill="#1f003f" stroke="#1f003f" strokeLinecap="round" d="M33.902 38.867a13.347 13.347 0 0 0 19.15-9.08l.223-1.044a14.2 14.2 0 0 0-2.51-11.466l-.36-.48a12.992 12.992 0 0 0-20.81 0l-.36.48a14.2 14.2 0 0 0-2.51 11.465l.223 1.046a13.35 13.35 0 0 0 6.953 9.08" /></g></svg>
+                  My Account
                 </div>
-
-                <hr className="dropdown-divider" />
-
-                <div className="topbar-dropdown-item" onClick={() => { closeAll(); navigate("/myaccount"); }}>
-                  👤 My Account
-                </div>
-
-                {/* Same pattern as doc3's working logout */}
-                <div className="topbar-dropdown-item logout" onClick={() => { closeAll(); setShowLogoutConfirm(true); }}>
-                  🚪 Logout
-                </div>
+                <div className="topnav-dropdown-item logout" onClick={() => { closeAll(); setShowLogout(true); }}><Icon icon="noto:door" width="15" height="15" /> Logout</div>
               </div>
             )}
           </div>
 
-          {/* OVERFLOW */}
           {showOverflowBtn && (
-            <div className="icon-wrapper">
-              <button
-                className="overflow-btn"
-                onClick={() => { const next = !showOverflow; setShowNotif(false); setShowProfile(false); setShowOverflow(next); }}
-                title="More options"
-              >
-                •••
-              </button>
-
+            <div className="topnav-icon-wrapper">
+              <button className="topnav-overflow-btn" onClick={() => { const next = !showOverflow; setShowNotif(false); setShowProfile(false); setShowOverflow(next); }} title="More options">•••</button>
               {showOverflow && (
-                <div className="overflow-dropdown">
-                  {notifHidden && (
-                    <div className="overflow-item" onClick={() => { setShowOverflow(false); setShowNotif(true); }}>
-                      🔔 Notifications
-                      <span className="overflow-notif-dot">!</span>
-                    </div>
-                  )}
+                <div className="topnav-overflow-dropdown">
+                  {notifHidden && <div className="topnav-overflow-item" onClick={() => { setShowOverflow(false); setShowNotif(true); }}><Icon icon="glyphs-poly:bell" width="35" height="30" /> Notifications<span className="topnav-overflow-notif-dot">!</span></div>}
                 </div>
               )}
             </div>
           )}
+
         </div>
       </header>
 
-      {showLogoutConfirm && (
-        <div className="topbar-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowLogoutConfirm(false); }}>
-          <div className="topbar-modal">
+      {showLogout && (
+        <div className="topnav-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowLogout(false); }}>
+          <div className="topnav-modal">
             <h3>Log Out</h3>
             <p>Are you sure you want to log out?</p>
-            <div className="topbar-modal-actions">
-              <button className="btn cancel" onClick={() => setShowLogoutConfirm(false)}>Cancel</button>
-              <button className="btn confirm" onClick={handleLogout}>Yes, Log Out</button>
+            <div className="topnav-modal-actions">
+              <button className="topnav-btn cancel" onClick={() => setShowLogout(false)}>Cancel</button>
+              <button className="topnav-btn confirm" onClick={handleLogout}>Yes, Log Out</button>
             </div>
           </div>
         </div>
