@@ -1,0 +1,432 @@
+.menuhub-container
+{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #150e43;
+  font-family: 'DM Sans', sans-serif;
+  overflow: hidden;
+  position: relative;
+  padding: 60px 20px;
+  box-sizing: border-box;
+}
+.menuhub-ambient
+{
+  content: '';
+  position: absolute;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  bottom: -260px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  transition: background 0.5s ease;
+  z-index: 0;
+}
+.menuhub-header
+{
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-bottom: 48px;
+  max-width: 480px;
+  width: 100%;
+  animation: menuhub-fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.menuhub-back
+{
+  position: absolute;
+  top: -4px;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: none;
+  color: rgba(255,255,255,0.55);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+.menuhub-back svg
+{
+  width: 14px;
+  height: 14px;
+}
+.menuhub-back:hover
+{
+  color: #ffffff;
+  background: rgba(255,255,255,0.06);
+}
+.menuhub-card-tag
+{
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  padding: 4px 9px;
+  border-radius: 20px;
+  z-index: 1;
+}
+.menuhub-brand
+{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.menuhub-logo
+{
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  border-radius: 5px;
+  filter: brightness(1.4) drop-shadow(0 0 6px rgba(250,19,119,0.3));
+}
+.menuhub-eyebrow
+{
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #FA1377;
+  margin: 0;
+}
+.menuhub-heading
+{
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+.menuhub-sub
+{
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+  margin: 0;
+}
+.menuhub-stage
+{
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  width: 100%;
+  max-width: 980px;
+  outline: none;
+}
+.menuhub-stage:focus-visible
+{
+  outline: 2px solid rgba(250,19,119,0.5);
+  outline-offset: 8px;
+  border-radius: 24px;
+}
+.menuhub-viewport
+{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+}
+.menuhub-track
+{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  touch-action: pan-y;
+  cursor: grab;
+  transition: transform 0.15s ease-out;
+}
+.menuhub-track:active
+{
+  cursor: grabbing;
+}
+.menuhub-track-next-out
+{
+  animation: menuhub-slide-next-out 0.16s cubic-bezier(0.4, 0, 1, 1) both;
+}
+.menuhub-track-next-in
+{
+  animation: menuhub-slide-next-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.menuhub-track-prev-out
+{
+  animation: menuhub-slide-prev-out 0.16s cubic-bezier(0.4, 0, 1, 1) both;
+}
+.menuhub-track-prev-in
+{
+  animation: menuhub-slide-prev-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes menuhub-slide-next-out
+{
+  from { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(-50px); opacity: 0.25; }
+}
+@keyframes menuhub-slide-next-in
+{
+  from { transform: translateX(50px); opacity: 0.25; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+@keyframes menuhub-slide-prev-out
+{
+  from { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(50px); opacity: 0.25; }
+}
+@keyframes menuhub-slide-prev-in
+{
+  from { transform: translateX(-50px); opacity: 0.25; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+.menuhub-card
+{
+  position: relative;
+  border-radius: 20px;
+  background: linear-gradient(150deg, #1e1566 0%, #150e43 55%, #0e0930 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  flex-shrink: 0;
+}
+.menuhub-card-side
+{
+  width: 160px;
+  height: 200px;
+  opacity: 0.45;
+  filter: blur(0.3px);
+  transform: scale(0.92);
+  padding: 24px 16px;
+  gap: 10px;
+}
+.menuhub-card-side:hover
+{
+  opacity: 0.7;
+  transform: scale(0.95);
+}
+.menuhub-card-center
+{
+  width: 300px;
+  height: 320px;
+  padding: 40px 32px;
+  gap: 14px;
+  box-shadow:
+    0 0 0 1px rgba(250,19,119,0.2),
+    0 30px 80px rgba(0,0,0,0.5),
+    0 0 60px var(--accent-glow, rgba(250,19,119,0.18));
+  animation: menuhub-fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.menuhub-card-center:hover
+{
+  transform: translateY(-4px);
+}
+.menuhub-card-glow
+{
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 60%);
+  pointer-events: none;
+}
+.menuhub-card-icon
+{
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.06);
+  position: relative;
+  z-index: 1;
+}
+.menuhub-card-center .menuhub-card-icon
+{
+  width: 68px;
+  height: 68px;
+}
+.menuhub-card-label
+{
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: #ffffff;
+  margin: 0;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.menuhub-card-center .menuhub-card-label
+{
+  font-size: 24px;
+}
+.menuhub-card-sub
+{
+  font-size: 13px;
+  color: rgba(255,255,255,0.4);
+  margin: 0;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.menuhub-card-cta
+{
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  position: relative;
+  z-index: 1;
+}
+.menuhub-card-cta svg
+{
+  width: 14px;
+  height: 14px;
+  transition: transform 0.25s ease;
+}
+.menuhub-card-center:hover .menuhub-card-cta svg
+{
+  transform: translateX(3px);
+}
+.menuhub-arrow
+{
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.25s ease;
+  position: relative;
+  z-index: 1;
+}
+.menuhub-arrow:hover
+{
+  background: #FA1377;
+  border-color: #FA1377;
+  transform: scale(1.06);
+  box-shadow: 0 6px 20px rgba(250,19,119,0.35);
+}
+.menuhub-arrow svg
+{
+  width: 20px;
+  height: 20px;
+}
+.menuhub-dots
+{
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 40px;
+}
+.menuhub-dot
+{
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.18);
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+.menuhub-dot:hover
+{
+  background: rgba(255,255,255,0.4);
+}
+.menuhub-dot-active
+{
+  width: 22px;
+  border-radius: 5px;
+}
+@keyframes menuhub-fadeUp
+{
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 768px)
+{
+  .menuhub-heading
+  {
+    font-size: 24px;
+  }
+
+  .menuhub-stage
+  {
+    gap: 10px;
+  }
+
+  .menuhub-track
+  {
+    gap: 12px;
+  }
+
+  .menuhub-card-side
+  {
+    width: 70px;
+    height: 150px;
+    padding: 16px 8px;
+  }
+
+  .menuhub-card-side .menuhub-card-icon
+  {
+    width: 40px;
+    height: 40px;
+  }
+
+  .menuhub-card-side .menuhub-card-label
+  {
+    font-size: 11px;
+  }
+
+  .menuhub-card-center
+  {
+    width: 220px;
+    height: 280px;
+    padding: 28px 20px;
+  }
+
+  .menuhub-arrow
+  {
+    width: 38px;
+    height: 38px;
+  }
+
+  .menuhub-ambient
+  {
+    width: 500px;
+    height: 500px;
+  }
+}

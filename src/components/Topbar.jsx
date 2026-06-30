@@ -121,7 +121,12 @@ function Topbar({ onMobileMenuClick, isMobile })
               <div className="topnav-profile-dropdown">
                 <hr className="topnav-dropdown-divider" />
                 <div className="topnav-dropdown-item" onClick={() => { closeAll(); navigate("/myaccount"); }}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width={15} height={15} viewBox="0 0 80 80"><g fill="none" strokeLinejoin="round" strokeWidth={4}><path fill="#27014f" stroke="#27014f" strokeLinecap="square" d="M60 70H20a4 4 0 0 1-4-4a15.87 15.87 0 0 1 10.3-14.86l1.23-.462a35.53 35.53 0 0 1 24.94 0l1.23.462A15.87 15.87 0 0 1 64 66a4 4 0 0 1-4 4Z" /><path fill="#1f003f" stroke="#1f003f" strokeLinecap="round" d="M33.902 38.867a13.347 13.347 0 0 0 19.15-9.08l.223-1.044a14.2 14.2 0 0 0-2.51-11.466l-.36-.48a12.992 12.992 0 0 0-20.81 0l-.36.48a14.2 14.2 0 0 0-2.51 11.465l.223 1.046a13.35 13.35 0 0 0 6.953 9.08" /></g></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width={15} height={15} viewBox="0 0 80 80">
+                    <g fill="none" strokeLinejoin="round" strokeWidth={4}>
+                      <path fill="#27014f" stroke="#27014f" strokeLinecap="square" d="M60 70H20a4 4 0 0 1-4-4a15.87 15.87 0 0 1 10.3-14.86l1.23-.462a35.53 35.53 0 0 1 24.94 0l1.23.462A15.87 15.87 0 0 1 64 66a4 4 0 0 1-4 4Z" />
+                      <path fill="#1f003f" stroke="#1f003f" strokeLinecap="round" d="M33.902 38.867a13.347 13.347 0 0 0 19.15-9.08l.223-1.044a14.2 14.2 0 0 0-2.51-11.466l-.36-.48a12.992 12.992 0 0 0-20.81 0l-.36.48a14.2 14.2 0 0 0-2.51 11.465l.223 1.046a13.35 13.35 0 0 0 6.953 9.08" />
+                    </g>
+                  </svg>
                   My Account
                 </div>
                 <div className="topnav-dropdown-item logout" onClick={() => { closeAll(); setShowLogout(true); }}><Icon icon="noto:door" width="15" height="15" /> Logout</div>

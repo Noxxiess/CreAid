@@ -109,7 +109,7 @@
 .topnav-notif-btn
 {
   position: relative;
-  background: #f5f3fc;
+  background: #faf9fe;
   border: 1.5px solid #ede9f8;
   font-size: 16px;
   cursor: pointer;
@@ -123,7 +123,7 @@
 
 .topnav-notif-btn:hover
 {
-  background: #ede9f8;
+  background: #ffffff;
   border-color: rgba(250,19,119,0.25);
 }
 

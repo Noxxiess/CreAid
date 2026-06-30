@@ -4,11 +4,14 @@ import { useNavigate } from "react-router-dom";
 import logo from "../assets/creaid.jpg";
 import "../App.css";
 import { loginApi } from "../api/auth";
+import { supabase } from "../lib/supabase";
+import Spinner from "../components/Spinner";
 
 function Login() 
 {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loggingIn, setLoggingIn] = useState(false);
   const navigate = useNavigate();
   const { setRole } = useAuth();
 
@@ -18,6 +21,8 @@ function Login()
 
     e.preventDefault();
 
+    setLoggingIn(true);
+
     try 
     {
       const result =
@@ -25,6 +30,13 @@ function Login()
           username,
           password
         );
+
+      await supabase.auth.setSession(
+        {
+          access_token: result.session.access_token,
+          refresh_token: result.session.refresh_token,
+        }
+      );
 
       localStorage.setItem(
         "role",
@@ -42,7 +54,7 @@ function Login()
         result.user.role
       );
 
-      navigate("/dashboard");
+      navigate("/dashboard"); 
 
     } 
     
@@ -54,6 +66,8 @@ function Login()
         err.response?.data?.message ||
         err.message
       );
+
+      setLoggingIn(false);
     }
   };
 
@@ -90,8 +104,8 @@ function Login()
               </div>
             </div>
 
-            <button type="submit" className="login-btn">
-              Sign In →
+            <button type="submit" className="login-btn" disabled={loggingIn}>
+              {loggingIn ? <Spinner size="sm" /> : "Sign In →"}
             </button>
           </form>
 

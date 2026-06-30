@@ -1,0 +1,8 @@
+.spn { display: inline-flex; align-items: center; gap: 4px; }
+.spn-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: spn-bounce 0.6s ease-in-out infinite; }
+.spn-dot:nth-child(1) { background: #ffffff; animation-delay: 0s; }
+.spn-dot:nth-child(2) { background: #3b82f6; animation-delay: 0.15s; }
+.spn-dot:nth-child(3) { background: #150e43; animation-delay: 0.3s; }
+.spn-sm .spn-dot { width: 5px; height: 5px; }
+.spn-lg .spn-dot { width: 8px; height: 8px; }
+@keyframes spn-bounce { 0%, 100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(-6px); opacity: 1; } }

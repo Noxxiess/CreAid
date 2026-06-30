@@ -7,6 +7,11 @@
   justify-content: center;
   align-items: center;
   background-color: #150e43;
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(250, 19, 119, 0.20) 0%, transparent 60%),
+    radial-gradient(ellipse at 90% 10%, rgba(250, 19, 119, 0.20) 0%, transparent 30%),
+    repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(255,255,255,0.015) 80px, rgba(255,255,255,0.015) 81px),
+    repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(255,255,255,0.015) 80px, rgba(255,255,255,0.015) 81px);
   font-family: 'DM Sans', sans-serif;
   overflow: hidden;
   position: relative;

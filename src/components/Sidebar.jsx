@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { Icon } from "@iconify/react";
 import { useAuth } from "../context/AuthContext";
 import logo from "../assets/creaid.jpg";
 import "../styles/Sidebar.css";
 
 const NAV_ICONS = 
 {
-  dashboard: "📊",
-  calendar:  "📅",
-  users:     "👥",
-  payments:  "💳",
-  reports:   "📈",
-  system:    "🗂️",
-  inbox:     "📬",
+  dashboard: "fluent-emoji-flat:bar-chart",
+  calendar:  "flat-color-icons:calendar",
+  users:     "fluent-emoji-flat:busts-in-silhouette",
+  payments:  "fluent-emoji-flat:credit-card",
+  reports:   "fluent-emoji-flat:bar-chart",
+  system:    "fluent-emoji-flat:card-index-dividers",
+  inbox:     "fluent-color:mail-48",
 };
 
 function Sidebar({ collapsed, onToggle, mobileClose, isMobileDrawer }) 
@@ -32,16 +33,16 @@ function Sidebar({ collapsed, onToggle, mobileClose, isMobileDrawer })
       <div className="sidebar-divider" />
       <nav className="sidebar-nav">
 
-        <NavLink to="/dashboard" className={navClass} data-tooltip="Dashboard"
+        <NavLink to="/dashboard" className={navClass} data-tooltip="Menu"
           onClick={isMobileDrawer ? mobileClose : undefined}>
-          <span className="nav-icon">{NAV_ICONS.dashboard}</span>
+          <span className="nav-icon"><Icon icon={NAV_ICONS.dashboard} /></span>
           <span className="nav-label">Dashboard</span>
         </NavLink>
 
         {permissions.calendar?.includes("view") && (
           <NavLink to="/calendar" className={navClass} data-tooltip="Calendar"
             onClick={isMobileDrawer ? mobileClose : undefined}>
-            <span className="nav-icon">{NAV_ICONS.calendar}</span>
+            <span className="nav-icon"><Icon icon={NAV_ICONS.calendar} /></span>
             <span className="nav-label">Calendar</span>
           </NavLink>
         )}
@@ -49,13 +50,13 @@ function Sidebar({ collapsed, onToggle, mobileClose, isMobileDrawer })
         {permissions.users?.includes("view") && (
           <>
             <div className={`nav-item submenu-toggle${openUsers ? " open" : ""}`} data-tooltip="Users" onClick={() => !collapsed && setOpenUsers(!openUsers)}>
-              <span className="nav-icon">{NAV_ICONS.users}</span>
+              <span className="nav-icon"><Icon icon={NAV_ICONS.users} /></span>
               <span className="nav-label">Users</span>
               <span className="chevron-icon">▼</span>
             </div>
             {openUsers && !collapsed && (
               <div className="submenu">
-                <NavLink to="/users" end className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>All Users</NavLink>
+                <NavLink to="/users/userlist" end className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>All Users</NavLink>
                 <NavLink to="/users/patients" end className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>Patients</NavLink>
                 <NavLink to="/users/dentists" end className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>Dentists</NavLink>
                 <NavLink to="/users/logs" end className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>User Logs</NavLink>
@@ -66,7 +67,7 @@ function Sidebar({ collapsed, onToggle, mobileClose, isMobileDrawer })
 
         {permissions.payments?.includes("view") && (
           <NavLink to="/payments" className={navClass} data-tooltip="Payment" onClick={isMobileDrawer ? mobileClose : undefined}>
-            <span className="nav-icon">{NAV_ICONS.payments}</span>
+            <span className="nav-icon"><Icon icon={NAV_ICONS.payments} /></span>
             <span className="nav-label">Payment</span>
           </NavLink>
         )}
@@ -74,7 +75,7 @@ function Sidebar({ collapsed, onToggle, mobileClose, isMobileDrawer })
         {permissions.reports?.includes("view") && (
           <>
             <div className={`nav-item submenu-toggle${openReports ? " open" : ""}`} data-tooltip="Reports" onClick={() => !collapsed && setOpenReports(!openReports)}>
-              <span className="nav-icon">{NAV_ICONS.reports}</span>
+              <span className="nav-icon"><Icon icon={NAV_ICONS.reports} /></span>
               <span className="nav-label">Reports</span>
               <span className="chevron-icon">▼</span>
             </div>
@@ -92,14 +93,14 @@ function Sidebar({ collapsed, onToggle, mobileClose, isMobileDrawer })
 
         {permissions.system?.includes("view") && (
           <NavLink to="/system" className={navClass} data-tooltip="System Data" onClick={isMobileDrawer ? mobileClose : undefined}>
-            <span className="nav-icon">{NAV_ICONS.system}</span>
+            <span className="nav-icon"><Icon icon={NAV_ICONS.system} /></span>
             <span className="nav-label">System Data</span>
           </NavLink>
         )}
 
         {permissions.inbox?.includes("view") && (
           <NavLink to="/inbox" className={navClass} data-tooltip="Inbox" onClick={isMobileDrawer ? mobileClose : undefined}>
-            <span className="nav-icon">{NAV_ICONS.inbox}</span>
+            <span className="nav-icon"><Icon icon={NAV_ICONS.inbox} /></span>
             <span className="nav-label">Inbox</span>
           </NavLink>
         )}
