@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "../styles/calendar.css";
+import Spinner from "../components/Spinner";
 import
 {
   getAppointmentsApi,
@@ -19,6 +20,7 @@ function Calendar()
   const [view, setView] = useState("month");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [appointments, setAppointments] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [appointmentServices, setAppointmentServices] = useState([]);
   const [statusFilter, setStatusFilter] = useState("");
@@ -68,12 +70,17 @@ function Calendar()
   {
     try
     {
+      setIsLoading(true);
       const result = await getAppointmentsApi();
       setAppointments(result.appointments || []);
     }
     catch (err)
     {
       console.error(err);
+    }
+    finally
+    {
+      setIsLoading(false);
     }
   };
 
@@ -296,6 +303,8 @@ function Calendar()
   const firstDayOfMonth = new Date(year, monthIndex, 1).getDay();
   const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
   const weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
 
   const getDayStatuses = (dayAppointments) =>
   {
@@ -368,126 +377,136 @@ function Calendar()
           <div className="calendar-alert">Showing Pending Verification Appointments</div>
         )}
 
-        {view === "year" && (
-          <div className="year-grid">
-            {Array.from({ length: 12 }, (_, i) =>
-            {
-              const now = new Date();
-              const isCurrentMonth = year === now.getFullYear() && i === now.getMonth();
-              return (
-                <div key={i} className={`month-card ${isCurrentMonth ? "current" : ""}`} onClick={() => { setCurrentDate(new Date(year, i, 1)); setView("month"); }}>
-                  {new Date(year, i).toLocaleString("default", { month: "long" })}
-                </div>
-              );
-            })}
+        {isLoading ? (
+          <div className="calendar-loading">
+            <Spinner size="lg" />
           </div>
-        )}
-
-        {view === "month" && (
-          <div className="month-calendar">
-            <div className="weekday-row">
-              {weekDays.map(d => <div key={d} className="weekday-cell">{d}</div>)}
-            </div>
-            <div className="calendar-grid">
-              {Array.from({ length: firstDayOfMonth }).map((_, i) => <div key={`s-${i}`} className="calendar-cell empty" />)}
-              {Array.from({ length: daysInMonth }, (_, i) =>
-              {
-                const dateString = `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(i + 1).padStart(2, "0")}`;
-                const dayAppointments = filteredAppointments.filter(appt => appt.appointment_date === dateString);
-                const dayStatuses = getDayStatuses(dayAppointments);
-                const cellDate = new Date(year, monthIndex, i + 1);
-                const isToday = cellDate.toDateString() === new Date().toDateString();
-                return (
-                  <div key={i} className={`calendar-cell ${isToday ? "today" : ""}`} onClick={() => navigate_to_day(cellDate)}>
-                    {i + 1}
-                    {dayStatuses.length > 0 && (
-                      <div className="calendar-cell-dots">
-                        {dayStatuses.map(status => <span key={status} className={`calendar-cell-dot ${status}`} />)}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-              {Array.from({ length: (7 - ((firstDayOfMonth + daysInMonth) % 7)) % 7 }).map((_, i) => <div key={`e-${i}`} className="calendar-cell empty" />)}
-            </div>
-          </div>
-        )}
-
-        {view === "week" && (
-          <div className="week-calendar">
-            <div className="week-header">
-              <div className="time-col-header" />
-              {Array.from({ length: 7 }, (_, i) =>
-              {
-                const d = new Date(currentDate);
-                d.setDate(dayNumber - d.getDay() + i);
-                return (
-                  <div key={i} className={`week-day-header ${d.toDateString() === new Date().toDateString() ? "today" : ""}`}>
-                    <strong>{d.toLocaleString("default", { weekday: "long" })}</strong>
-                    <div className="week-date">{d.toLocaleString("default", { month: "short" })} {d.getDate()}</div>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="week-body">
-              <div className="time-column">
-                {Array.from({ length: 16 }, (_, i) => <div key={i} className="time-cell">{7 + i}:00</div>)}
-              </div>
-              <div className="week-grid-columns">
-                {Array.from({ length: 7 }).map((_, dayIndex) =>
+        ) : (
+          <>
+            {view === "year" && (
+              <div className="year-grid">
+                {Array.from({ length: 12 }, (_, i) =>
                 {
-                  const dayDate = new Date(currentDate);
-                  dayDate.setDate(currentDate.getDate() - currentDate.getDay() + dayIndex);
-                  const dateString = `${dayDate.getFullYear()}-${String(dayDate.getMonth() + 1).padStart(2, "0")}-${String(dayDate.getDate()).padStart(2, "0")}`;
-                  const dayAppointments = filteredAppointments.filter(appt => appt.appointment_date === dateString);
+                  const now = new Date();
+                  const isCurrentMonth = year === now.getFullYear() && i === now.getMonth();
                   return (
-                    <div key={dayIndex} className="week-day-column">
-                      {dayAppointments.map(appt =>
-                      {
-                        const startMinutes = convertTimeToMinutes(appt.appointment_time);
-                        const endMinutes = convertTimeToMinutes(appt.appointment_end_time);
-                        const clinicStart = 7 * 60;
-                        const slotHeight = 44;
-                        const top = ((startMinutes - clinicStart) / 60) * slotHeight;
-                        const height = Math.max(((endMinutes - startMinutes) / 60) * slotHeight, 40);
-                        return (
-                          <div key={appt.id} className={`week-appointment ${getStatusClass(appt.status)}`} style={{ top: `${top}px`, height: `${height}px` }} onClick={() => { setSelectedAppointment(appt); loadAppointmentServices(appt.id); }}>
-                            <strong>{appt.appointment_time}</strong>
-                            <div>{appt.patient?.full_name || appt.guest_name}</div>
-                            <div>{appt.service?.name}</div>
-                            <span className="week-appointment-badge">{appt.status?.replaceAll("_", " ")}</span>
-                          </div>
-                        );
-                      })}
+                    <div key={i} className={`month-card ${isCurrentMonth ? "current" : ""}`} onClick={() => { setCurrentDate(new Date(year, i, 1)); setView("month"); }}>
+                      {new Date(year, i).toLocaleString("default", { month: "long" })}
                     </div>
                   );
                 })}
               </div>
-            </div>
-          </div>
-        )}
+            )}
 
-        {view === "day" && (
-          <div className="day-grid">
-            {filteredAppointments
-              .filter(appt =>
-              {
-                const selectedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`;
-                return appt.appointment_date === selectedDate;
-              })
-              .map(appt => (
-                <div key={appt.id} className={`hour-row ${getStatusClass(appt.status)}`} onClick={() => { setSelectedAppointment(appt); loadAppointmentServices(appt.id); }}>
-                  <div className="hour-row-main">
-                    <span className="hour-row-time">{appt.appointment_time}</span>
-                    <span className="hour-row-patient">{appt.patient?.full_name || appt.guest_name}</span>
-                    <span className="hour-row-service">{appt.service?.name || "Service"}</span>
-                  </div>
-                  <span className={`hour-row-badge ${getStatusClass(appt.status)}`}>
-                    {appt.status?.replaceAll("_", " ")}
-                  </span>
+            {view === "month" && (
+              <div className="month-calendar">
+                <div className="weekday-row">
+                  {weekDays.map(d => <div key={d} className="weekday-cell">{d}</div>)}
                 </div>
-              ))}
-          </div>
+                <div className="calendar-grid">
+                  {Array.from({ length: firstDayOfMonth }).map((_, i) => <div key={`s-${i}`} className="calendar-cell empty" />)}
+                  {Array.from({ length: daysInMonth }, (_, i) =>
+                  {
+                    const dateString = `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(i + 1).padStart(2, "0")}`;
+                    const dayAppointments = filteredAppointments.filter(appt => appt.appointment_date === dateString);
+                    const dayStatuses = getDayStatuses(dayAppointments);
+                    const cellDate = new Date(year, monthIndex, i + 1);
+                    const isToday = cellDate.toDateString() === new Date().toDateString();
+                    const isPast = cellDate < todayStart;
+                    return (
+                      <div key={i} className={`calendar-cell ${isToday ? "today" : ""} ${isPast ? "past" : ""}`} onClick={() => navigate_to_day(cellDate)}>
+                        {i + 1}
+                        {dayStatuses.length > 0 && (
+                          <div className="calendar-cell-dots">
+                            {dayStatuses.map(status => <span key={status} className={`calendar-cell-dot ${status}`} />)}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {Array.from({ length: (7 - ((firstDayOfMonth + daysInMonth) % 7)) % 7 }).map((_, i) => <div key={`e-${i}`} className="calendar-cell empty" />)}
+                </div>
+              </div>
+            )}
+
+            {view === "week" && (
+              <div className="week-calendar">
+                <div className="week-header">
+                  <div className="time-col-header" />
+                  {Array.from({ length: 7 }, (_, i) =>
+                  {
+                    const d = new Date(currentDate);
+                    d.setDate(dayNumber - d.getDay() + i);
+                    return (
+                      <div key={i} className={`week-day-header ${d.toDateString() === new Date().toDateString() ? "today" : ""}`}>
+                        <strong>{d.toLocaleString("default", { weekday: "long" })}</strong>
+                        <div className="week-date">{d.toLocaleString("default", { month: "short" })} {d.getDate()}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="week-body">
+                  <div className="time-column">
+                    {Array.from({ length: 16 }, (_, i) => <div key={i} className="time-cell">{7 + i}:00</div>)}
+                  </div>
+                  <div className="week-grid-columns">
+                    {Array.from({ length: 7 }).map((_, dayIndex) =>
+                    {
+                      const dayDate = new Date(currentDate);
+                      dayDate.setDate(currentDate.getDate() - currentDate.getDay() + dayIndex);
+                      const dateString = `${dayDate.getFullYear()}-${String(dayDate.getMonth() + 1).padStart(2, "0")}-${String(dayDate.getDate()).padStart(2, "0")}`;
+                      const dayAppointments = filteredAppointments.filter(appt => appt.appointment_date === dateString);
+                      const isPastDay = dayDate < todayStart;
+                      return (
+                        <div key={dayIndex} className={`week-day-column ${isPastDay ? "past" : ""}`}>
+                          {dayAppointments.map(appt =>
+                          {
+                            const startMinutes = convertTimeToMinutes(appt.appointment_time);
+                            const endMinutes = convertTimeToMinutes(appt.appointment_end_time);
+                            const clinicStart = 7 * 60;
+                            const slotHeight = 44;
+                            const top = ((startMinutes - clinicStart) / 60) * slotHeight;
+                            const height = Math.max(((endMinutes - startMinutes) / 60) * slotHeight, 40);
+                            return (
+                              <div key={appt.id} className={`week-appointment ${getStatusClass(appt.status)}`} style={{ top: `${top}px`, height: `${height}px` }} onClick={() => { setSelectedAppointment(appt); loadAppointmentServices(appt.id); }}>
+                                <strong>{appt.appointment_time}</strong>
+                                <div>{appt.patient?.full_name || appt.guest_name}</div>
+                                <div>{appt.service?.name}</div>
+                                <span className="week-appointment-badge">{appt.status?.replaceAll("_", " ")}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {view === "day" && (
+              <div className="day-grid">
+                {filteredAppointments
+                  .filter(appt =>
+                  {
+                    const selectedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`;
+                    return appt.appointment_date === selectedDate;
+                  })
+                  .map(appt => (
+                    <div key={appt.id} className={`hour-row ${getStatusClass(appt.status)}`} onClick={() => { setSelectedAppointment(appt); loadAppointmentServices(appt.id); }}>
+                      <div className="hour-row-main">
+                        <span className="hour-row-time">{appt.appointment_time}</span>
+                        <span className="hour-row-patient">{appt.patient?.full_name || appt.guest_name}</span>
+                        <span className="hour-row-service">{appt.service?.name || "Service"}</span>
+                      </div>
+                      <span className={`hour-row-badge ${getStatusClass(appt.status)}`}>
+                        {appt.status?.replaceAll("_", " ")}
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </>
         )}
 
         {selectedAppointment && (
@@ -568,8 +587,8 @@ function Calendar()
                     </div>
                     <div className="appt-modal-link-group">
                       {selectedAppointment.receipt_url && (
-                        <a href={supabase.storage.from("receipts").getPublicUrl(selectedAppointment.receipt_url).data.publicUrl} target="_blank" rel="noopener noreferrer" className="appt-receipt-link">
-                          📄 View Downpayment Receipt
+                        <a href="#" className="appt-receipt-link" onClick={(e) => { e.preventDefault(); const fullName = selectedAppointment.patient?.full_name || selectedAppointment.guest_name; localStorage.setItem("highlightUserName", fullName); navigate("/users/userlist");}}>
+                          👤 View Patient Details
                         </a>
                       )}
                       <a href="#" className="appt-receipt-link" onClick={(e) => { e.preventDefault(); localStorage.setItem("highlightPaymentId", selectedAppointment.id); navigate("/payments"); }}>
@@ -680,7 +699,7 @@ function Calendar()
                 </div>
               </div>
               <div className="appointment-modal-actions" style={{ padding: "0 20px 20px" }}>
-                <button className="btn-reschedule" onClick={handleReschedule}>Save</button>
+                <button className="btn-save" onClick={handleReschedule}>Save</button>
                 <button className="modal-close-btn" onClick={() => setShowReschedule(false)}>Cancel</button>
               </div>
             </div>

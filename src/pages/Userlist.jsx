@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "../styles/users.css";
+import Spinner from "../components/Spinner";
 import 
 {
   getUsersApi,
@@ -52,6 +53,8 @@ function Userlist()
   const [totalUsers, setTotalUsers] = useState(0);
   const [page, setPage] = useState(1);
   const [showArchived, setShowArchived] = useState(false);
+  const [loadingUsers, setLoadingUsers] = useState(true);
+  const [savingEdit, setSavingEdit] = useState(false);
 
   const [filters, setFilters] = useState({ name: "", year: "", type: "" });
   const [appliedFilters, setAppliedFilters] = useState({ name: "", year: "", type: "" });
@@ -87,6 +90,7 @@ function Userlist()
 
   async function fetchUsers()
   {
+    setLoadingUsers(true);
     try
     {
       const result = await getUsersApi({
@@ -127,6 +131,10 @@ function Userlist()
     {
       console.error("Fetch users error:", error);
       alert(error.message);
+    }
+    finally
+    {
+      setLoadingUsers(false);
     }
   }
 
@@ -232,6 +240,7 @@ function Userlist()
 
   async function saveEditUser()
   {
+    setSavingEdit(true);
     try
     {
       await updateUserApi(editingUser.id, 
@@ -249,6 +258,10 @@ function Userlist()
     {
       console.error(error);
       alert(error.message);
+    }
+    finally
+    {
+      setSavingEdit(false);
     }
   }
 
@@ -321,8 +334,10 @@ function Userlist()
           </div>
 
           <div className="filter-actions">
-            <button className="btn-go" onClick={handleGo}>Apply</button>
-            <button className="btn-clear" onClick={handleClear}>Clear</button>
+            <button className="btn-go" onClick={handleGo} disabled={loadingUsers}>
+              {loadingUsers ? <Spinner size="sm" /> : "Apply"}
+            </button>
+            <button className="btn-clear" onClick={handleClear} disabled={loadingUsers}>Clear</button>
           </div>
         </div>
 
@@ -338,7 +353,11 @@ function Userlist()
             <span>Status</span>
           </div>
 
-          {users.length === 0 ? (
+          {loadingUsers ? (
+            <div className="users-empty">
+              <Spinner size="lg" />
+            </div>
+          ) : users.length === 0 ? (
             <div className="users-empty">No users found.</div>
           ) : (
             users.map((u, i) => (
@@ -377,11 +396,11 @@ function Userlist()
             {totalUsers > 0 ? `Showing ${pageStart}–${pageEnd} of ${totalUsers} users` : "No users"}
           </span>
           <div className="pagination">
-            <button className={`pagination-btn ${page === 1 ? "pagination-disabled" : ""}`} onClick={() => page > 1 && setPage(page - 1)} disabled={page === 1}>‹</button>
+            <button className={`pagination-btn ${page === 1 ? "pagination-disabled" : ""}`} onClick={() => page > 1 && setPage(page - 1)} disabled={page === 1 || loadingUsers}>‹</button>
             {pageNumbers.map((n) => (
-              <button key={n} className={`pagination-btn ${n === page ? "pagination-active" : ""}`} onClick={() => setPage(n)}>{n}</button>
+              <button key={n} className={`pagination-btn ${n === page ? "pagination-active" : ""}`} onClick={() => setPage(n)} disabled={loadingUsers}>{n}</button>
             ))}
-            <button className={`pagination-btn ${page >= totalPages ? "pagination-disabled" : ""}`} onClick={() => page < totalPages && setPage(page + 1)} disabled={page >= totalPages}>›</button>
+            <button className={`pagination-btn ${page >= totalPages ? "pagination-disabled" : ""}`} onClick={() => page < totalPages && setPage(page + 1)} disabled={page >= totalPages || loadingUsers}>›</button>
           </div>
         </div>
 
@@ -816,13 +835,15 @@ function Userlist()
 
               <div className="edit-modal-actions">
                 {showArchived ? (
-                  <button className="btn-clear" onClick={() => requestRestore(editingUser.id)}>Restore User</button>
+                  <button className="btn-clear" onClick={() => requestRestore(editingUser.id)} disabled={savingEdit}>Restore User</button>
                 ) : (
-                  <button className="btn-clear" onClick={() => requestArchive(editingUser.id)}>Archive User</button>
+                  <button className="btn-clear" onClick={() => requestArchive(editingUser.id)} disabled={savingEdit}>Archive User</button>
                 )}
                 <div className="edit-modal-actions-right">
-                  <button className="btn-modal-cancel" onClick={() => setEditingUser(null)}>Cancel</button>
-                  <button className="btn-modal-save" onClick={saveEditUser}>Save Changes</button>
+                  <button className="btn-modal-cancel" onClick={() => setEditingUser(null)} disabled={savingEdit}>Cancel</button>
+                  <button className="btn-modal-save" onClick={saveEditUser} disabled={savingEdit}>
+                    {savingEdit ? <Spinner size="sm" /> : "Save Changes"}
+                  </button>
                 </div>
               </div>
             </div>
@@ -840,7 +861,7 @@ function Userlist()
             <div className="confirm-modal-actions">
               <button className="btn-modal-cancel" onClick={cancelConfirmAction} disabled={confirmLoading}>Cancel</button>
               <button className={confirmAction.type === "archive" ? "btn-modal-cancel" : "btn-modal-save"} onClick={submitConfirmAction} disabled={confirmLoading}>
-                {confirmLoading ? "Verifying…" : confirmAction.type === "archive" ? "Archive" : "Restore"}
+                {confirmLoading ? <Spinner size="sm" /> : confirmAction.type === "archive" ? "Archive" : "Restore"}
               </button>
             </div>
           </div>

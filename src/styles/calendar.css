@@ -185,7 +185,7 @@
 
 .legend-dot.pending-verification
 {
-  background: #e3bb44;
+  background: #f4c430;
 }
 
 .legend-dot.scheduled
@@ -200,7 +200,7 @@
 
 .legend-dot.no-show
 {
-  background: #f59e0b;
+  background: #ff7a1a;
 }
 
 .legend-dot.cancelled
@@ -211,6 +211,14 @@
 .legend-dot.rejected
 {
   background: #6b7280;
+}
+
+.calendar-loading
+{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 0;
 }
 
 .year-grid
@@ -315,6 +323,24 @@
   box-shadow: inset 0 0 0 1.5px rgba(250, 19, 119, 0.4);
 }
 
+.calendar-cell.past
+{
+  background: #faf9fa;
+  color: #c4c0d6;
+}
+
+.calendar-cell.past:nth-child(7n),
+.calendar-cell.past:nth-child(7n-6)
+{
+  color: #f3b8d1;
+}
+
+.calendar-cell.past:hover
+{
+  background: #f5f3f7;
+  box-shadow: none;
+}
+
 .calendar-cell:not(.empty):hover
 {
   background: #fff0f6;
@@ -342,8 +368,8 @@
 
 .calendar-cell-dot.pending-verification
 {
-  background: #e3bb44;
-  box-shadow: 0 0 4px rgba(227, 187, 68, 0.5);
+  background: #f4c430;
+  box-shadow: 0 0 4px rgba(244, 196, 48, 0.5);
 }
 
 .calendar-cell-dot.scheduled
@@ -360,8 +386,8 @@
 
 .calendar-cell-dot.no-show
 {
-  background: #f59e0b;
-  box-shadow: 0 0 4px rgba(245, 158, 11, 0.5);
+  background: #ff7a1a;
+  box-shadow: 0 0 4px rgba(255, 122, 26, 0.5);
 }
 
 .calendar-cell-dot.cancelled
@@ -374,6 +400,36 @@
 {
   background: #6b7280;
   box-shadow: 0 0 4px rgba(107, 114, 128, 0.5);
+}
+
+.calendar-cell:hover .calendar-cell-dot.pending-verification
+{
+  background: #d4a017;
+}
+
+.calendar-cell:hover .calendar-cell-dot.scheduled
+{
+  background: #d40b62;
+}
+
+.calendar-cell:hover .calendar-cell-dot.completed
+{
+  background: #1e7a55;
+}
+
+.calendar-cell:hover .calendar-cell-dot.no-show
+{
+  background: #d4610f;
+}
+
+.calendar-cell:hover .calendar-cell-dot.cancelled
+{
+  background: #7a8085;
+}
+
+.calendar-cell:hover .calendar-cell-dot.rejected
+{
+  background: #4b5563;
 }
 
 .week-calendar
@@ -467,6 +523,16 @@
   min-height: 704px;
 }
 
+.week-day-column.past
+{
+  background: #faf9fa;
+}
+
+.week-day-column.past .week-appointment
+{
+  opacity: 0.55;
+}
+
 .week-slot
 {
   height: 44px;
@@ -485,23 +551,42 @@
   position: absolute;
   left: 4px;
   right: 4px;
+  box-sizing: border-box;
   border: none;
   border-left: 3px solid transparent;
   color: white;
   border-radius: 8px;
-  padding: 6px;
+  padding: 6px 8px;
   cursor: pointer;
   font-size: 11px;
+  line-height: 1.3;
   overflow: hidden;
   z-index: 10;
-  transition: 0.2s;
+  transition: z-index 0s, box-shadow 0.2s, transform 0.2s, background 0.2s;
   box-shadow: 0 1px 3px rgba(21, 14, 67, 0.08);
+}
+
+.week-appointment strong
+{
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.week-appointment div
+{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .week-appointment:hover
 {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(250, 19, 119, 0.25);
+  z-index: 50;
+  box-shadow: 0 6px 18px rgba(21, 14, 67, 0.3);
+  overflow: visible;
+  height: auto !important;
 }
 
 .week-appointment-badge
@@ -516,12 +601,13 @@
   padding: 1px 6px;
   border-radius: 999px;
   margin-top: 2px;
+  white-space: nowrap;
 }
 
 .week-appointment.pending-verification
 {
-  background: rgba(227, 187, 68, 0.88);
-  border-left-color: #b3920f;
+  background: rgba(244, 196, 48, 0.9);
+  border-left-color: #d4a017;
 }
 
 .week-appointment.scheduled
@@ -538,8 +624,8 @@
 
 .week-appointment.no-show
 {
-  background: rgba(245, 158, 11, 0.88);
-  border-left-color: #c2780a;
+  background: rgba(255, 122, 26, 0.9);
+  border-left-color: #d4610f;
 }
 
 .week-appointment.cancelled
@@ -552,6 +638,36 @@
 {
   background: rgba(107, 114, 128, 0.88);
   border-left-color: #4b5563;
+}
+
+.week-appointment.pending-verification:hover
+{
+  background: rgba(212, 160, 23, 1);
+}
+
+.week-appointment.scheduled:hover
+{
+  background: rgba(212, 11, 98, 1);
+}
+
+.week-appointment.completed:hover
+{
+  background: rgba(30, 122, 85, 1);
+}
+
+.week-appointment.no-show:hover
+{
+  background: rgba(212, 97, 15, 1);
+}
+
+.week-appointment.cancelled:hover
+{
+  background: rgba(122, 128, 133, 1);
+}
+
+.week-appointment.rejected:hover
+{
+  background: rgba(75, 85, 99, 1);
 }
 
 .day-grid
@@ -630,8 +746,8 @@
 
 .hour-row.pending-verification
 {
-  background: #fdf8e9;
-  border-left-color: #e3bb44;
+  background: #fdf3d0;
+  border-left-color: #f4c430;
 }
 
 .hour-row.scheduled
@@ -660,8 +776,44 @@
 
 .hour-row.no-show
 {
-  background: #fef3e2;
-  border-left-color: #f59e0b;
+  background: #ffe9d6;
+  border-left-color: #ff7a1a;
+}
+
+.hour-row.pending-verification:hover
+{
+  background: #faecb0;
+  border-left-color: #d4a017;
+}
+
+.hour-row.scheduled:hover
+{
+  background: #ffd7e9;
+  border-left-color: #d40b62;
+}
+
+.hour-row.completed:hover
+{
+  background: #cdf0db;
+  border-left-color: #1e7a55;
+}
+
+.hour-row.no-show:hover
+{
+  background: #ffd5b0;
+  border-left-color: #d4610f;
+}
+
+.hour-row.cancelled:hover
+{
+  background: #e6e6e8;
+  border-left-color: #7a8085;
+}
+
+.hour-row.rejected:hover
+{
+  background: #e3e3e3;
+  border-left-color: #4b5563;
 }
 
 .hour-row-badge
@@ -680,7 +832,7 @@
 
 .hour-row-badge.pending-verification
 {
-  background: #e3bb44;
+  background: #f4c430;
   color: #fff;
 }
 
@@ -710,7 +862,7 @@
 
 .hour-row-badge.no-show
 {
-  background: #f59e0b;
+  background: #ff7a1a;
   color: #fff;
 }
 
@@ -861,6 +1013,8 @@
 .appt-modal-status-card .appt-status-pill
 {
   width: fit-content;
+  max-width: none;
+  white-space: nowrap;
   font-size: 14px;
   padding: 8px 16px;
 }
@@ -945,8 +1099,8 @@
 
 .appt-status-pill.pending-verification
 {
-  background: rgb(254, 254, 194);
-  color: rgb(235, 190, 44);
+  background: #f4c430;
+  color: #fff;
 }
 
 .appt-status-pill.scheduled
@@ -963,8 +1117,8 @@
 
 .appt-status-pill.no-show
 {
-  background: #fff0d6;
-  color: #b45309;
+  background: #ff7a1a;
+  color: #fff;
 }
 
 .appt-status-pill.cancelled
@@ -996,17 +1150,24 @@
 
 .appt-receipt-link
 {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  gap: 8px;
   color: #FA1377;
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #fff0f6;
+  transition: 0.2s;
 }
 
 .appt-receipt-link:hover
 {
-  text-decoration: underline;
+  background: #ffd7e9;
+  text-decoration: none;
+  transform: translateX(2px);
 }
 
 .appointment-modal-actions
@@ -1039,7 +1200,7 @@
 .btn-cancel-b
 {
   border: none;
-  background: #9aa0a6;
+  background: #dc2626;
   color: white;
   padding: 8px 14px;
   border-radius: 8px;
@@ -1051,7 +1212,7 @@
 
 .btn-cancel-b:hover
 {
-  background: #7a8085;
+  background: #b91c1c;
 }
 
 .btn-no-show
@@ -1075,7 +1236,7 @@
 .btn-incomplete
 {
   border: none;
-  background: #FA1377;
+  background: #2a9d6f;
   color: white;
   padding: 10px 18px;
   border-radius: 10px;
@@ -1086,18 +1247,41 @@
 
 .btn-incomplete:hover
 {
-  background: #d40b62;
+  background: #1e7a55;
 }
 
 .btn-confirm-payment
 {
-  background: #FA1377;
+  background: #2a9d6f;
   color: white;
   border: none;
   padding: 10px 18px;
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-confirm-payment:hover
+{
+  background: #1e7a55;
+}
+
+.btn-save
+{
+  background: #2a9d6f;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.btn-save:hover
+{
+  background: #1e7a55;
 }
 
 .btn-reschedule
@@ -1121,7 +1305,7 @@
 
 .btn-reject-booking
 {
-  background: #6b7280;
+  background: #dc2626;
   color: white;
   border: none;
   padding: 12px 22px;
@@ -1133,15 +1317,15 @@
 
 .btn-reject-booking:hover
 {
-  background: #4b5563;
+  background: #b91c1c;
   transform: translateY(-1px);
 }
 
 .modal-close-btn
 {
   border: none;
-  background: #ddd;
-  color: #333;
+  background: #dc2626;
+  color: white;
   padding: 8px 14px;
   border-radius: 8px;
   cursor: pointer;
@@ -1152,7 +1336,7 @@
 
 .modal-close-btn:hover
 {
-  background: #cfcfcf;
+  background: #b91c1c;
 }
 
 .calendar-nav-btn
