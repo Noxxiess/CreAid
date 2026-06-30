@@ -57,11 +57,17 @@ function Userlist()
   const [appliedFilters, setAppliedFilters] = useState({ name: "", year: "", type: "" });
 
   const [editingUser, setEditingUser] = useState(null);
+  const [confirmAction, setConfirmAction] = useState(null);
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmError, setConfirmError] = useState("");
+  const [confirmLoading, setConfirmLoading] = useState(false);
   const [editForm, setEditForm] = useState({
     first_name: "", middle_name: "", last_name: "",
     address: "", contact_number: "", birthdate: "",
     sex: "", email: "", blood_type: "", civil_status: "",
-    occupation: "", company: "",
+    occupation: "", company: "", username: "",
+    position: "", employee_id: "", date_hired: "", employment_status: "",
+    prc_license_number: "", specialization: "",
   });
   const [guardian, setGuardian] = useState({
     father_name: "", father_occupation: "", father_contact: "",
@@ -107,6 +113,7 @@ function Userlist()
         civil_status: u.civil_status,
         occupation: u.occupation,
         company: u.company,
+        username: u.username,
         created: new Date(u.created_at).toLocaleDateString("en-US", {
           month: "short", day: "numeric", year: "numeric",
         }),
@@ -123,36 +130,68 @@ function Userlist()
     }
   }
 
-  async function archiveUser(id)
+  function requestArchive(id)
   {
-    if (!window.confirm("Archive this user?")) return;
+    setConfirmAction({ type: "archive", id });
+    setConfirmPassword("");
+    setConfirmError("");
+  }
+
+  function requestRestore(id)
+  {
+    setConfirmAction({ type: "restore", id });
+    setConfirmPassword("");
+    setConfirmError("");
+  }
+
+  async function submitConfirmAction()
+  {
+    if (!confirmPassword)
+    {
+      setConfirmError("Password is required.");
+      return;
+    }
+
+    setConfirmLoading(true);
+    setConfirmError("");
 
     try
     {
-      await archiveUserApi(id);
+      // TODO: once a backend "verify current password" endpoint exists,
+      // call it here and only proceed on success, e.g.:
+      // await verifyPasswordApi(confirmPassword);
+
+      if (confirmAction.type === "archive")
+      {
+        await archiveUserApi(confirmAction.id);
+      }
+      else
+      {
+        await restoreUserApi(confirmAction.id);
+      }
+
+      setConfirmAction(null);
+      setConfirmPassword("");
+      setEditingUser(null);
       fetchUsers();
     }
     catch (error)
     {
       console.error(error);
-      alert(error.message);
+      setConfirmError(error.message || "Something went wrong. Please try again.");
+    }
+    finally
+    {
+      setConfirmLoading(false);
     }
   }
 
-  async function restoreUser(id)
+  function cancelConfirmAction()
   {
-    if (!window.confirm("Restore this user?")) return;
-
-    try
-    {
-      await restoreUserApi(id);
-      fetchUsers();
-    }
-    catch (error)
-    {
-      console.error(error);
-      alert(error.message);
-    }
+    if (confirmLoading) return;
+    setConfirmAction(null);
+    setConfirmPassword("");
+    setConfirmError("");
   }
 
   function editUser(user)
@@ -171,6 +210,13 @@ function Userlist()
       civil_status: user.civil_status || "",
       occupation: user.occupation || "",
       company: user.company || "",
+      username: user.username || "",
+      position: user.position || "",
+      employee_id: user.employee_id || "",
+      date_hired: user.date_hired || "",
+      employment_status: user.employment_status || "",
+      prc_license_number: user.prc_license_number || "",
+      specialization: user.specialization || "",
     });
     setGuardian({
       father_name: "", father_occupation: "", father_contact: "",
@@ -237,6 +283,9 @@ function Userlist()
   const pageEnd = Math.min(page * PAGE_SIZE, totalUsers);
   const pageNumbers = Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1);
   const isPatient = editingUser?.role?.toLowerCase() === "patient";
+  const isAdmin = editingUser?.role?.toLowerCase() === "admin";
+  const isStaff = editingUser?.role?.toLowerCase() === "staff";
+  const isDentist = editingUser?.role?.toLowerCase() === "dentist";
 
   return (
     <div className="users-content">
@@ -297,9 +346,9 @@ function Userlist()
                 <span className="row-actions">
                   <button className="edit-btn" title="Edit user" onClick={() => editUser(u)}>✏️</button>
                   {showArchived ? (
-                    <button className="edit-btn" title="Restore user" onClick={() => restoreUser(u.id)}>↩️</button>
+                    <button className="edit-btn" title="Restore user" onClick={() => requestRestore(u.id)}>↩️</button>
                   ) : (
-                    <button className="edit-btn" title="Archive user" onClick={() => archiveUser(u.id)}>📁</button>
+                    <button className="edit-btn" title="Archive user" onClick={() => requestArchive(u.id)}>📁</button>
                   )}
                 </span>
                 <span>
@@ -351,6 +400,7 @@ function Userlist()
                 <span className={`role-badge ${getRoleBadgeClass(editingUser.role)}`}>{editingUser.role}</span>
                 <div className="modal-left-id">{editingUser.id}</div>
                 <div className="modal-left-row">Created: {editingUser.created}</div>
+                <div className="modal-left-row">Last Login: {editingUser.lastOnline || "—"}</div>
                 <span className="status-online" style={{ fontSize: "11px", padding: "2px 8px" }}>
                   <span className="status-dot" /> Online
                 </span>
@@ -359,137 +409,439 @@ function Userlist()
 
             <div className="modal-right">
               <div className="modal-right-header">
-                <h3>Edit {isPatient ? "Patient" : "User"}</h3>
+                <h3>Edit {isAdmin ? "Admin" : isPatient ? "Patient" : isStaff ? "Staff" : isDentist ? "Dentist" : "User"}</h3>
                 <button className="modal-close-btn" onClick={() => setEditingUser(null)}>✕</button>
               </div>
 
-              <div className="modal-section-title">Personal Information</div>
-              <div className="modal-row">
-                <div className="modal-field">
-                  <label>Full Name</label>
-                  <div className="modal-field-static">{`${editForm.last_name}, ${editForm.first_name} ${editForm.middle_name}` || "—"}</div>
-                </div>
-              </div>
-
-              <div className="modal-row">
-                <div className="modal-field">
-                  <label>Birthdate</label>
-                  <div className="modal-field-static">{editForm.birthdate || "—"}</div>
-                </div>
-
-                <div className="modal-field">
-                  <label>Sex</label>
-                  <div className="modal-field-static">{editForm.sex || "—"}</div>
-                </div>
-
-                <div className="modal-field">
-                  <label>Blood Type</label>
-                  <div className="modal-field-static">{editForm.blood_type || "—"}</div>
-                </div>
-
-                <div className="modal-field">
-                  <label>Civil Status</label>
-                  <div className="modal-field-static">{editForm.civil_status || "—"}</div>
-                </div>
-              </div>
-
-              <div className="modal-row">
-                <div className="modal-field" style={{ flex: 2 }}>
-                  <label>Address</label>
-                  <div className="modal-field-static">{editForm.address || "—"}</div>
-                </div>
-
-                <div className="modal-field">
-                  <label>Contact No.</label>
-                  <div className="modal-field-static">{editForm.contact_number || "—"}</div>
-                </div>
-
-                <div className="modal-field">
-                  <label>Email</label>
-                  <div className="modal-field-static">{editForm.email || "—"}</div>
-                </div>
-              </div>
-
-              <div className="modal-row">
-                <div className="modal-field">
-                  <label>Occupation</label>
-                  <div className="modal-field-static">{editForm.occupation || "—"}</div>
-                </div>
-
-                <div className="modal-field">
-                  <label>Company</label>
-                  <div className="modal-field-static">{editForm.company || "—"}</div>
-                </div>
-              </div>
-
-              {isPatient && (
+              {isAdmin ? (
                 <>
-                  <div className="modal-section-title">Guardian Information</div>
-                  {[
-                    { label: "Father", prefix: "father" },
-                    { label: "Mother", prefix: "mother" },
-                    { label: "Guardian", prefix: "guardian" },
-                  ].map(({ label, prefix }) => (
-                    <div className="modal-row" key={prefix}>
-                      <div className="modal-field">
-                        <label>{label}'s Name</label>
-                        <div className="modal-field-static">{guardian[`${prefix}_name`] || "—"}</div>
-                      </div>
-
-                      <div className="modal-field">
-                        <label>Occupation</label>
-                        <div className="modal-field-static">{guardian[`${prefix}_occupation`] || "—"}</div>
-                      </div>
-
-                      <div className="modal-field">
-                        <label>Contact No.</label>
-                        <div className="modal-field-static">{guardian[`${prefix}_contact`] || "—"}</div>
+                  <div className="modal-section-title">Personal Information</div>
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Full Name</label>
+                      <div className="modal-field-static">{`${editForm.last_name}, ${editForm.first_name}${editForm.middle_name ? " " + editForm.middle_name : ""}` || "—"}</div>
+                    </div>
+                  </div>
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Username</label>
+                      <div className="modal-field-static">{editForm.username || "—"}</div>
+                    </div>
+                    <div className="modal-field">
+                      <label>Email</label>
+                      <div className="modal-field-static">{editForm.email || "—"}</div>
+                    </div>
+                    <div className="modal-field">
+                      <label>Phone Number</label>
+                      <div className="modal-field-static">{editForm.contact_number || "—"}</div>
+                    </div>
+                  </div>
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Password</label>
+                      <div className="modal-field-inline">
+                        <div className="modal-field-static">••••••••••</div>
+                        <button className="btn-clear" onClick={() => alert("Change password flow not implemented yet.")}>Change</button>
                       </div>
                     </div>
-                  ))}
-
-                  <div className="modal-section-title">Medical Information</div>
-                  {[
-                    { label: "Previous Hospitalizations", field: "previous_hospitalizations" },
-                    { label: "Prescribed Medications", field: "prescribed_medications" },
-                    { label: "Allergies to Medications", field: "allergies" },
-                    { label: "Family Medical Problems", field: "family_medical_problems" },
-                    { label: "Other Medical Concerns", field: "other_concerns" },
-                    { label: "Medical Alert", field: "medical_alert" },
-                    { label: "Patient's Diet", field: "diet" },
-                  ].map(({ label, field }) => (
-                    <div className="modal-field" key={field}>
-                      <label>{label}</label>
-                      <div className="modal-field-static">{medical[field] || "—"}</div>
+                  </div>
+                </>
+              ) : isPatient ? (
+                <>
+                  <div className="modal-section-title">Personal Information</div>
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Full Name</label>
+                      <div className="modal-field-static">{`${editForm.last_name}, ${editForm.first_name} ${editForm.middle_name}` || "—"}</div>
                     </div>
-                  ))}
-
-                  <div className="modal-section-title">Medical Conditions</div>
-                  <div className="modal-checkbox-group">
-                    {MEDICAL_CONDITIONS.map((c) => (
-                      <label key={c}>
-                        <input type="checkbox" checked={medical.conditions.includes(c)} onChange={() => toggleCheckbox("conditions", c)} />
-                        {c}
-                      </label>
-                    ))}
                   </div>
 
-                  <div className="modal-section-title">Dental Habits</div>
-                  <div className="modal-checkbox-group">
-                    {DENTAL_HABITS.map((h) => (
-                      <label key={h}>
-                        <input type="checkbox" checked={medical.dental_habits.includes(h)} onChange={() => toggleCheckbox("dental_habits", h)} />
-                        {h}
-                      </label>
-                    ))}
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Username</label>
+                      <div className="modal-field-static">{editForm.username || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Password</label>
+                      <div className="modal-field-inline">
+                        <div className="modal-field-static">••••••••••</div>
+                        <button className="btn-clear" onClick={() => alert("Change password flow not implemented yet.")}>Change</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Birthdate</label>
+                      <div className="modal-field-static">{editForm.birthdate || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Sex</label>
+                      <div className="modal-field-static">{editForm.sex || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Blood Type</label>
+                      <div className="modal-field-static">{editForm.blood_type || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Civil Status</label>
+                      <div className="modal-field-static">{editForm.civil_status || "—"}</div>
+                    </div>
+                  </div>
+
+                  <div className="modal-row">
+                    <div className="modal-field" style={{ flex: 2 }}>
+                      <label>Address</label>
+                      <div className="modal-field-static">{editForm.address || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Contact No.</label>
+                      <div className="modal-field-static">{editForm.contact_number || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Email</label>
+                      <div className="modal-field-static">{editForm.email || "—"}</div>
+                    </div>
+                  </div>
+
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Occupation</label>
+                      <div className="modal-field-static">{editForm.occupation || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Company</label>
+                      <div className="modal-field-static">{editForm.company || "—"}</div>
+                    </div>
+                  </div>
+
+                  {isPatient && (
+                    <>
+                      <details className="modal-details">
+                        <summary className="modal-section-title">Guardian Information</summary>
+                        {[
+                          { label: "Father", prefix: "father" },
+                          { label: "Mother", prefix: "mother" },
+                          { label: "Guardian", prefix: "guardian" },
+                        ].map(({ label, prefix }) => (
+                          <div className="modal-row modal-row-compact" key={prefix}>
+                            <div className="modal-field">
+                              <label>{label}'s Name</label>
+                              <div className="modal-field-static">{guardian[`${prefix}_name`] || "—"}</div>
+                            </div>
+
+                            <div className="modal-field">
+                              <label>Occupation</label>
+                              <div className="modal-field-static">{guardian[`${prefix}_occupation`] || "—"}</div>
+                            </div>
+
+                            <div className="modal-field">
+                              <label>Contact No.</label>
+                              <div className="modal-field-static">{guardian[`${prefix}_contact`] || "—"}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </details>
+
+                      <details className="modal-details">
+                        <summary className="modal-section-title">Medical Information</summary>
+                        <div className="modal-row modal-row-compact">
+                          {[
+                            { label: "Previous Hospitalizations", field: "previous_hospitalizations" },
+                            { label: "Prescribed Medications", field: "prescribed_medications" },
+                            { label: "Allergies to Medications", field: "allergies" },
+                            { label: "Family Medical Problems", field: "family_medical_problems" },
+                            { label: "Other Medical Concerns", field: "other_concerns" },
+                            { label: "Medical Alert", field: "medical_alert" },
+                            { label: "Patient's Diet", field: "diet" },
+                          ].map(({ label, field }) => (
+                            <div className="modal-field" key={field}>
+                              <label>{label}</label>
+                              <div className="modal-field-static">{medical[field] || "—"}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </details>
+
+                      <details className="modal-details">
+                        <summary className="modal-section-title">
+                          Medical Conditions
+                          {medical.conditions.length > 0 && <span className="modal-summary-count"> ({medical.conditions.length} reported)</span>}
+                        </summary>
+                        <div className="modal-tag-group">
+                          {medical.conditions.length > 0 ? (
+                            medical.conditions.map((c) => (
+                              <span className="modal-tag" key={c}>{c}</span>
+                            ))
+                          ) : (
+                            <span className="modal-field-static">None reported</span>
+                          )}
+                        </div>
+                      </details>
+
+                      <details className="modal-details">
+                        <summary className="modal-section-title">
+                          Dental Habits
+                          {medical.dental_habits.length > 0 && <span className="modal-summary-count"> ({medical.dental_habits.length} reported)</span>}
+                        </summary>
+                        <div className="modal-tag-group">
+                          {medical.dental_habits.length > 0 ? (
+                            medical.dental_habits.map((h) => (
+                              <span className="modal-tag" key={h}>{h}</span>
+                            ))
+                          ) : (
+                            <span className="modal-field-static">None reported</span>
+                          )}
+                        </div>
+                      </details>
+                    </>
+                  )}
+                </>
+              ) : isStaff ? (
+                <>
+                  <div className="modal-section-title">Personal Information</div>
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Full Name</label>
+                      <div className="modal-field-static">{`${editForm.last_name}, ${editForm.first_name}${editForm.middle_name ? " " + editForm.middle_name : ""}` || "—"}</div>
+                    </div>
+                  </div>
+
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Username</label>
+                      <div className="modal-field-static">{editForm.username || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Password</label>
+                      <div className="modal-field-inline">
+                        <div className="modal-field-static">••••••••••</div>
+                        <button className="btn-clear" onClick={() => alert("Change password flow not implemented yet.")}>Change</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Email</label>
+                      <div className="modal-field-static">{editForm.email || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Contact Number</label>
+                      <div className="modal-field-static">{editForm.contact_number || "—"}</div>
+                    </div>
+                  </div>
+
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Birthdate</label>
+                      <div className="modal-field-static">{editForm.birthdate || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Sex</label>
+                      <div className="modal-field-static">{editForm.sex || "—"}</div>
+                    </div>
+                  </div>
+
+                  <div className="modal-row">
+                    <div className="modal-field" style={{ flex: 2 }}>
+                      <label>Address</label>
+                      <div className="modal-field-static">{editForm.address || "—"}</div>
+                    </div>
+                  </div>
+
+                  <div className="modal-section-title">Employment Information</div>
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Position</label>
+                      <div className="modal-field-static">{editForm.position || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Date Hired</label>
+                      <div className="modal-field-static">{editForm.date_hired || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Employment Status</label>
+                      <div className="modal-field-static">{editForm.employment_status || "—"}</div>
+                    </div>
+                  </div>
+                </>
+              ) : isDentist ? (
+                <>
+                  <div className="modal-section-title">Personal Information</div>
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Full Name</label>
+                      <div className="modal-field-static">{`${editForm.last_name}, ${editForm.first_name}${editForm.middle_name ? " " + editForm.middle_name : ""}` || "—"}</div>
+                    </div>
+                  </div>
+
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Username</label>
+                      <div className="modal-field-static">{editForm.username || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Password</label>
+                      <div className="modal-field-inline">
+                        <div className="modal-field-static">••••••••••</div>
+                        <button className="btn-clear" onClick={() => alert("Change password flow not implemented yet.")}>Change</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Email</label>
+                      <div className="modal-field-static">{editForm.email || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Phone Number</label>
+                      <div className="modal-field-static">{editForm.contact_number || "—"}</div>
+                    </div>
+                  </div>
+
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Birthdate</label>
+                      <div className="modal-field-static">{editForm.birthdate || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Sex</label>
+                      <div className="modal-field-static">{editForm.sex || "—"}</div>
+                    </div>
+                  </div>
+
+                  <div className="modal-row">
+                    <div className="modal-field" style={{ flex: 2 }}>
+                      <label>Address</label>
+                      <div className="modal-field-static">{editForm.address || "—"}</div>
+                    </div>
+                  </div>
+
+                  <div className="modal-section-title">Employment Information</div>
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Position</label>
+                      <div className="modal-field-static">{editForm.position || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Employee ID</label>
+                      <div className="modal-field-static">{editForm.employee_id || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Date Hired</label>
+                      <div className="modal-field-static">{editForm.date_hired || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Employment Status</label>
+                      <div className="modal-field-static">{editForm.employment_status || "—"}</div>
+                    </div>
+                  </div>
+
+                  <div className="modal-section-title">Professional Information</div>
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>PRC License Number</label>
+                      <div className="modal-field-static">{editForm.prc_license_number || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Specialization</label>
+                      <div className="modal-field-static">{editForm.specialization || "—"}</div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="modal-section-title">Personal Information</div>
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Full Name</label>
+                      <div className="modal-field-static">{`${editForm.last_name}, ${editForm.first_name} ${editForm.middle_name}` || "—"}</div>
+                    </div>
+                  </div>
+
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Username</label>
+                      <div className="modal-field-static">{editForm.username || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Password</label>
+                      <div className="modal-field-inline">
+                        <div className="modal-field-static">••••••••••</div>
+                        <button className="btn-clear" onClick={() => alert("Change password flow not implemented yet.")}>Change</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="modal-row">
+                    <div className="modal-field" style={{ flex: 2 }}>
+                      <label>Address</label>
+                      <div className="modal-field-static">{editForm.address || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Contact No.</label>
+                      <div className="modal-field-static">{editForm.contact_number || "—"}</div>
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Email</label>
+                      <div className="modal-field-static">{editForm.email || "—"}</div>
+                    </div>
                   </div>
                 </>
               )}
 
               <div className="edit-modal-actions">
-                <button className="btn-clear" onClick={() => setEditingUser(null)}>Cancel</button>
-                <button className="btn-go" onClick={saveEditUser}>Save Changes</button>
+                {showArchived ? (
+                  <button className="btn-clear" onClick={() => requestRestore(editingUser.id)}>Restore User</button>
+                ) : (
+                  <button className="btn-clear" onClick={() => requestArchive(editingUser.id)}>Archive User</button>
+                )}
+                <div className="edit-modal-actions-right">
+                  <button className="btn-modal-cancel" onClick={() => setEditingUser(null)}>Cancel</button>
+                  <button className="btn-modal-save" onClick={saveEditUser}>Save Changes</button>
+                </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmAction && (
+        <div className="edit-modal-overlay" onClick={(e) => e.target === e.currentTarget && cancelConfirmAction()}>
+          <div className="confirm-modal">
+            <h3>{confirmAction.type === "archive" ? "Archive User" : "Restore User"}</h3>
+            <p>For security, please enter your current password to {confirmAction.type === "archive" ? "archive" : "restore"} this account.</p>
+            <input type="password" className="confirm-modal-input" placeholder="Enter your password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submitConfirmAction()} autoFocus disabled={confirmLoading}/>
+            {confirmError && <div className="confirm-modal-error">{confirmError}</div>}
+            <div className="confirm-modal-actions">
+              <button className="btn-modal-cancel" onClick={cancelConfirmAction} disabled={confirmLoading}>Cancel</button>
+              <button className={confirmAction.type === "archive" ? "btn-modal-cancel" : "btn-modal-save"} onClick={submitConfirmAction} disabled={confirmLoading}>
+                {confirmLoading ? "Verifying…" : confirmAction.type === "archive" ? "Archive" : "Restore"}
+              </button>
             </div>
           </div>
         </div>
