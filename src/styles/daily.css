@@ -59,9 +59,15 @@
     grid-template-columns: 1fr 1.5fr 1fr 1fr 1.5fr 1fr; 
 }
 
-.daily-cols-procedures 
-{ 
-    grid-template-columns: 1fr 1.5fr 1fr 1.5fr 1fr 1fr; 
+.daily-cols-procedures
+{
+  grid-template-columns:
+    1fr
+    1.5fr
+    1fr
+    3fr
+    1fr
+    1fr;
 }
 .daily-cols-6-even 
 { 
@@ -403,4 +409,127 @@
   {
     font-size: 16px;
   }
+}
+.daily-row-rejected{
+  background: #fee2e2 !important;
+  color: #991b1b;
+}
+
+.daily-row-rejected span:last-child{
+  font-weight: 700;
+  color: #dc2626;
+}
+.daily-cols-overpayment
+{
+  display: grid;
+  grid-template-columns:
+    1fr
+    2fr
+    1fr
+    1fr
+    1fr
+    1fr;
+
+  align-items: center;
+  gap: 12px;
+
+  padding: 14px 18px;
+
+  border-bottom:
+    1px solid #ece8f5;
+}
+.daily-cols-overpayment span
+{
+  display: block;
+}
+.daily-modal-overlay
+{
+  position: fixed;
+  inset: 0;
+
+  background:
+    rgba(0,0,0,0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
+}
+
+.daily-modal
+{
+  width: 95%;
+  max-width: 1400px;
+
+  height: 90vh;
+
+  background: white;
+
+  border-radius: 14px;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+}
+
+.daily-modal-header
+{
+  display: flex;
+
+  justify-content:
+    space-between;
+
+  align-items: center;
+
+  padding: 18px 24px;
+
+  border-bottom:
+    1px solid #eee;
+  
+  color: #FA1377;
+}
+
+.daily-modal-body
+{
+  flex: 1;
+
+  overflow-y: auto;
+
+  padding: 20px;
+}
+
+.daily-modal-close
+{
+  border: none;
+
+  background: none;
+
+  font-size: 22px;
+
+  cursor: pointer;
+}
+.daily-modal-body .daily-td span
+{
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  word-break: break-word;
+}
+
+.financial-filter-row
+{
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.financial-filter-row select
+{
+  height: 38px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0 12px;
 }

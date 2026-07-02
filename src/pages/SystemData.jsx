@@ -11,7 +11,7 @@ const CATEGORIES = [
     pageTitle: "HMO",
     pageSubtitle: "Manage health maintenance organization list.",
     addLabel: "+ New HMO",
-    columns: ["#", "Name", "Coverage Details", "Discount %", "Status"],
+    columns: ["Name", "Coverage Details", "Discount %", "Status"],
   },
   {
     key: "services",
@@ -21,7 +21,7 @@ const CATEGORIES = [
     pageTitle: "Services / Bill Items",
     pageSubtitle: "Manage account services or bill items list.",
     addLabel: "+ New Service / Bill Item",
-    columns: ["#", "Name", "Details", "Default Amount", "Auto Add?"],
+    columns: ["Name", "Details", "Default Amount", "Duration"],
   },
   {
     key: "medicines",
@@ -31,7 +31,7 @@ const CATEGORIES = [
     pageTitle: "Medicines",
     pageSubtitle: "Manage clinic medicine inventory list.",
     addLabel: "+ New Medicine",
-    columns: ["#", "Name", "Generic Name", "Dosage", "Unit", "Stock"],
+    columns: ["Name", "Generic Name", "Dosage", "Unit", "Stock"],
   },
   {
     key: "templates",
@@ -41,7 +41,7 @@ const CATEGORIES = [
     pageTitle: "Templates",
     pageSubtitle: "Manage document and prescription templates.",
     addLabel: "+ New Template",
-    columns: ["#", "Name", "Type", "Last Updated"],
+    columns: ["Name", "Type", "Last Updated"],
   },
   {
     key: "dental-habits",
@@ -51,7 +51,7 @@ const CATEGORIES = [
     pageTitle: "Dental Habits",
     pageSubtitle: "Manage dental habit entries for patient records.",
     addLabel: "+ New Dental Habit",
-    columns: ["#", "Habit Name", "Description", "Risk Level"],
+    columns: ["Habit Name", "Description", "Risk Level"],
   },
   {
     key: "medical-conditions",
@@ -61,7 +61,7 @@ const CATEGORIES = [
     pageTitle: "Medical Conditions",
     pageSubtitle: "Manage medical condition entries used in patient charts.",
     addLabel: "+ New Condition",
-    columns: ["#", "Condition Name", "ICD Code", "Notes"],
+    columns: ["Condition Name", "ICD Code", "Notes"],
   },
   {
     key: "tooth-items",
@@ -71,7 +71,7 @@ const CATEGORIES = [
     pageTitle: "Tooth Items",
     pageSubtitle: "Manage tooth chart item definitions.",
     addLabel: "+ New Tooth Item",
-    columns: ["#", "Name", "Abbreviation", "Color Tag", "Category"],
+    columns: ["Name", "Abbreviation", "Color Tag", "Category"],
   },
   {
     key: "recall-items",
@@ -81,7 +81,7 @@ const CATEGORIES = [
     pageTitle: "Recall Items",
     pageSubtitle: "Manage patient recall and follow-up templates.",
     addLabel: "+ New Recall Item",
-    columns: ["#", "Name", "Interval (days)", "Message Template"],
+    columns: ["Name", "Interval (days)", "Message Template"],
   },
 ];
 
@@ -114,28 +114,121 @@ function MasterfileTable({ category, onBack }) {
   const [toothCategory, setToothCategory] = useState("");
   const [showModal, setShowModal] = useState(false);
 
+  const [durationMinutes, setDurationMinutes] = useState("");
+
+  const [templateType, setTemplateType] = useState("");
+
+  const [templateFile, setTemplateFile] = useState(null);
+
+  const [editingRow, setEditingRow] =
+  useState(null);
+
 
   useEffect(() => {
     fetchRows();
   }, [category]);
 
+  async function handleArchive(id)
+{
+
+  if(category.key === "services")
+{
+  const { error } =
+    await supabase
+      .from("services")
+      .update({
+        active: false
+      })
+      .eq(
+        "id",
+        id
+      );
+
+  if(error)
+  {
+    console.log(error);
+    alert("Archive failed");
+    return;
+  }
+
+  fetchRows();
+  return;
+}
+
+  const tableMap = {
+    medicines: "medicines",
+    services: "services",
+    hmo: "hmo",
+    "dental-habits": "dental_habits",
+    "medical-conditions":
+      "medical_conditions",
+    "tooth-items":
+      "tooth_items",
+    templates: "templates",
+  };
+
+  const tableName =
+    tableMap[category.key];
+
+  const { error } =
+    await supabase
+      .from(tableName)
+      .update({
+        is_archived: true
+      })
+      .eq("id", id);
+
+  if(error)
+  {
+    console.log(error);
+    alert("Archive failed");
+    return;
+  }
+
+  fetchRows();
+}
+
   async function fetchRows() {
     const tableMap = {
       medicines: "medicines",
-      services: "web_services",
+      services: "services",
       hmo: "hmo",
       "dental-habits": "dental_habits",
       "medical-conditions": "medical_conditions",
       "tooth-items": "tooth_items",
+      templates: "templates",
     };
 
     const tableName = tableMap[category.key];
 
     if (!tableName) return;
 
-    const { data, error } = await supabase
-      .from(tableName)
-      .select("*");
+    let query =
+  supabase
+    .from(tableName)
+    .select("*");
+
+if(category.key === "services")
+{
+  query =
+    query.eq(
+      "active",
+      true
+    );
+}
+else
+{
+  query =
+    query.eq(
+      "is_archived",
+      false
+    );
+}
+
+const {
+  data,
+  error
+} = await query;
 
     if (error) {
       console.log(error);
@@ -143,6 +236,144 @@ function MasterfileTable({ category, onBack }) {
       setRows(data);
     }
   }
+
+  function handleEdit(row)
+{
+  setEditingRow(row);
+
+  setName(row.name || "");
+  setCoverageDetails(row.coverage_details || "");
+  setDiscountPercent(row.discount_percent || "");
+  setStatus(row.status || "Active");
+
+  setDetails(row.description || "");
+  setDefaultAmount(row.price || "");
+  setAutoAdd(row.auto_add || false);
+
+  setGenericName(row.generic_name || "");
+  setDosage(row.dosage || "");
+  setUnit(row.unit || "");
+  setStock(row.stock || "");
+
+  setDescription(row.description || "");
+  setRiskLevel(row.risk_level || "Low");
+
+  setIcdCode(row.icd_code || "");
+  setNotes(row.notes || "");
+
+  setAbbreviation(row.abbreviation || "");
+  setColorTag(row.color_tag || "#ff0000");
+  setToothCategory(row.category || "");
+
+  setTemplateType(row.type || "");
+
+  setDurationMinutes(row.duration_minutes || "");
+
+  setShowModal(true);
+}
+
+async function handleUpdate()
+{
+  const tableMap = {
+    medicines: "medicines",
+    services: "services",
+    hmo: "hmo",
+    "dental-habits": "dental_habits",
+    "medical-conditions": "medical_conditions",
+    "tooth-items": "tooth_items",
+    templates: "templates",
+  };
+
+  const tableName =
+    tableMap[category.key];
+
+  let payload = {};
+
+  if(category.key === "medicines")
+  {
+    payload = {
+      name,
+      generic_name: genericName,
+      dosage,
+      unit,
+      stock
+    };
+  }
+
+  if(category.key === "services")
+  {
+    payload = {
+    name,
+    description: details,
+    price: defaultAmount,
+    duration_minutes: durationMinutes,
+    duration: `${durationMinutes} mins`
+};
+  }
+
+  if(category.key === "hmo")
+  {
+    payload = {
+      name,
+      coverage_details: coverageDetails,
+      discount_percent: discountPercent,
+      status
+    };
+  }
+
+  if(category.key === "dental-habits")
+  {
+    payload = {
+      name,
+      description,
+      risk_level: riskLevel
+    };
+  }
+
+  if(category.key === "medical-conditions")
+  {
+    payload = {
+      name,
+      icd_code: icdCode,
+      notes
+    };
+  }
+
+  if(category.key === "tooth-items")
+  {
+    payload = {
+      name,
+      abbreviation,
+      color_tag: colorTag,
+      category: toothCategory
+    };
+  }
+
+  if(category.key === "templates")
+{
+  payload = {
+    name,
+    type: templateType
+  };
+}
+
+  const { error } =
+    await supabase
+      .from(tableName)
+      .update(payload)
+      .eq("id", editingRow.id);
+
+  if(error)
+  {
+    console.log(error);
+    alert("Update failed");
+    return;
+  }
+
+  setEditingRow(null);
+  setShowModal(false);
+  fetchRows();
+}
 
   async function handleAddMedicine() {
 
@@ -177,35 +408,40 @@ function MasterfileTable({ category, onBack }) {
     }
   }
 
-  async function handleAddService() {
+  async function handleAddService()
+{
+  const { error } =
+    await supabase
+      .from("services")
+      .insert([
+        {
+          name: name,
+          description: details,
+          price: defaultAmount,
+          duration_minutes: durationMinutes,
+          duration: `${durationMinutes} mins`,
+          icon: "🦷",
+          active: true
+        }
+      ]);
 
-  const { error } = await supabase
-    .from("web_services")
-    .insert([
-      {
-        name: name,
-        details: details,
-        default_amount: defaultAmount,
-        auto_add: autoAdd,
-      },
-    ]);
-
-  if (error) {
+  if(error)
+  {
     console.log(error);
     alert("Failed to add service");
-  } else {
-
-    alert("Service added successfully");
-
-    setName("");
-    setDetails("");
-    setDefaultAmount("");
-    setAutoAdd(false);
-
-    setShowModal(false);
-
-    fetchRows();
+    return;
   }
+
+  alert("Service added successfully");
+
+  setName("");
+  setDetails("");
+  setDefaultAmount("");
+  setDurationMinutes("");
+
+  setShowModal(false);
+
+  fetchRows();
 }
 
 async function handleAddHMO() {
@@ -251,24 +487,25 @@ async function handleAddDentalHabit() {
       },
     ]);
 
-  if (error) 
-  {
+  if (error) {
     console.log(error);
     alert("Failed to add dental habit");
-  } 
-  else 
-  {
+  } else {
+
     alert("Dental habit added successfully");
+
     setName("");
     setDescription("");
     setRiskLevel("Low");
+
     setShowModal(false);
+
     fetchRows();
   }
 }
 
-async function handleAddMedicalCondition() 
-{
+async function handleAddMedicalCondition() {
+
   const { error } = await supabase
     .from("medical_conditions")
     .insert([
@@ -279,14 +516,10 @@ async function handleAddMedicalCondition()
       },
     ]);
 
-  if (error) 
-  {
+  if (error) {
     console.log(error);
     alert("Failed to add medical condition");
-  } 
-  
-  else 
-  {
+  } else {
 
     alert("Medical condition added successfully");
 
@@ -300,48 +533,109 @@ async function handleAddMedicalCondition()
   }
 }
 
-async function handleAddToothItem() 
-{
+async function handleAddToothItem() {
+
   const { error } = await supabase
     .from("tooth_items")
     .insert([
-    {
-      name: name,
-      abbreviation: abbreviation,
-      color_tag: colorTag,
-      category: toothCategory,
-    },
+      {
+        name: name,
+        abbreviation: abbreviation,
+        color_tag: colorTag,
+        category: toothCategory,
+      },
     ]);
 
-  if (error) 
-  {
+  if (error) {
     console.log(error);
     alert("Failed to add tooth item");
-  } 
-  
-  else 
-  {
+  } else {
+
     alert("Tooth item added successfully");
+
     setName("");
     setAbbreviation("");
     setColorTag("");
     setToothCategory("");
+
     setShowModal(false);
+
     fetchRows();
   }
 }
 
+async function handleAddTemplate()
+{
+  let filePath = null;
+
+  if(templateFile)
+  {
+    const fileName =
+      `${Date.now()}-${templateFile.name}`;
+
+    const {
+      error: uploadError
+    } =
+      await supabase.storage
+        .from("template-files")
+        .upload(
+          fileName,
+          templateFile
+        );
+
+    if(uploadError)
+    {
+      console.log(uploadError);
+      alert("File upload failed");
+      return;
+    }
+
+    filePath = fileName;
+  }
+
+  const { error } =
+    await supabase
+      .from("templates")
+      .insert([
+        {
+  name,
+  type: templateType,
+  file_url: filePath,
+  is_archived: false,
+  updated_at: new Date().toISOString()
+}
+      ]);
+
+  if(error)
+  {
+    console.log(error);
+    alert("Failed to add template");
+    return;
+  }
+
+  alert(
+    "Template added successfully"
+  );
+
+  setName("");
+  setTemplateType("");
+  setTemplateFile(null);
+
+  setShowModal(false);
+
+  fetchRows();
+}
+
   const fieldMap = {
-    "#": "id",
     "Name": "name",
     "Generic Name": "generic_name",
     "Dosage": "dosage",
     "Unit": "unit",
     "Stock": "stock",
 
-    "Details": "details",
-    "Default Amount": "default_amount",
-    "Auto Add?": "auto_add",
+    "Details": "description",
+    "Default Amount": "price",
+    "Duration": "duration",
 
     "Coverage Details": "coverage_details",
     "Discount %": "discount_percent",
@@ -358,6 +652,9 @@ async function handleAddToothItem()
     "Abbreviation": "abbreviation",
     "Color Tag": "color_tag",
     "Category": "category",
+
+    "Type": "type",
+    "Last Updated": "updated_at",
   };
 
   return (
@@ -371,10 +668,115 @@ async function handleAddToothItem()
 
     <div className="mf-modal">
 
+      {category.key === "templates" && (
+<>
+  <h2>
+    {
+      editingRow
+      ? "Edit Template"
+      : "Add Template"
+    }
+  </h2>
+
+  <div className="mf-modal-form">
+
+    <input
+      type="text"
+      placeholder="Template Name"
+      value={name}
+      onChange={(e) =>
+        setName(
+          e.target.value
+        )
+      }
+    />
+
+    <select
+  value={templateType}
+  onChange={(e)=>
+    setTemplateType(e.target.value)
+  }
+>
+
+<option value="">
+Select Template
+</option>
+
+<option value="xray">
+X-Ray Request
+</option>
+
+<option value="lab">
+Laboratory Result
+</option>
+
+<option value="clearance">
+Medical Clearance
+</option>
+
+<option value="consent">
+Consent Form
+</option>
+
+<option value="prescription">
+Prescription
+</option>
+
+<option value="referral">
+Referral Letter
+</option>
+
+<option value="other">
+Other
+</option>
+
+</select>
+
+    <input
+      type="file"
+      onChange={(e) =>
+        setTemplateFile(
+          e.target.files[0]
+        )
+      }
+    />
+
+  </div>
+
+  <div className="mf-modal-actions">
+
+    <button
+      className="mf-save-btn"
+      onClick={
+        editingRow
+        ? handleUpdate
+        : handleAddTemplate
+      }
+    >
+      Save
+    </button>
+
+    <button
+      className="mf-cancel-btn"
+      onClick={() =>
+      {
+        setEditingRow(null);
+        setShowModal(false);
+      }}
+    >
+      Cancel
+    </button>
+
+  </div>
+</>
+)}
+
       {/* MEDICINES MODAL */}
       {category.key === "medicines" && (
         <>
-          <h2>Add Medicine</h2>
+          <h2>
+  {editingRow ? "Edit Medicine" : "Add Medicine"}
+</h2>
 
           <div className="mf-modal-form">
 
@@ -419,7 +821,11 @@ async function handleAddToothItem()
 
             <button
               className="mf-save-btn"
-              onClick={handleAddMedicine}
+              onClick={
+  editingRow
+    ? handleUpdate
+    : handleAddMedicine
+}
             >
               Save
             </button>
@@ -438,7 +844,9 @@ async function handleAddToothItem()
       {/* SERVICES MODAL */}
       {category.key === "services" && (
         <>
-          <h2>Add Service</h2>
+          <h2>
+  {editingRow ? "Edit Service" : "Add Service"}
+</h2>
 
           <div className="mf-modal-form">
 
@@ -462,6 +870,17 @@ async function handleAddToothItem()
               onChange={(e) => setDefaultAmount(e.target.value)}
             />
 
+          <input
+            type="number"
+            placeholder="Duration Minutes"
+            value={durationMinutes}
+            onChange={(e) =>
+            setDurationMinutes(
+            e.target.value
+    )
+  }
+/>
+
             <label className="mf-checkbox">
 
               <input
@@ -480,8 +899,11 @@ async function handleAddToothItem()
 
             <button
               className="mf-save-btn"
-              onClick={handleAddService}
-            >
+              onClick={
+  editingRow
+    ? handleUpdate
+    : handleAddService
+}            >
               Save
             </button>
 
@@ -498,7 +920,9 @@ async function handleAddToothItem()
 
       {category.key === "hmo" && (
   <>
-    <h2>Add HMO</h2>
+    <h2>
+  {editingRow ? "Edit HMO" : "Add HMO"}
+</h2>
 
     <div className="mf-modal-form">
 
@@ -536,7 +960,11 @@ async function handleAddToothItem()
 
       <button
         className="mf-save-btn"
-        onClick={handleAddHMO}
+        onClick={
+  editingRow
+    ? handleUpdate
+    : handleAddHMO
+}
       >
         Save
       </button>
@@ -554,7 +982,9 @@ async function handleAddToothItem()
 
 {category.key === "dental-habits" && (
   <>
-    <h2>Add Dental Habit</h2>
+    <h2>
+  {editingRow ? "Edit Dental Habits" : "Add Dental Habits"}
+</h2>
 
     <div className="mf-modal-form">
       <input
@@ -581,7 +1011,14 @@ async function handleAddToothItem()
     </div>
 
     <div className="mf-modal-actions">
-      <button className="mf-save-btn" onClick={handleAddDentalHabit}>
+      <button className="mf-save-btn" 
+      
+      onClick={
+  editingRow
+    ? handleUpdate
+    : handleAddDentalHabit
+}
+>
         Save
       </button>
 
@@ -594,7 +1031,9 @@ async function handleAddToothItem()
 
 {category.key === "medical-conditions" && (
   <>
-    <h2>Add Medical Condition</h2>
+    <h2>
+  {editingRow ? "Edit Condition" : "Add Condition"}
+</h2>
 
     <div className="mf-modal-form">
 
@@ -624,7 +1063,12 @@ async function handleAddToothItem()
 
       <button
         className="mf-save-btn"
-        onClick={handleAddMedicalCondition}
+
+        onClick={
+  editingRow
+    ? handleUpdate
+    : handleAddMedicalCondition
+}
       >
         Save
       </button>
@@ -642,7 +1086,9 @@ async function handleAddToothItem()
 
 {category.key === "tooth-items" && (
   <>
-    <h2>Add Tooth Item</h2>
+    <h2>
+  {editingRow ? "Edit Tooth Items" : "Add Tooth Items"}
+</h2>
 
     <div className="mf-modal-form">
 
@@ -691,7 +1137,12 @@ async function handleAddToothItem()
 
       <button
         className="mf-save-btn"
-        onClick={handleAddToothItem}
+
+        onClick={
+  editingRow
+    ? handleUpdate
+    : handleAddToothItem
+}
       >
         Save
       </button>
@@ -789,18 +1240,41 @@ async function handleAddToothItem()
                   <td className="mf-actions-cell">
 
                     <button
-                      className="mf-action-edit"
-                      title="Edit"
-                    >
-                      ✏️
-                    </button>
+  className="mf-action-edit"
+  title="Edit"
+  onClick={() =>
+    handleEdit(row)
+  }
+>
+  ✏️
+</button>
 
                     <button
-                      className="mf-action-del"
-                      title="Delete"
-                    >
-                      🗑️
-                    </button>
+  className="mf-action-del"
+  title="Archive"
+  onClick={() =>
+    handleArchive(row.id)
+  }
+>
+  📦
+</button>
+
+{row.file_url && (
+  <a
+    className="mf-action-edit"
+    title="View File"
+    href={
+      supabase.storage
+        .from("template-files")
+        .getPublicUrl(row.file_url)
+        .data.publicUrl
+    }
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+  view
+  </a>
+)}
 
                   </td>
 

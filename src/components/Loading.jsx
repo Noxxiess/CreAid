@@ -1,5 +1,5 @@
 import "../styles/loading.css";
-import logo from "../assets/creaid.jpg";
+import logo from "../assets/creaid.png";
 
 function Loading({ label = "Loading" }) 
 {

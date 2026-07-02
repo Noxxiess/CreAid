@@ -9,9 +9,12 @@
     "@elysiajs/cors": "^1.1.1",
     "@elysiajs/node": "^1.4.5",
     "@supabase/supabase-js": "^2.46.1",
-    "dotenv": "^16.4.5",
+    "date-fns": "^4.4.0",
+    "date-holidays": "^3.32.0",
+    "dotenv": "^16.6.1",
     "elysia": "^1.1.25",
-    "nodemailer": "^8.0.10"
+    "nodemailer": "^8.0.10",
+    "react-datepicker": "^9.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.9.0",

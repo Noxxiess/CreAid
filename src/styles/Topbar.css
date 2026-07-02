@@ -23,52 +23,6 @@
   min-width: 0;
 }
 
-.topnav-search-box
-{
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #f5f3fc;
-  padding: 9px 18px;
-  border-radius: 999px;
-  width: 290px;
-  max-width: 100%;
-  border: 1.5px solid transparent;
-  transition: all 0.2s;
-  flex-shrink: 1;
-  min-width: 120px;
-}
-
-.topnav-search-box:focus-within
-{
-  border-color: rgba(250,19,119,0.3);
-  background: #fff;
-  box-shadow: 0 0 0 4px rgba(250,19,119,0.06);
-}
-
-.topnav-search-icon
-{
-  font-size: 13px;
-  flex-shrink: 0;
-  opacity: 0.5;
-}
-
-.topnav-search-box input
-{
-  border: none;
-  outline: none;
-  background: transparent;
-  font-size: 16px;
-  width: 100%;
-  font-family: 'DM Sans', sans-serif;
-  color: #150e43;
-}
-
-.topnav-search-box input::placeholder
-{
-  color: #b0aac8;
-}
-
 .topnav-new-patient-btn
 {
   padding: 9px 18px;
@@ -91,6 +45,29 @@
   background: #FA1377;
   color: white;
   box-shadow: 0 4px 14px rgba(250,19,119,0.3);
+}
+
+.topnav-walkin-btn
+{
+  padding: 9px 18px;
+  border: 1.5px solid #FA1377;
+  background: transparent;
+  color: #FA1377;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.topnav-walkin-btn:hover
+{
+  background: linear-gradient(135deg, #FA1377, #d40b62);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(250, 19, 119, 0.35);
 }
 
 .topnav-topbar-right

@@ -1,7 +1,7 @@
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/creaid.jpg";
+import logo from "../assets/creaid.png";
 import "../App.css";
 import { loginApi } from "../api/auth";
 import { supabase } from "../lib/supabase";

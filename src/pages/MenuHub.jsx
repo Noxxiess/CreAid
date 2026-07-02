@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
-import logo from "../assets/creaid.jpg";
+import logo from "../assets/creaid.png";
 import "../styles/menuhub.css";
 
 const FALLBACK_ICON = "fluent-emoji-flat:open-file-folder";

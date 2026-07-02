@@ -1,9 +1,30 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import "../styles/reports.css";
+import {
+  getReportsSummaryApi
+} from "../api/reports";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer
+}
+from "recharts";
 
 function Reports() 
 {
+  const CHART_COLORS =
+[
+  "#FA1377",
+  "#534AB7",
+  "#150E43",
+  "#F59E0B",
+  "#2E7D32",
+  "#EC4899"
+];
+
   const [filters, setFilters] = useState({
     clinic: "All",
     from: "",
@@ -18,12 +39,75 @@ function Reports()
     expenseCount: 0,
   });
 
+  const [charts,
+  setCharts] =
+  useState({
+    patientTypes: [],
+    paymentMethods: [],
+    expenseCategories: []
+  });
+
   const location = useLocation();
 
-  useEffect(() => 
+  useEffect(() =>
+{
+  loadSummary();
+}, []);
+
+async function loadSummary()
+{
+  try
   {
-    //backend hereee
-  }, [filters]);
+    const response =
+      await getReportsSummaryApi(
+        filters
+      );
+
+    const data =
+      response.summary;
+
+      console.log(
+  "SUMMARY RESPONSE:",
+  response
+);
+
+    setSummary({
+      netIncome:
+        `₱ ${Number(
+          data.netIncome || 0
+        ).toLocaleString()}`,
+      
+
+      collectionAmount:
+        `₱ ${Number(
+          data.collectionAmount || 0
+        ).toLocaleString()}`,
+
+      collectionCount:
+        data.collectionCount || 0,
+
+      expenseAmount:
+  `₱ ${Number(
+    (data.expenseAmount || 0) +
+    (data.billAmount || 0)
+  ).toLocaleString()}`,
+
+      expenseCount: 0
+    });
+
+    setCharts(
+  response.charts || {
+    patientTypes: [],
+    paymentMethods: [],
+    expenseCategories: []
+  }
+);
+  }
+  catch(error)
+  {
+    console.error(error);
+  }
+}
 
   return (
     <div className="users-content">
@@ -45,7 +129,10 @@ function Reports()
               <input type="date" value={filters.from} onChange={(e) => setFilters({ ...filters, from: e.target.value })}/>
               <span className="filter-label">Date To</span>
               <input type="date" value={filters.to} onChange={(e) => setFilters({ ...filters, to: e.target.value })}/>
-              <button className="btn-go">Show</button>
+              <button className="btn-go"
+              onClick={loadSummary}>
+              Show
+              </button>
             </div>
           </div>
         </div>
@@ -79,21 +166,121 @@ function Reports()
         <div className="reports-charts-grid">
           <div className="reports-chart-card">
             <p className="reports-chart-title">Type of Patient</p>
-            <div className="reports-chart-placeholder">
-              <span>Chart coming soon</span>
-            </div>
+            <ResponsiveContainer
+  width="100%"
+  height={250}
+>
+  <PieChart>
+
+    <Pie
+      data={charts.patientTypes}
+      dataKey="value"
+      nameKey="name"
+      innerRadius={55}
+      outerRadius={90}
+      label
+    >
+      {
+        charts.patientTypes?.map(
+          (entry, index) => (
+            <Cell
+              key={index}
+              fill={
+                CHART_COLORS[
+                  index %
+                  CHART_COLORS.length
+                ]
+              }
+            />
+          )
+        )
+      }
+    </Pie>
+
+    <Tooltip />
+
+  </PieChart>
+</ResponsiveContainer>
           </div>
           <div className="reports-chart-card">
             <p className="reports-chart-title">Expense Categories</p>
-            <div className="reports-chart-placeholder">
-              <span>Chart coming soon</span>
-            </div>
+            <ResponsiveContainer
+  width="100%"
+  height={250}
+>
+  <PieChart>
+
+    <Pie
+      data={
+        charts.expenseCategories
+      }
+      dataKey="value"
+      nameKey="name"
+      innerRadius={55}
+      outerRadius={90}
+      label
+    >
+      {
+        charts.expenseCategories?.map(
+          (entry, index) => (
+            <Cell
+              key={index}
+              fill={
+                CHART_COLORS[
+                  index %
+                  CHART_COLORS.length
+                ]
+              }
+            />
+          )
+        )
+      }
+    </Pie>
+
+    <Tooltip />
+
+  </PieChart>
+</ResponsiveContainer>
           </div>
           <div className="reports-chart-card">
             <p className="reports-chart-title">Payment Methods</p>
-            <div className="reports-chart-placeholder">
-              <span>Chart coming soon</span>
-            </div>
+            <ResponsiveContainer
+  width="100%"
+  height={250}
+>
+  <PieChart>
+
+    <Pie
+      data={
+        charts.paymentMethods
+      }
+      dataKey="value"
+      nameKey="name"
+      innerRadius={55}
+      outerRadius={90}
+      label
+    >
+      {
+        charts.paymentMethods?.map(
+          (entry, index) => (
+            <Cell
+              key={index}
+              fill={
+                CHART_COLORS[
+                  index %
+                  CHART_COLORS.length
+                ]
+              }
+            />
+          )
+        )
+      }
+    </Pie>
+
+    <Tooltip />
+
+  </PieChart>
+</ResponsiveContainer>
           </div>
         </div>
 

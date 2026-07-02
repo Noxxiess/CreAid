@@ -13,6 +13,7 @@ async () => {
     await supabase
       .from("services")
       .select("*")
+      .eq("active", true)
       .order("name");
 
   return {

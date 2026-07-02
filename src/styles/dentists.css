@@ -1,71 +1,94 @@
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
 :root
 {
-  --bg: #faf9fb;
+  --bg: #f5f3fc;
   --surface: #ffffff;
-  --surface2: #f7f5f8;
-  --border: #e8e4ea;
-  --primary: #c2185b;
-  --primary-light: #fbe9f0;
-  --primary-dark: #99134a;
-  --accent: #1a6bb5;
-  --accent-bg: #eaf2fa;
-  --text: #221a20;
-  --text-muted: #847d85;
-  --text-light: #b3acb4;
-  --green: #4f8f63;
-  --green-bg: #eef6f0;
-  --red: #b3463f;
-  --red-bg: #faeceb;
-  --orange: #b3463f;
-  --orange-bg: #faeceb;
-  --yellow: #9c8a3a;
-  --yellow-bg: #f7f3e8;
-  --shadow-sm: 0 1px 2px rgba(20,10,16,0.04);
-  --shadow: 0 2px 6px rgba(20,10,16,0.06);
-  --shadow-lg: 0 8px 24px rgba(20,10,16,0.10);
+  --surface2: #faf9fe;
+  --border: #ede9f8;
+  --border-hover: #d4caed;
+  --primary: #FA1377;
+  --primary-light: #FBEAF0;
+  --primary-dark: #993556;
+  --accent: #534AB7;
+  --accent-bg: #EEEDFE;
+  --text: #150e43;
+  --text-muted: #6b638f;
+  --text-light: #b0aac8;
+  --green: #3B6D11;
+  --green-bg: #EAF3DE;
+  --red: #A32D2D;
+  --red-bg: #FCEBEB;
+  --orange: #854F0B;
+  --orange-bg: #FAEEDA;
+  --yellow: #854F0B;
+  --yellow-bg: #FAEEDA;
+  --shadow-sm: 0 1px 3px rgba(21,14,67,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 4px 12px rgba(21,14,67,0.10), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 40px rgba(21,14,67,0.18), 0 4px 12px rgba(0,0,0,0.06);
   --sidebar-w: 260px;
-  --radius: 10px;
+  --radius: 12px;
   --radius-sm: 8px;
   --radius-xs: 6px;
-  --font: 'Sora', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font: 'DM Sans', sans-serif;
+  --font-heading: 'Playfair Display', serif;
+  --font-mono: monospace;
+  --transition: 0.18s ease;
 }
 .dentists-root
 {
   display: flex;
+  flex-direction: column;
   height: 100%;
+  min-height: 100%;
   background: var(--bg);
   font-family: var(--font);
   color: var(--text);
+  overflow: hidden;
+}
+
+.dentists-mobile-bar
+{
+  display: none;
+  padding: 10px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.dentists-inner
+{
+  display: flex;
+  flex: 1;
   overflow: hidden;
   position: relative;
 }
 .dentists-sidebar-toggle
 {
-  display: none;
-  position: fixed;
-  top: 14px;
-  left: 14px;
-  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   background: var(--primary);
   color: #fff;
   border: none;
   border-radius: var(--radius-sm);
   padding: 8px 14px;
+  font-family: var(--font);
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 700;
   box-shadow: var(--shadow);
-  align-items: center;
-  gap: 6px;
+}
+.dentists-sidebar-toggle svg
+{
+  width: 16px;
+  height: 16px;
 }
 .dentists-sidebar-overlay
 {
   display: none;
-  position: fixed;
+  position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.35);
-  z-index: 149;
+  background: rgba(21,14,67,0.4);
+  z-index: 14;
 }
 .dentists-sidebar
 {
@@ -76,25 +99,87 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: transform var(--transition);
 }
 .dentists-sidebar-header
 {
-  padding: 20px 20px 14px;
+  padding: 18px 16px 14px;
   border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.dentists-sidebar-header-actions
+{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dentists-sidebar-close
+{
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  padding: 6px;
+  border-radius: var(--radius-xs);
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition), color var(--transition);
+}
+.dentists-sidebar-close svg
+{
+  width: 20px;
+  height: 20px;
+}
+.dentists-sidebar-close:hover
+{
+  background: var(--surface2);
+  color: var(--primary);
 }
 .dentists-sidebar-title
 {
-  font-size: 1.05rem;
-  font-weight: 600;
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
   display: flex;
   align-items: center;
   gap: 7px;
   margin: 0;
+  white-space: nowrap;
+}
+.dentists-sidebar-title svg
+{
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.dentists-branch-select
+{
+  padding: 6px 10px;
+  border: 1.5px solid var(--primary);
+  border-radius: var(--radius-xs);
+  background: var(--surface);
+  color: var(--primary);
+  font-family: var(--font);
+  font-size: 0.73rem;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+  flex-shrink: 0;
+}
+.dentists-branch-select:focus
+{
+  box-shadow: 0 0 0 3px rgba(250,19,119,0.10);
 }
 .dentists-sidebar-search-wrap
 {
   position: relative;
-  padding: 12px 16px;
+  padding: 12px 14px 12px;
   border-bottom: 1px solid var(--border);
 }
 .dentists-search-icon
@@ -104,122 +189,208 @@
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-light);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+.dentists-search-icon svg
+{
+  width: 15px;
+  height: 15px;
 }
 .dentists-search-input
 {
   width: 100%;
-  padding: 8px 10px 8px 32px;
-  border: 1px solid var(--border);
+  padding: 9px 12px 9px 34px;
+  border: 1.5px solid var(--border);
   border-radius: var(--radius-xs);
+  font-family: var(--font);
   font-size: 0.82rem;
   background: var(--surface2);
   color: var(--text);
   box-sizing: border-box;
+  transition: border-color var(--transition), box-shadow var(--transition);
   outline: none;
 }
 .dentists-search-input:focus
 {
-  border-color: var(--accent);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(250,19,119,0.06);
 }
-.dentist-list
+.dentists-filter-pills
+{
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.dentists-pill
+{
+  padding: 4px 11px;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  background: transparent;
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: all var(--transition);
+}
+.dentists-pill:hover
+{
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.dentists-pill-active
+{
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff !important;
+}
+.dentists-dentist-list
 {
   list-style: none;
   margin: 0;
-  padding: 6px 0;
+  padding: 8px 0;
   overflow-y: auto;
   flex: 1;
 }
-.dentist-item
+.dentists-dentist-list::-webkit-scrollbar
+{
+  width: 4px;
+}
+.dentists-dentist-list::-webkit-scrollbar-thumb
+{
+  background: var(--border);
+  border-radius: 4px;
+}
+.dentists-dentist-item
 {
   display: flex;
   align-items: center;
-  gap: 11px;
-  padding: 10px 18px;
-  border-left: 2px solid transparent;
+  gap: 12px;
+  padding: 11px 18px;
+  cursor: pointer;
+  transition: background var(--transition);
+  border-left: 3px solid transparent;
 }
-.dentist-item:hover
+.dentists-dentist-item:hover
 {
   background: var(--surface2);
 }
-.dentist-item-selected
+.dentists-dentist-item-selected
 {
   background: var(--primary-light) !important;
   border-left-color: var(--primary);
 }
-.dentist-avatar
+.dentists-dentist-avatar
 {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
   border-radius: 50%;
-  background: var(--primary);
-  color: #fff;
-  font-size: 0.78rem;
-  font-weight: 600;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.82rem;
   font-family: var(--font-mono);
 }
-.dentist-meta
+.dentists-dentist-avatar-img
+{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.dentists-dentist-avatar-lg-img
+{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.dentists-dentist-meta
 {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 2px;
   overflow: hidden;
+  min-width: 0;
 }
-.dentist-name
+.dentists-dentist-name
 {
-  font-size: 0.86rem;
+  font-size: 0.88rem;
   font-weight: 600;
+  color: var(--text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.dentist-spec
+.dentists-dentist-spec
 {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.dentist-right
+.dentists-status-pill
 {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
-.status-dot
+.dentists-status-available-pill
 {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  display: inline-block;
+  background: var(--green-bg);
+  color: var(--green);
 }
-.status-available
+.dentists-status-busy-pill
 {
-  background: var(--green);
+  background: var(--orange-bg);
+  color: var(--orange);
 }
-.status-busy, .status-off
+.dentists-status-off-pill
 {
-  background: var(--text-light);
+  background: var(--border);
+  color: var(--text-muted);
 }
-.req-badge
+.dentists-active-badge
 {
-  background: var(--primary);
-  color: #fff;
-  font-size: 0.62rem;
-  font-weight: 700;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.dentists-active-active
+{
+  background: var(--green-bg);
+  color: var(--green);
+}
+
+.dentists-active-inactive
+{
+  background: var(--border);
+  color: var(--text-muted);
+}
+
+.dentists-empty-list
+{
+  padding: 24px;
+  text-align: center;
+  color: var(--text-light);
+  font-size: 0.85rem;
+  list-style: none;
 }
 .dentists-detail
 {
@@ -229,33 +400,65 @@
   flex-direction: column;
   min-width: 0;
 }
-.detail-empty
+.dentists-detail::-webkit-scrollbar
+{
+  width: 5px;
+}
+.dentists-detail::-webkit-scrollbar-thumb
+{
+  background: var(--border);
+  border-radius: 4px;
+}
+.dentists-detail-empty
 {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 14px;
   color: var(--text-light);
 }
-.empty-icon
+.dentists-list-loading
 {
-  font-size: 2.6rem;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dentists-detail-loading
+{
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dentists-empty-icon
+{
+  font-size: 3rem;
   opacity: 0.3;
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
 }
-.detail-empty p
+.dentists-empty-icon svg
 {
-  font-size: 0.88rem;
+  width: 48px;
+  height: 48px;
 }
-.detail-content
+.dentists-detail-empty p
+{
+  font-size: 0.9rem;
+}
+.dentists-detail-content
 {
   padding: 28px 32px;
-  max-width: 860px;
   width: 100%;
   box-sizing: border-box;
 }
-.detail-hero
+.dentists-detail-hero
 {
   display: flex;
   align-items: flex-start;
@@ -263,280 +466,314 @@
   flex-wrap: wrap;
   background: var(--surface);
   border-radius: var(--radius);
-  padding: 22px;
+  padding: 24px;
   box-shadow: var(--shadow-sm);
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   border: 1px solid var(--border);
 }
-.dentist-avatar-lg
+.dentists-dentist-avatar-lg
 {
-  width: 58px;
-  height: 58px;
-  min-width: 58px;
+  width: 60px;
+  height: 60px;
+  min-width: 60px;
   border-radius: 50%;
-  background: var(--primary);
+  background: linear-gradient(135deg, var(--primary), var(--accent));
   color: #fff;
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-mono);
+  box-shadow: 0 4px 12px rgba(250,19,119,0.35);
+  flex-shrink: 0;
+  overflow: hidden;
 }
-.detail-hero-info
+.dentists-detail-hero-info
 {
   flex: 1;
   min-width: 160px;
 }
-.detail-name
+.dentists-detail-name
 {
-  font-size: 1.3rem;
-  font-weight: 600;
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   margin: 0 0 4px;
 }
-.detail-spec
+.dentists-detail-spec
 {
-  font-size: 0.86rem;
-  color: var(--accent);
-  font-weight: 500;
-  margin: 0 0 6px;
-}
-.detail-sub
-{
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
   margin: 2px 0;
 }
-.detail-schedule
+.dentists-detail-sub
 {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
-  margin-top: 6px;
+  margin: 2px 0;
 }
-.detail-hero-right
+.dentists-detail-schedule
+{
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  margin: 8px 0 0;
+}
+.dentists-detail-hero-right
 {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 12px;
+  gap: 8px;
 }
-.status-pill
+.dentists-commission-box
 {
-  font-size: 0.76rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 700;
   padding: 4px 14px;
   border-radius: 20px;
-}
-.status-available-pill
-{
-  background: var(--green-bg);
-  color: var(--green);
-}
-.status-busy-pill, .status-off-pill
-{
-  background: var(--surface2);
-  color: var(--text-muted);
-}
-.commission-box
-{
-  background: var(--primary);
-  color: #fff;
-  padding: 11px 16px;
-  border-radius: var(--radius-sm);
+  background: var(--primary-light);
+  color: var(--primary-dark);
   text-align: right;
   min-width: 140px;
 }
-.commission-label
+.dentists-commission-label
 {
   display: block;
-  font-size: 0.66rem;
-  opacity: 0.85;
+  font-size: 0.68rem;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
-.commission-value
+.dentists-commission-value
 {
   display: block;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 700;
   font-family: var(--font-mono);
 }
-.commission-rate
+.dentists-commission-rate
 {
   display: block;
-  font-size: 0.66rem;
-  opacity: 0.8;
+  font-size: 0.68rem;
   font-family: var(--font-mono);
 }
-.detail-tabs
+.dentists-detail-tabs
 {
   display: flex;
   gap: 4px;
   margin-bottom: 16px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 2px solid var(--border);
   overflow-x: auto;
+  scrollbar-width: none;
 }
-.tab-btn
+.dentists-detail-tabs::-webkit-scrollbar
+{
+  display: none;
+}
+.dentists-tab-btn
 {
   background: none;
   border: none;
-  padding: 9px 16px;
-  font-size: 0.82rem;
+  padding: 9px 18px;
+  font-family: var(--font);
+  font-size: 0.83rem;
   font-weight: 500;
   color: var(--text-muted);
   border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
+  margin-bottom: -2px;
+  transition: all var(--transition);
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
-.tab-btn:hover
+.dentists-tab-btn svg
+{
+  width: 16px;
+  height: 16px;
+}
+.dentists-tab-btn:hover
 {
   color: var(--primary);
 }
-.tab-active
+.dentists-tab-active
 {
   color: var(--primary) !important;
   border-bottom-color: var(--primary) !important;
-  font-weight: 600;
+  font-weight: 700;
 }
-.overview-grid
+.dentists-tab-panel
+{
+  animation: dentistsFadeIn 0.2s ease;
+}
+@keyframes dentistsFadeIn
+{
+  from
+  {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to
+  {
+    opacity: 1;
+    transform: none;
+  }
+}
+.dentists-overview-grid
 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
-.ov-card
+.dentists-ov-card
 {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 16px;
+  padding: 14px 16px;
   display: flex;
   align-items: center;
   gap: 12px;
+  transition: border-color var(--transition), box-shadow var(--transition);
 }
-.ov-card-highlight
+.dentists-ov-card:hover
 {
-  background: var(--primary-light);
-  border-color: var(--primary-light);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-sm);
 }
-.ov-icon
+.dentists-ov-card-highlight
 {
-  font-size: 1.3rem;
+  background: linear-gradient(180deg, #fff, var(--surface2));
+}
+.dentists-ov-icon
+{
+  font-size: 1.4rem;
   flex-shrink: 0;
-  opacity: 0.8;
+  color: var(--primary);
+  display: inline-flex;
 }
-.ov-card div
+.dentists-ov-icon svg
+{
+  width: 22px;
+  height: 22px;
+}
+.dentists-ov-card div
 {
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
 }
-.ov-value
+.dentists-ov-value
 {
-  font-size: 1.05rem;
-  font-weight: 600;
-  font-family: var(--font-mono);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.ov-label
-{
-  font-size: 0.66rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-size: 0.9rem;
   font-weight: 500;
+  color: var(--text);
+  word-break: break-word;
+  font-family: var(--font-mono);
 }
-.section-card
+.dentists-ov-label
+{
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.dentists-section-card
 {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 20px;
-}
-.section-title
-{
-  font-size: 0.88rem;
-  font-weight: 600;
-  margin: 0 0 14px;
-}
-.commission-table
-{
-  display: flex;
-  flex-direction: column;
-  min-width: 420px;
+  padding: 20px 22px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
   overflow-x: auto;
+  width: 100%;
+  box-sizing: border-box;
 }
-.ct-header, .ct-row, .ct-total
+.dentists-section-title
 {
-  display: grid;
-  grid-template-columns: 100px 1fr 1fr 90px;
-  gap: 10px;
-  padding: 8px 10px;
-  font-size: 0.78rem;
-  align-items: center;
-}
-.ct-header
-{
-  font-weight: 600;
-  color: var(--text-light);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 10px;
-}
-.ct-row
-{
-  border-bottom: 1px solid var(--surface2);
-  color: var(--text-muted);
-}
-.ct-row:last-child
-{
-  border-bottom: none;
-}
-.ct-procedure
-{
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.ct-amount
-{
-  font-family: var(--font-mono);
-  font-weight: 600;
-  text-align: right;
-}
-.ct-total
-{
-  border-top: 1px solid var(--border);
-  font-weight: 600;
-  margin-top: 4px;
-}
-.ct-amount-total
-{
-  font-family: var(--font-mono);
+  font-size: 0.76rem;
   font-weight: 700;
-  color: var(--primary);
-  font-size: 0.88rem;
-  text-align: right;
+  color: var(--primary-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
-.dentists-no-data
+.dentists-commission-table
 {
-  color: var(--text-light);
-  font-size: 0.82rem;
-  padding: 12px 0;
+  width: 100%;
+  border-collapse: collapse;
 }
+.dentists-commission-table th,
+.dentists-commission-table td
+{
+  padding: 9px 11px;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 0.85rem;
+}
+.dentists-commission-table th
+{
+  background: var(--surface2);
+  color: var(--text-light);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.68rem;
+}
+.dentists-commission-table tr
+{
+  border-bottom: 1px solid var(--border);
+}
+.dentists-commission-table .dentists-earnings-col,
+.dentists-commission-table .dentists-commission-col
+{
+  text-align: right;
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+.dentists-no-data,
 .dentists-no-data-center
 {
   text-align: center;
   color: var(--text-light);
   font-size: 0.85rem;
-  padding: 30px 0;
+  padding: 20px 0;
 }
-.handled-list
+.dentists-patient-search-wrap
+{
+  margin-bottom: 18px;
+}
+.dentists-patient-search-input
+{
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-xs);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  color: var(--text);
+  background: var(--surface2);
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.dentists-patient-search-input:focus
+{
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(250,19,119,0.06);
+}
+.dentists-handled-list
 {
   list-style: none;
   margin: 0;
@@ -545,33 +782,45 @@
   flex-direction: column;
   gap: 8px;
 }
-.handled-item
+.dentists-handled-item
 {
   display: flex;
   align-items: center;
   gap: 14px;
-  background: var(--surface);
+  padding: 16px;
+  border-radius: 14px;
+  background: white;
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 14px 16px;
-  flex-wrap: wrap;
+  transition: all 0.25s ease;
 }
-.handled-avatar
+.dentists-handled-item:hover
 {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+  box-shadow: 0 10px 20px rgba(250,19,119,0.08);
+}
+.dentists-handled-avatar
+{
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
   border-radius: 50%;
-  background: var(--accent);
-  color: #fff;
-  font-size: 0.78rem;
-  font-weight: 600;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-mono);
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  font-weight: 700;
 }
-.handled-meta
+.dentists-handled-avatar-img
+{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.dentists-handled-meta
 {
   flex: 1;
   display: flex;
@@ -579,244 +828,162 @@
   gap: 2px;
   min-width: 100px;
 }
-.handled-name
+.dentists-handled-name
 {
-  font-size: 0.86rem;
+  font-size: 0.85rem;
   font-weight: 600;
+  color: var(--text);
 }
-.handled-proc
+.dentists-handled-proc-label
 {
-  font-size: 0.74rem;
-  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
-.handled-date
+.dentists-handled-proc
+{
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+.dentists-handled-date
 {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
   gap: 2px;
+  min-width: 100px;
 }
-.date-label
+.dentists-date-label
 {
-  font-size: 0.65rem;
+  font-size: 0.7rem;
+  font-weight: 600;
   color: var(--text-light);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
 }
-.date-val
+.dentists-date-val
 {
-  font-size: 0.78rem;
-  font-family: var(--font-mono);
+  font-size: 0.73rem;
   color: var(--text-muted);
+  font-family: var(--font-mono);
 }
-.btn-view-patient
+.dentists-view-record-btn
 {
-  background: var(--surface2);
-  color: var(--primary);
-  border: 1px solid var(--border);
-  padding: 6px 12px;
+  border: none;
+  padding: 5px 10px;
   border-radius: var(--radius-xs);
+  font-family: var(--font);
   font-size: 0.75rem;
   font-weight: 600;
-  white-space: nowrap;
+  background: var(--primary-light);
+  color: var(--primary);
+  transition: all var(--transition);
+  flex-shrink: 0;
 }
-.btn-view-patient:hover
+.dentists-view-record-btn:hover
 {
   background: var(--primary);
   color: #fff;
-  border-color: var(--primary);
 }
-.request-list
-{
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.request-item
-{
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 16px;
-  flex-wrap: wrap;
-}
-.req-avatar
-{
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  border-radius: 50%;
-  background: var(--surface2);
-  color: var(--text-muted);
-  font-size: 0.78rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  border: 1px solid var(--border);
-}
-.req-meta
-{
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 140px;
-}
-.req-patient
-{
-  font-size: 0.86rem;
-  font-weight: 600;
-}
-.req-message
-{
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  font-style: italic;
-}
-.req-date
-{
-  font-size: 0.72rem;
-  color: var(--text-light);
-  font-family: var(--font-mono);
-}
-.req-actions
-{
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.btn-accept
-{
-  background: var(--surface);
-  color: var(--green);
-  border: 1px solid var(--green-bg);
-  padding: 6px 14px;
-  border-radius: var(--radius-xs);
-  font-size: 0.78rem;
-  font-weight: 600;
-}
-.btn-accept:hover
-{
-  background: var(--green);
-  color: #fff;
-  border-color: var(--green);
-}
-.btn-decline
-{
-  background: var(--surface);
-  color: var(--text-muted);
-  border: 1px solid var(--border);
-  padding: 6px 14px;
-  border-radius: var(--radius-xs);
-  font-size: 0.78rem;
-  font-weight: 600;
-}
-.btn-decline:hover
-{
-  background: var(--red);
-  color: #fff;
-  border-color: var(--red);
-}
-.action-tag
-{
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 5px 12px;
-  border-radius: var(--radius-xs);
-}
-.accepted
-{
-  background: var(--green-bg);
-  color: var(--green);
-}
-.declined
-{
-  background: var(--surface2);
-  color: var(--text-muted);
-}
-.forms-intro
-{
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  margin-bottom: 16px;
-}
-.forms-grid
-{
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
-}
-.form-card
-{
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.form-card:hover
-{
-  border-color: var(--primary);
-  background: var(--primary-light);
-}
-.form-card-icon
-{
-  font-size: 1.5rem;
-  opacity: 0.85;
-}
-.form-card-label
-{
-  font-size: 0.86rem;
-  font-weight: 600;
-}
-.form-card-action
-{
-  font-size: 0.74rem;
-  color: var(--primary);
-  font-weight: 500;
-  margin-top: 4px;
-}
-.dentists-modal-overlay
+.dentists-modal-overlay,
+.dentists-record-modal-overlay,
+.dentists-upload-modal-overlay
 {
   position: fixed;
   inset: 0;
-  background: rgba(20,15,18,0.45);
+  background: rgba(21, 14, 67, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 100;
+  backdrop-filter: blur(3px);
+  animation: dentistsOverlayIn 0.15s ease;
   padding: 16px;
   box-sizing: border-box;
 }
-.dentists-modal
+@keyframes dentistsOverlayIn
+{
+  from
+  {
+    opacity: 0;
+  }
+  to
+  {
+    opacity: 1;
+  }
+}
+.dentists-record-modal,
+.dentists-upload-modal
 {
   background: var(--surface);
   border-radius: var(--radius);
+  width: 480px;
+  max-width: 100%;
   box-shadow: var(--shadow-lg);
-  overflow: hidden;
+  animation: dentistsModalIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  padding: 20px 24px 24px;
+  box-sizing: border-box;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+@keyframes dentistsModalIn
+{
+  from
+  {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to
+  {
+    opacity: 1;
+    transform: none;
+  }
+}
+.dentists-record-modal
+{
+  width: 920px;
+}
+.dentists-record-modal-close
+{
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: var(--text-muted);
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: background var(--transition);
+  display: flex;
+  align-items: center;
+}
+.dentists-record-modal-close svg
+{
+  width: 16px;
+  height: 16px;
+}
+.dentists-record-modal-close:hover
+{
+  background: var(--border);
 }
 .dentists-modal-header
 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 22px 13px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
   border-bottom: 1px solid var(--border);
 }
 .dentists-modal-header h3
 {
-  font-size: 0.92rem;
-  font-weight: 600;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
   margin: 0;
 }
 .dentists-modal-close
@@ -827,523 +994,539 @@
   color: var(--text-muted);
   padding: 4px 6px;
   border-radius: 4px;
+  transition: background var(--transition);
+  display: flex;
+  align-items: center;
+}
+.dentists-modal-close svg
+{
+  width: 16px;
+  height: 16px;
 }
 .dentists-modal-close:hover
 {
-  background: var(--surface2);
+  background: var(--border);
 }
-.dentists-modal-form-doc
+.dentists-record-tabs
 {
-  width: 580px;
-  max-width: 100%;
-  max-height: 90vh;
   display: flex;
-  flex-direction: column;
+  gap: 6px;
+  margin: 18px 0;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
 }
-.form-doc-body
+.dentists-record-tab
 {
-  overflow-y: auto;
-  padding: 20px 24px;
-  flex: 1;
+  padding: 4px 11px;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  background: transparent;
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: all var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
-.doc-preview
+.dentists-record-tab:hover
 {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.dentists-record-tab.dentists-active
+{
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff !important;
+}
+.dentists-record-header
+{
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+  background: var(--surface);
+  border-radius: var(--radius);
   padding: 24px;
-  margin-bottom: 16px;
-  font-family: 'Georgia', serif;
-}
-.doc-letterhead
-{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 4px;
-  margin-bottom: 12px;
-}
-.doc-clinic
-{
-  font-size: 0.98rem;
-  font-weight: 700;
-  color: var(--primary);
-}
-.doc-address
-{
-  font-size: 0.72rem;
-  color: var(--text-muted);
-}
-.doc-divider
-{
-  border: none;
-  border-top: 1px solid var(--primary);
-  margin: 10px 0 16px;
-}
-.doc-title
-{
-  font-size: 0.96rem;
-  font-weight: 700;
-  text-align: center;
-  text-decoration: underline;
-  margin: 0 0 16px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-.doc-content
-{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.doc-field
-{
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.doc-field label
-{
-  font-size: 0.78rem;
-  white-space: nowrap;
-  color: var(--text-muted);
-  min-width: 130px;
-}
-.doc-input-line
-{
-  flex: 1;
-  border-bottom: 1px solid var(--text-light);
-  min-height: 18px;
-  min-width: 80px;
-}
-.doc-input-line.long
-{
-  min-width: 200px;
-}
-.doc-rx
-{
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--primary);
-  line-height: 1;
-  margin-bottom: -4px;
-}
-.doc-rx-lines
-{
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-left: 20px;
-}
-.dentists-mt
-{
-  margin-top: 12px;
-}
-.doc-para
-{
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  margin: 0;
-  line-height: 1.7;
-}
-.doc-para-lines
-{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 8px 0;
-}
-.doc-section-label
-{
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  margin-top: 4px;
-  font-weight: 600;
-}
-.doc-checkboxes
-{
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-left: 10px;
-}
-.doc-checkbox-item
-{
-  font-size: 0.78rem;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: var(--text-muted);
-}
-.esign-section
-{
-  border-top: 1px dashed var(--border);
-  margin-top: 20px;
-  padding-top: 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-}
-.esign-label
-{
-  font-size: 0.82rem;
-  font-weight: 600;
-}
-.esign-title
-{
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  margin-bottom: 8px;
-}
-.btn-esign
-{
-  background: var(--surface);
-  color: var(--primary);
-  border: 1px solid var(--primary);
-  padding: 7px 16px;
-  border-radius: var(--radius-xs);
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-.btn-esign:hover
-{
-  background: var(--primary);
-  color: #fff;
-}
-.esign-form
-{
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: flex-end;
-}
-.esign-input
-{
-  width: 240px;
-  max-width: 100%;
-  padding: 8px 12px;
-  border: 1px solid var(--primary);
-  border-radius: var(--radius-xs);
-  font-family: 'Brush Script MT', cursive, var(--font);
-  font-size: 1rem;
-  color: var(--primary);
-  outline: none;
-}
-.esign-btns
-{
-  display: flex;
-  gap: 8px;
-}
-.btn-esign-cancel
-{
-  background: none;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 22px;
   border: 1px solid var(--border);
-  padding: 6px 12px;
-  border-radius: var(--radius-xs);
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-muted);
 }
-.btn-esign-confirm
+.dentists-record-avatar
 {
-  background: var(--primary);
-  border: none;
-  padding: 6px 12px;
-  border-radius: var(--radius-xs);
-  font-size: 0.75rem;
-  font-weight: 600;
+  width: 60px;
+  height: 60px;
+  min-width: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
   color: #fff;
-}
-.btn-esign-confirm:hover
-{
-  background: var(--primary-dark);
-}
-.signed-stamp
-{
-  text-align: right;
-}
-.signature-text
-{
-  font-family: 'Brush Script MT', cursive;
-  font-size: 1.5rem;
-  color: var(--primary);
-  line-height: 1.2;
-}
-.signed-label
-{
-  font-size: 0.7rem;
-  color: var(--green);
-  font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--font-mono);
-}
-.form-doc-actions
-{
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  padding-top: 4px;
-  flex-wrap: wrap;
-}
-.btn-print, .btn-download, .btn-send
-{
-  border: 1px solid var(--border);
-  padding: 8px 16px;
-  border-radius: var(--radius-xs);
-  font-size: 0.78rem;
-  font-weight: 600;
-  background: var(--surface);
-  color: var(--text-muted);
-}
-.btn-print:hover
-{
-  background: var(--surface2);
-}
-.btn-download:hover
-{
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.btn-send
-{
-  background: var(--primary);
-  color: #fff;
-  border-color: var(--primary);
-}
-.btn-send:hover
-{
-  background: var(--primary-dark);
-}
-.dact-btn
-{
-  border: 1px solid transparent;
-  padding: 8px 14px;
-  border-radius: var(--radius-xs);
-  font-size: 0.78rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-.dact-primary
-{
-  background: var(--primary);
-  color: #fff;
-}
-.dact-primary:hover
-{
-  background: var(--primary-dark);
-}
-.dact-secondary
-{
-  background: var(--surface);
-  color: var(--text-muted);
-  border: 1px solid var(--border);
-}
-.dact-secondary:hover
-{
-  border-color: var(--primary);
-  color: var(--primary);
-}
-.dact-danger
-{
-  background: var(--surface);
-  color: var(--red);
-  border: 1px solid var(--red-bg);
-}
-.dact-danger:hover
-{
-  background: var(--red);
-  color: #fff;
-  border-color: var(--red);
-}
-.dact-confirm-modal
-{
-  width: 400px;
-  max-width: 100%;
-}
-.dact-edit-modal
-{
-  width: 560px;
-  max-width: 100%;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(250,19,119,0.35);
+  flex-shrink: 0;
   overflow: hidden;
 }
-.dact-modal-body
+.dentists-record-avatar img
 {
-  padding: 20px 24px 24px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.dentists-record-header-info
+{
+  flex: 1;
+  min-width: 160px;
+}
+.dentists-record-patient-name
+{
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 4px;
+}
+.dentists-record-patient-badge
+{
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  background: var(--accent-bg);
+  color: var(--accent);
+  display: inline-block;
+  margin-bottom: 6px;
+}
+.dentists-record-contact
+{
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  overflow-y: auto;
+  gap: 6px;
+  margin-top: 6px;
 }
-.dact-modal-body p
+.dentists-record-contact span
 {
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
-  margin: 0;
-  line-height: 1.6;
 }
-.dact-modal-body p strong
-{
-  color: var(--text);
-}
-.dact-form-grid
+.dentists-record-stats
 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
+  margin-top: 22px;
 }
-.dact-form-group
-{
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.dact-form-group.full
-{
-  grid-column: 1 / -1;
-}
-.dact-form-group label
-{
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-.dact-form-group input, .dact-form-group select
-{
-  padding: 9px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xs);
-  font-size: 0.85rem;
-  color: var(--text);
-  background: var(--surface2);
-  outline: none;
-}
-.dact-form-group input:focus, .dact-form-group select:focus
-{
-  border-color: var(--accent);
-}
-.dact-modal-actions
-{
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 4px;
-}
-.dact-day-row
-{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--surface2);
-}
-.dact-day-label
-{
-  font-size: 0.82rem;
-  font-weight: 600;
-  width: 90px;
-  flex-shrink: 0;
-}
-.dact-time-input
-{
-  padding: 6px 10px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xs);
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  color: var(--text);
-  background: var(--surface2);
-  outline: none;
-  width: 100px;
-}
-.dact-time-sep
-{
-  color: var(--text-muted);
-  font-size: 0.85rem;
-}
-.dact-off-toggle
-{
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  margin-left: auto;
-}
-.leave-section-card
+.dentists-record-stat
 {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-  overflow: hidden;
-}
-.leave-section-header
-{
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
   display: flex;
   align-items: center;
+  gap: 12px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.dentists-record-stat:hover
+{
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-sm);
+}
+.dentists-record-stat-icon
+{
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  color: var(--primary);
+  display: inline-flex;
+}
+.dentists-record-stat-icon svg
+{
+  width: 22px;
+  height: 22px;
+}
+.dentists-record-stat h4
+{
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+.dentists-record-stat p
+{
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-top: 2px;
+}
+.dentists-record-section
+{
+  padding: 20px 0 0;
+}
+.dentists-record-section-header
+{
+  display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
   margin-bottom: 16px;
 }
-.leave-pending-badge
+.dentists-record-section-header h3
 {
-  background: var(--surface2);
-  color: var(--text-muted);
-  font-size: 0.72rem;
-  font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-family: var(--font-mono);
-  border: 1px solid var(--border);
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
 }
-.leave-list
+.dentists-record-file-filter
+{
+  width: 220px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.dentists-record-file-filter:hover
+{
+  border-color: var(--primary);
+}
+.dentists-record-file-filter:focus
+{
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(250,19,119,0.06);
+}
+.dentists-upload-document-btn
+{
+  background: linear-gradient(135deg, var(--primary), #d40b62);
+  color: #fff;
+  border: none;
+  padding: 7px 14px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font);
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+.dentists-upload-document-btn:hover
+{
+  box-shadow: 0 6px 16px rgba(250,19,119,0.35);
+  transform: translateY(-1px);
+}
+.dentists-empty-record-box
+{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 70px 20px;
+  text-align: center;
+}
+.dentists-empty-record-box h4
+{
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-size: 22px;
+}
+.dentists-empty-record-box p
+{
+  margin-top: 10px;
+  color: var(--text-muted);
+  max-width: 420px;
+}
+.dentists-record-files-table
 {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+  width: 100%;
 }
-.leave-item
+.dentists-record-files-table thead
+{
+  display: none;
+}
+.dentists-record-files-table tbody
+{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dentists-record-files-table tr
+{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 14px;
+  background: white;
+  border: 1px solid var(--border);
+  transition: all 0.25s ease;
+}
+.dentists-record-files-table tr:hover
+{
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+  box-shadow: 0 10px 20px rgba(250,19,119,0.08);
+}
+.dentists-record-files-table td
+{
+  font-size: 0.85rem;
+  color: var(--text);
+}
+.dentists-record-files-table td:first-child
+{
+  flex: 1;
+  min-width: 100px;
+  font-weight: 600;
+}
+.dentists-file-badge
+{
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.dentists-file-badge.dentists-xray
+{
+  background: #E6F1FB;
+  color: #185FA5;
+}
+.dentists-file-badge.dentists-lab
+{
+  background: var(--green-bg);
+  color: var(--green);
+}
+.dentists-file-badge.dentists-clearance
+{
+  background: var(--orange-bg);
+  color: var(--orange);
+}
+.dentists-file-badge.dentists-consent
+{
+  background: var(--accent-bg);
+  color: #3C3489;
+}
+.dentists-file-badge.dentists-receipt
+{
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+.dentists-file-badge.dentists-invoice
+{
+  background: var(--accent-bg);
+  color: #3C3489;
+}
+.dentists-file-badge.dentists-other
+{
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+.dentists-file-actions
+{
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.dentists-file-btn
+{
+  border: none;
+  padding: 5px 10px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all var(--transition);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.dentists-file-btn.dentists-view
+{
+  background: var(--primary-light);
+  color: var(--primary);
+}
+.dentists-file-btn.dentists-view:hover
+{
+  background: var(--primary);
+  color: #fff;
+}
+.dentists-file-btn.dentists-download
+{
+  background: var(--primary-light);
+  color: var(--primary);
+}
+.dentists-file-btn.dentists-download:hover
+{
+  background: var(--primary);
+  color: #fff;
+}
+.dentists-file-btn.dentists-archive
+{
+  background: var(--orange-bg);
+  color: var(--orange);
+}
+.dentists-file-btn.dentists-archive:hover
+{
+  background: var(--orange);
+  color: #fff;
+}
+.dentists-record-history
+{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+.dentists-record-card
+{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 14px;
+  background: white;
+  border: 1px solid var(--border);
+  transition: all 0.25s ease;
+}
+.dentists-record-card:hover
+{
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+  box-shadow: 0 10px 20px rgba(250,19,119,0.08);
+}
+.dentists-record-date
+{
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  min-width: 90px;
+}
+.dentists-record-history h4
+{
+  flex: 1;
+  min-width: 100px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dentists-record-action-btn
+{
+  border: none;
+  padding: 5px 10px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--primary-light);
+  color: var(--primary);
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+.dentists-record-action-btn:hover
+{
+  background: var(--primary);
+  color: #fff;
+}
+.dentists-leave-section-card
+{
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  box-shadow: var(--shadow-sm);
+}
+.dentists-leave-section-header
+{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.dentists-leave-pending-badge
+{
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.dentists-leave-list
+{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dentists-leave-item
 {
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  padding: 14px 16px;
-  border-radius: var(--radius-sm);
+  padding: 16px;
+  border-radius: 14px;
+  background: white;
   border: 1px solid var(--border);
-  background: var(--surface);
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
+  transition: all 0.25s ease;
 }
-.leave-item-pending
+.dentists-leave-item:hover
+{
+  border-color: var(--border-hover);
+  box-shadow: 0 10px 20px rgba(250,19,119,0.08);
+}
+.dentists-leave-item-pending
 {
   border-left: 3px solid var(--text-light);
 }
-.leave-item-approved
+.dentists-leave-item-approved
 {
   border-left: 3px solid var(--green);
 }
-.leave-item-declined
+.dentists-leave-item-declined
 {
   border-left: 3px solid var(--red);
 }
-.leave-type-badge
+.dentists-leave-type-badge
 {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   flex-shrink: 0;
   margin-top: 2px;
+  color: var(--primary);
   opacity: 0.85;
 }
-.leave-meta
+.dentists-leave-meta
 {
   flex: 1;
   display: flex;
@@ -1352,18 +1535,19 @@
   min-width: 0;
   overflow: hidden;
 }
-.leave-type-label
+.dentists-leave-type-label
 {
-  font-size: 0.86rem;
+  font-size: 0.85rem;
   font-weight: 600;
+  color: var(--text);
 }
-.leave-dates
+.dentists-leave-dates
 {
   font-size: 0.76rem;
   color: var(--accent);
   font-family: var(--font-mono);
 }
-.leave-reason
+.dentists-leave-reason
 {
   font-size: 0.76rem;
   color: var(--text-muted);
@@ -1372,7 +1556,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.leave-remark-display
+.dentists-leave-remark-display
 {
   font-size: 0.74rem;
   color: var(--text-muted);
@@ -1383,14 +1567,15 @@
   margin-top: 2px;
   word-break: break-word;
 }
-.leave-submitted-on
+.dentists-leave-reviewed-by,
+.dentists-leave-reviewed-date,
+.dentists-leave-submitted-on
 {
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   color: var(--text-light);
   font-family: var(--font-mono);
-  margin-top: 2px;
 }
-.leave-actions-col
+.dentists-leave-actions-col
 {
   display: flex;
   flex-direction: column;
@@ -1398,51 +1583,57 @@
   gap: 6px;
   flex-shrink: 0;
 }
-.leave-status-pill
+.dentists-leave-status-pill
 {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 600;
-  padding: 4px 12px;
+  padding: 2px 8px;
   border-radius: 20px;
   white-space: nowrap;
 }
-.leave-status-pending
+.dentists-leave-status-pending
 {
-  background: var(--surface2);
+  background: var(--border);
   color: var(--text-muted);
 }
-.leave-status-approved
+.dentists-leave-status-approved
 {
   background: var(--green-bg);
   color: var(--green);
 }
-.leave-status-declined
+.dentists-leave-status-declined
 {
   background: var(--red-bg);
   color: var(--red);
 }
-.leave-review-btn
+.dentists-leave-status-cancelled
 {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xs);
-  padding: 5px 12px;
-  font-size: 0.73rem;
-  font-weight: 600;
-  color: var(--primary);
+  background: var(--border);
+  color: var(--text-muted);
 }
-.leave-review-btn:hover
+.dentists-leave-review-btn
+{
+  border: none;
+  padding: 5px 10px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--primary-light);
+  color: var(--primary);
+  transition: all var(--transition);
+}
+.dentists-leave-review-btn:hover
 {
   background: var(--primary);
   color: #fff;
-  border-color: var(--primary);
 }
-.leave-review-modal
+.dentists-leave-review-modal
 {
   width: 460px;
   max-width: 100%;
 }
-.leave-review-summary
+.dentists-leave-review-summary
 {
   display: flex;
   align-items: flex-start;
@@ -1451,37 +1642,40 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 14px 16px;
+  margin-top: 16px;
 }
-.leave-review-icon
+.dentists-leave-review-icon
 {
-  font-size: 1.7rem;
+  font-size: 1.6rem;
   flex-shrink: 0;
+  color: var(--primary);
   opacity: 0.85;
 }
-.leave-review-info
+.dentists-leave-review-info
 {
   display: flex;
   flex-direction: column;
   gap: 3px;
 }
-.leave-review-type
+.dentists-leave-review-type
 {
-  font-size: 0.98rem;
+  font-size: 0.95rem;
   font-weight: 600;
+  color: var(--text);
 }
-.leave-review-dates
+.dentists-leave-review-dates
 {
   font-size: 0.8rem;
   color: var(--accent);
   font-family: var(--font-mono);
 }
-.leave-review-filed
+.dentists-leave-review-filed
 {
   font-size: 0.72rem;
   color: var(--text-light);
   font-family: var(--font-mono);
 }
-.leave-review-reason-box
+.dentists-leave-review-reason-box
 {
   background: var(--surface2);
   border-left: 3px solid var(--text-light);
@@ -1490,62 +1684,802 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
+  margin-top: 14px;
 }
-.leave-review-reason-label
+.dentists-leave-review-reason-box strong
 {
   font-size: 0.66rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--text-muted);
 }
-.leave-review-reason-text
+.dentists-leave-review-reason-box p
 {
   font-size: 0.83rem;
   color: var(--text-muted);
   font-style: italic;
   margin: 0;
 }
-.leave-review-actions
+.dentists-remark-input
+{
+  width: 100%;
+  min-height: 100px;
+  margin-top: 16px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  resize: vertical;
+  font-family: var(--font);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--surface);
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.dentists-remark-input:focus
+{
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(250,19,119,0.06);
+}
+.dentists-leave-review-actions
 {
   display: flex;
-  gap: 8px;
   justify-content: flex-end;
-  padding-top: 4px;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
 }
-.leave-btn-decline
+.dentists-decline-btn
 {
-  background: var(--surface);
-  color: var(--text-muted);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xs);
+  background: none;
+  border: 1.5px solid var(--border);
   padding: 8px 18px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font);
   font-size: 0.82rem;
   font-weight: 600;
+  color: var(--text-muted);
+  transition: all var(--transition);
 }
-.leave-btn-decline:hover
+.dentists-decline-btn:hover
 {
-  background: var(--red);
-  color: #fff;
-  border-color: var(--red);
+  background: var(--surface2);
 }
-.leave-btn-approve
+.dentists-approve-btn
+{
+  background: linear-gradient(135deg, var(--primary), #d40b62);
+  border: none;
+  padding: 8px 20px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #fff;
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+.dentists-approve-btn:hover
+{
+  box-shadow: 0 6px 16px rgba(250,19,119,0.35);
+  transform: translateY(-1px);
+}
+.dentists-dact-day-row
+{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--surface2);
+}
+.dentists-dact-day-label
+{
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  width: 90px;
+  flex-shrink: 0;
+}
+.dentists-dact-time-input
+{
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-xs);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text);
+  background: var(--surface2);
+  outline: none;
+  width: 100px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.dentists-dact-time-input:focus
+{
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(250,19,119,0.06);
+}
+.dentists-dact-time-sep
+{
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+.dentists-dact-off-toggle
+{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+.dentists-dact-form-grid
+{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.dentists-dact-form-group
+{
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.dentists-dact-form-group.dentists-full
+{
+  grid-column: 1 / -1;
+}
+.dentists-dact-form-group label
+{
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.dentists-dact-form-group input,
+.dentists-dact-form-group select
+{
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-xs);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  color: var(--text);
+  background: var(--surface2);
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.dentists-dact-form-group input:focus,
+.dentists-dact-form-group select:focus
+{
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(250,19,119,0.06);
+}
+.dentists-custom-lunch-days
+{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.dentists-custom-lunch-day
+{
+  padding: 4px 11px;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  background: transparent;
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: all var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.dentists-custom-lunch-day:hover
+{
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.dentists-custom-lunch-day input
+{
+  accent-color: var(--primary);
+}
+.dentists-dact-btn
+{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  padding: 9px 18px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+.dentists-dact-primary
+{
+  background: linear-gradient(135deg, var(--primary), #d40b62);
+  color: #fff;
+}
+.dentists-dact-primary:hover
+{
+  box-shadow: 0 6px 16px rgba(250,19,119,0.35);
+  transform: translateY(-1px);
+}
+.dentists-forms-intro
+{
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+.dentists-forms-toolbar
+{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.dentists-forms-search
+{
+  flex: 1;
+  max-width: 475px;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-xs);
+  background: var(--surface2);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.dentists-forms-search:focus
+{
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(250,19,119,0.06);
+}
+.dentists-forms-filter
+{
+  width: 220px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.dentists-forms-filter:hover
+{
+  border-color: var(--primary);
+}
+.dentists-forms-filter:focus
+{
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(250,19,119,0.06);
+}
+.dentists-forms-list
+{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dentists-template-row
+{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  transition: all 0.25s ease;
+}
+.dentists-template-row:hover
+{
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+  box-shadow: 0 10px 20px rgba(250,19,119,0.08);
+}
+.dentists-template-left
+{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.dentists-template-icon
+{
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  display: inline-flex;
+}
+.dentists-template-icon svg
+{
+  width: 22px;
+  height: 22px;
+}
+.dentists-template-left h3
+{
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  color: var(--text);
+}
+.dentists-template-type
+{
+  display: inline-block;
+  margin-top: 4px;
+  color: var(--text-muted);
+  text-transform: capitalize;
+  font-size: 0.73rem;
+  font-family: var(--font-mono);
+}
+.dentists-template-actions
+{
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.dentists-template-btn
+{
+  border: none;
+  padding: 5px 10px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--primary-light);
+  color: var(--primary);
+  transition: all var(--transition);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.dentists-template-btn:hover
 {
   background: var(--primary);
   color: #fff;
+}
+.dentists-modal-form-doc
+{
+  width: 580px;
+  max-width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+.dentists-form-doc-body
+{
+  overflow-y: auto;
+  padding: 20px 24px;
+  flex: 1;
+}
+.dentists-doc-preview
+{
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  font-family: 'Georgia', serif;
+}
+.dentists-doc-letterhead
+{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+.dentists-doc-clinic
+{
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 0.02em;
+}
+.dentists-doc-address
+{
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+.dentists-doc-divider
+{
   border: none;
+  border-top: 2px solid var(--primary);
+  margin: 10px 0 16px;
+}
+.dentists-doc-title
+{
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: underline;
+  margin: 0 0 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text);
+}
+.dentists-doc-content
+{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dentists-doc-field
+{
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.dentists-doc-field label
+{
+  font-size: 0.78rem;
+  white-space: nowrap;
+  color: var(--text-muted);
+  min-width: 130px;
+}
+.dentists-doc-input-line
+{
+  flex: 1;
+  border-bottom: 1px solid var(--text);
+  min-height: 18px;
+  min-width: 80px;
+}
+.dentists-doc-input-line.dentists-long
+{
+  min-width: 200px;
+}
+.dentists-doc-rx
+{
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1;
+  margin-bottom: -4px;
+}
+.dentists-doc-rx-lines
+{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-left: 20px;
+}
+.dentists-doc-para
+{
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.7;
+}
+.dentists-esign-section
+{
+  border-top: 1px dashed var(--border);
+  margin-top: 20px;
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.dentists-esign-label
+{
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.dentists-esign-title
+{
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.dentists-btn-esign
+{
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  padding: 7px 16px;
   border-radius: var(--radius-xs);
+  font-family: var(--font);
+  font-size: 0.8rem;
+  font-weight: 700;
+  transition: all var(--transition);
+}
+.dentists-btn-esign:hover
+{
+  background: var(--primary);
+  color: #fff;
+}
+.dentists-esign-form
+{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+.dentists-esign-input
+{
+  width: 240px;
+  max-width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid var(--primary);
+  border-radius: var(--radius-xs);
+  font-family: var(--font);
+  font-size: 1rem;
+  color: var(--primary);
+  outline: none;
+}
+.dentists-esign-btns
+{
+  display: flex;
+  gap: 8px;
+}
+.dentists-btn-esign-cancel
+{
+  background: none;
+  border: 1.5px solid var(--border);
+  padding: 6px 12px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: all var(--transition);
+}
+.dentists-btn-esign-cancel:hover
+{
+  background: var(--surface2);
+}
+.dentists-btn-esign-confirm
+{
+  background: linear-gradient(135deg, var(--primary), #d40b62);
+  border: none;
+  padding: 6px 12px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fff;
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+.dentists-btn-esign-confirm:hover
+{
+  box-shadow: 0 6px 16px rgba(250,19,119,0.35);
+  transform: translateY(-1px);
+}
+.dentists-signed-stamp
+{
+  text-align: right;
+}
+.dentists-signature-text
+{
+  font-size: 1.4rem;
+  color: var(--primary);
+  line-height: 1.2;
+  font-family: var(--font-heading);
+}
+.dentists-signed-label
+{
+  font-size: 0.7rem;
+  color: var(--green);
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+.dentists-form-doc-actions
+{
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.dentists-btn-print,
+.dentists-btn-download,
+.dentists-btn-send
+{
+  border: none;
+  padding: 5px 10px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.dentists-btn-print
+{
+  background: var(--surface2);
+  color: var(--text-muted);
+}
+.dentists-btn-print:hover
+{
+  background: var(--border);
+}
+.dentists-btn-download
+{
+  background: var(--primary-light);
+  color: var(--primary);
+}
+.dentists-btn-download:hover
+{
+  background: var(--primary);
+  color: #fff;
+}
+.dentists-btn-send
+{
+  background: linear-gradient(135deg, var(--primary), #d40b62);
+  color: #fff;
+}
+.dentists-btn-send:hover
+{
+  box-shadow: 0 6px 16px rgba(250,19,119,0.35);
+  transform: translateY(-1px);
+}
+.dentists-upload-modal h2
+{
+  margin: 0 0 4px;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.dentists-upload-modal label
+{
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 14px 0 6px;
+}
+.dentists-upload-modal select,
+.dentists-upload-modal input[type="file"]
+{
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-xs);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  color: var(--text);
+  background: var(--surface2);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.dentists-upload-modal select:focus,
+.dentists-upload-modal input[type="file"]:focus
+{
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(250,19,119,0.06);
+}
+.dentists-upload-modal-actions,
+.dentists-modal-actions
+{
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+.dentists-upload-modal-actions button:first-child
+{
+  background: none;
+  border: 1.5px solid var(--border);
   padding: 8px 18px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font);
   font-size: 0.82rem;
   font-weight: 600;
+  color: var(--text-muted);
+  transition: all var(--transition);
 }
-.leave-btn-approve:hover
+.dentists-upload-modal-actions button:first-child:hover
 {
-  background: var(--primary-dark);
+  background: var(--surface2);
+}
+.dentists-upload-modal-actions button:last-child
+{
+  background: linear-gradient(135deg, var(--primary), #d40b62);
+  border: none;
+  padding: 8px 20px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #fff;
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+.dentists-upload-modal-actions button:last-child:hover
+{
+  box-shadow: 0 6px 16px rgba(250,19,119,0.35);
+  transform: translateY(-1px);
+}
+.dentists-archive-confirm-modal
+{
+  width: 480px;
+  max-width: 100%;
+}
+.dentists-archive-confirm-body p
+{
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+.dentists-archive-confirm-body strong
+{
+  color: var(--text);
+}
+.dentists-confirm-input
+{
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-xs);
+  background: var(--surface2);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  margin-bottom: 14px;
+}
+.dentists-confirm-input:focus
+{
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(250,19,119,0.06);
+}
+.dentists-confirm-error
+{
+  color: var(--red);
+  background: var(--red-bg);
+  border-radius: var(--radius-xs);
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.dentists-icon-text
+{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.dentists-icon-text svg
+{
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 @media (max-width: 768px)
 {
-  .dentists-sidebar-toggle
+  .dentists-mobile-bar
   {
     display: flex;
   }
@@ -1553,13 +2487,17 @@
   {
     display: block;
   }
+  .dentists-sidebar-close
+  {
+    display: flex;
+  }
   .dentists-sidebar
   {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
-    height: 100vh;
-    z-index: 150;
+    height: 100%;
+    z-index: 15;
     transform: translateX(-100%);
     box-shadow: var(--shadow-lg);
   }
@@ -1570,19 +2508,18 @@
   .dentists-detail
   {
     width: 100%;
-    padding-top: 56px;
   }
-  .detail-content
+  .dentists-detail-content
   {
     padding: 16px;
   }
-  .detail-hero
+  .dentists-detail-hero
   {
     flex-direction: column;
     align-items: flex-start;
-    gap: 16px;
+    gap: 14px;
   }
-  .detail-hero-right
+  .dentists-detail-hero-right
   {
     align-items: flex-start;
     flex-direction: row;
@@ -1590,113 +2527,47 @@
     gap: 10px;
     width: 100%;
   }
-  .commission-box
+  .dentists-detail-name
   {
-    text-align: left;
-    flex: 1;
-    min-width: 140px;
+    font-size: 1.2rem;
   }
-  .detail-name
-  {
-    font-size: 1.15rem;
-  }
-  .overview-grid
-  {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .section-card
-  {
-    padding: 14px;
-  }
-}
-@media (max-width: 480px)
-{
-  .detail-content
-  {
-    padding: 12px;
-  }
-  .overview-grid
+  .dentists-overview-grid
   {
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
   }
-  .ov-card
+  .dentists-record-modal
   {
-    padding: 12px;
-    gap: 8px;
+    padding: 16px;
   }
-  .ov-value
-  {
-    font-size: 0.92rem;
-  }
-  .detail-tabs
-  {
-    gap: 0;
-  }
-  .tab-btn
-  {
-    padding: 8px 10px;
-    font-size: 0.76rem;
-  }
-  .handled-item
-  {
-    gap: 10px;
-  }
-  .handled-date
-  {
-    display: none;
-  }
-  .request-item
+  .dentists-record-header
   {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: 14px;
   }
-  .forms-grid
-  {
-    grid-template-columns: 1fr;
-  }
-  .form-doc-actions
-  {
-    justify-content: stretch;
-  }
-  .btn-print, .btn-download, .btn-send
-  {
-    flex: 1;
-    text-align: center;
-  }
-  .dact-form-grid
-  {
-    grid-template-columns: 1fr;
-  }
-  .dact-form-group.full
-  {
-    grid-column: 1;
-  }
-  .dact-day-row
-  {
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  .dact-day-label
-  {
-    width: 100%;
-  }
-  .leave-item
-  {
-    flex-wrap: wrap;
-  }
-  .leave-review-modal
-  {
-    width: 100%;
-  }
-  .leave-review-actions
+  .dentists-record-contact
   {
     flex-direction: column;
+    gap: 10px;
   }
-  .leave-btn-decline, .leave-btn-approve
+  .dentists-handled-date
   {
+    display: none;
+  }
+  .dentists-forms-toolbar
+  {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .dentists-forms-search,
+  .dentists-forms-filter
+  {
+    max-width: 100%;
     width: 100%;
-    text-align: center;
+  }
+  .dentists-branch-select
+  {
+    font-size: 0.68rem;
+    padding: 5px 8px;
   }
 }

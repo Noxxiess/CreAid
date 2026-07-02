@@ -2,7 +2,7 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import { useAuth } from "../context/AuthContext";
-import logo from "../assets/creaid.jpg";
+import logo from "../assets/creaid.png";
 import "../styles/Sidebar.css";
 
 const NAV_ICONS = 
@@ -81,7 +81,7 @@ function Sidebar({ collapsed, onToggle, mobileClose, isMobileDrawer })
             </div>
             {openReports && !collapsed && (
               <div className="submenu">
-                <NavLink to="/reports"              end className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>Summary</NavLink>
+                <NavLink to="/reports/summary"      end className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>Summary</NavLink>
                 <NavLink to="/reports/daily"        end className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>Daily Sales</NavLink>
                 <NavLink to="/reports/collections"  end className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>Collections</NavLink>
                 <NavLink to="/reports/expenses"     end className={navClass} onClick={isMobileDrawer ? mobileClose : undefined}>Expenses & Bills</NavLink>

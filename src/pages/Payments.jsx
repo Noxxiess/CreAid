@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import { Icon } from "@iconify/react";
 import "../styles/payment.css";
-import
-{
+import Spinner from "../components/Spinner";
+import {
   getPaymentsApi,
   getAppointmentServicesApi,
   markPaymentPaidApi,
@@ -12,8 +13,8 @@ import
   markServiceNotPerformedApi,
   markServicePerformedApi
 } from "../api/appointments";
-
 import { getServicesApi } from "../api/services";
+import { jsPDF } from "jspdf";
 import axios from "axios";
 
 const AVATAR_PALETTES = [
@@ -25,7 +26,33 @@ const AVATAR_PALETTES = [
   { bg: "#f3e5f5", color: "#6a1b9a" },
 ];
 
-const PAGE_SIZE = 6;
+function formatStatus(status = "")
+{
+  switch (status.toLowerCase())
+  {
+    case "downpayment_paid": return "Downpayment";
+    case "pending_verification": return "For Verification";
+    case "no_show": return "No Show";
+    case "cancelled": return "Cancelled";
+    case "paid": return "Paid";
+    case "pending": return "Pending";
+    default: return status;
+  }
+}
+
+function getStatusClass(status = "")
+{
+  switch (status.toLowerCase())
+  {
+    case "paid": return "pay-status-paid";
+    case "pending": return "pay-status-pending";
+    case "downpayment_paid": return "pay-status-downpayment";
+    case "cancelled": return "pay-status-cancelled";
+    case "no_show": return "pay-status-noshow";
+    case "pending_verification": return "pay-status-verification";
+    default: return "pay-status-pending";
+  }
+}
 
 function getInitials(name = "")
 {
@@ -34,37 +61,26 @@ function getInitials(name = "")
 
 function getAvatarPalette(name = "")
 {
-  const idx = name.charCodeAt(0) % AVATAR_PALETTES.length;
-  return AVATAR_PALETTES[idx];
+  return AVATAR_PALETTES[name.charCodeAt(0) % AVATAR_PALETTES.length];
 }
 
-const METHOD_LABELS = 
-{
-  gcash: "GCash",
-  mastercard: "Mastercard",
-  visa: "Visa",
-  jcb: "JCB",
-  cash: "Cash",
-  card: "Card",
-};
-
-function normalizeMethod(method = "")
-{
-  return METHOD_LABELS[method.toLowerCase()] || method;
-}
+const PAGE_SIZE = 6;
 
 function Payment()
 {
   const [payments, setPayments] = useState([]);
+  const [loadingPayments, setLoadingPayments] = useState(true);
+  const [loadingServices, setLoadingServices] = useState(false);
   const [highlightedId, setHighlightedId] = useState(localStorage.getItem("highlightPaymentId"));
+  const [showReceipt, setShowReceipt] = useState(false);
+  const [clinicFilter, setClinicFilter] = useState("All");
   const [editingPayment, setEditingPayment] = useState(null);
   const [editForm, setEditForm] = useState({});
   const [services, setServices] = useState([]);
-  const [viewingPayment, setViewingPayment] = useState(null);
   const [allServices, setAllServices] = useState([]);
-  const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [filterMethod, setFilterMethod] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() =>
@@ -73,10 +89,64 @@ function Payment()
     loadServices();
   }, []);
 
-  useEffect(() =>
+  async function loadPayments()
   {
-    setCurrentPage(1);
-  }, [search, filterStatus, filterMethod]);
+    try
+    {
+      setLoadingPayments(true);
+      const response = await getPaymentsApi();
+      const list = response.payments || [];
+      setPayments(list);
+      return list;
+    }
+    catch (error)
+    {
+      console.error(error);
+      return [];
+    }
+    finally
+    {
+      setLoadingPayments(false);
+    }
+  }
+
+  async function loadServices()
+  {
+    try
+    {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/services`);
+      setAllServices(response.data.services || []);
+    }
+    catch (error) { console.error(error); }
+  }
+
+  async function handleEdit(p)
+  {
+    setEditingPayment(p);
+    setEditForm({ ...p });
+    try
+    {
+      setLoadingServices(true);
+      const response = await getAppointmentServicesApi(p.id);
+      setServices(response.services || []);
+    }
+    catch (error)
+    {
+      console.error(error);
+      setServices([]);
+    }
+    finally
+    {
+      setLoadingServices(false);
+    }
+  }
+
+  function handleCancel()
+  {
+    setEditingPayment(null);
+    setEditForm({});
+    setServices([]);
+  }
 
   async function handleMarkPaid()
   {
@@ -86,11 +156,7 @@ function Payment()
       await loadPayments();
       handleCancel();
     }
-    catch (error) 
-    { 
-      console.error(error); 
-
-    }
+    catch (error) { console.error(error); }
   }
 
   async function handleCancelPayment()
@@ -101,10 +167,7 @@ function Payment()
       await loadPayments();
       handleCancel();
     }
-    catch (error) 
-    { 
-      console.error(error); 
-    }
+    catch (error) { console.error(error); }
   }
 
   async function handleNotPerformed(service)
@@ -116,10 +179,7 @@ function Payment()
       const updatedPayment = updatedPayments.find(p => p.id === editingPayment.id);
       if (updatedPayment) await handleEdit(updatedPayment);
     }
-    catch (error) 
-    { 
-      console.error(error); 
-    }
+    catch (error) { console.error(error); }
   }
 
   async function handlePerformed(service)
@@ -129,69 +189,7 @@ function Payment()
       await markServicePerformedApi(service.id);
       await handleEdit(editingPayment);
     }
-    catch (error) 
-    { 
-      console.error(error); 
-    }
-  }
-
-  async function loadPayments()
-  {
-    try
-    {
-      const response = await getPaymentsApi();
-      const list = response.payments || [];
-      setPayments(list);
-      return list;
-    }
-    catch (error)
-    {
-      console.error(error);
-      return [];
-    }
-  }
-
-  async function loadServices()
-  {
-    try
-    {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/services`);
-      setAllServices(response.data.services || []);
-    }
-    catch (error) 
-    { 
-      console.error(error); 
-    }
-  }
-
-  async function handleEdit(p)
-  {
-    setEditingPayment(p);
-    setEditForm({ ...p });
-    try
-    {
-      const response = await getAppointmentServicesApi(p.id);
-      setServices(response.services || []);
-    }
-    catch (error)
-    {
-      console.error(error);
-      setServices([]);
-    }
-  }
-
-  function handleSave()
-  {
-    setPayments(payments.map(p => p.id === editingPayment.id ? { ...editForm } : p));
-    setEditingPayment(null);
-    setEditForm({});
-  }
-
-  function handleCancel()
-  {
-    setEditingPayment(null);
-    setEditForm({});
-    setServices([]);
+    catch (error) { console.error(error); }
   }
 
   async function handleUndoPaid()
@@ -207,10 +205,7 @@ function Payment()
         setEditForm(updatedPayment);
       }
     }
-    catch (error)
-    { 
-      console.error(error); 
-    }
+    catch (error) { console.error(error); }
   }
 
   async function handleReinstate()
@@ -221,317 +216,340 @@ function Payment()
       await loadPayments();
       handleCancel();
     }
-    catch (error) 
-    { 
-      console.error(error); 
-    }
+    catch (error) { console.error(error); }
   }
 
-  const filtered = payments.filter(p =>
+  function handleGenerateInvoice()
   {
-    const q = search.toLowerCase();
-    const matchName = !q || (p.guest_name || "").toLowerCase().includes(q);
-    const matchStatus = !filterStatus || (p.payment_status || "").toLowerCase() === filterStatus;
-    const matchMethod = !filterMethod || (p.payment_method || "").toLowerCase() === filterMethod;
-    return matchName && matchStatus && matchMethod;
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text("JUANA SMILE DENTAL CLINIC", 20, 20);
+    doc.setFontSize(14);
+    doc.text("INVOICE", 20, 30);
+    doc.line(20, 35, 190, 35);
+    let y = 50;
+    doc.text(`Invoice #: ${editForm.invoice_number || `INV-${editForm.id?.slice(0, 8).toUpperCase()}`}`, 20, y); y += 10;
+    doc.text(`Patient: ${editForm.guest_name}`, 20, y); y += 10;
+    doc.text(`Clinic: ${editForm.branch_id}`, 20, y); y += 10;
+    doc.text(`Date: ${editForm.appointment_date}`, 20, y); y += 15;
+    doc.text("Services", 20, y); y += 10;
+    services.forEach(s => { doc.text(`${s.service_name}`, 20, y); doc.text(`PHP ${Number(s.price).toLocaleString()}`, 140, y); y += 8; });
+    y += 10;
+    doc.text(`Total Amount: PHP ${Number(editForm.total_amount || 0).toLocaleString()}`, 20, y); y += 10;
+    doc.text(`Amount Paid: PHP ${Number(editForm.amount_paid || 0).toLocaleString()}`, 20, y); y += 10;
+    doc.text(`Remaining Balance: PHP ${Number(editForm.remaining_balance || 0).toLocaleString()}`, 20, y);
+    doc.save(`Invoice-${editForm.guest_name?.replaceAll(" ", "-")}.pdf`);
+  }
+
+  function handleGenerateOfficialReceipt()
+  {
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text("JUANA SMILE DENTAL CLINIC", 20, 20);
+    doc.setFontSize(14);
+    doc.text("OFFICIAL RECEIPT", 20, 30);
+    doc.line(20, 35, 190, 35);
+    let y = 50;
+    doc.text(`Receipt No: OR-${editForm.id?.slice(0, 8).toUpperCase()}`, 20, y); y += 10;
+    doc.text(`Patient: ${editForm.guest_name}`, 20, y); y += 10;
+    doc.text(`Branch: ${editForm.branch_id}`, 20, y); y += 10;
+    doc.text(`Payment Method: ${editForm.payment_method}`, 20, y); y += 10;
+    doc.text(`Date Paid: ${new Date().toLocaleDateString()}`, 20, y); y += 15;
+    doc.setFontSize(16);
+    doc.text(`Amount Received: PHP ${Number(editForm.total_amount || 0).toLocaleString()}`, 20, y); y += 20;
+    doc.setFontSize(12);
+    doc.text("Payment received in full for dental services rendered.", 20, y); y += 30;
+    doc.text("________________________", 20, y); y += 10;
+    doc.text("Authorized Signature", 20, y);
+    doc.save(`Official-Receipt-${editForm.guest_name?.replaceAll(" ", "-")}.pdf`);
+  }
+
+  const filteredPayments = payments.filter(payment =>
+  {
+    if (clinicFilter !== "All" && payment.branch_id !== clinicFilter) return false;
+    const q = searchTerm.toLowerCase();
+    const matchesSearch =
+      payment.guest_name?.toLowerCase().includes(q) ||
+      payment.payment_method?.toLowerCase().includes(q) ||
+      payment.payment_status?.toLowerCase().includes(q) ||
+      payment.status?.toLowerCase().includes(q);
+    if (!matchesSearch) return false;
+    let matchesStatus = true;
+    if (filterStatus === "today") matchesStatus = payment.appointment_date === new Date().toISOString().split("T")[0];
+    else if (filterStatus === "pending") matchesStatus = ["pending", "downpayment_paid"].includes(payment.payment_status?.toLowerCase());
+    else if (filterStatus) matchesStatus = payment.payment_status?.toLowerCase() === filterStatus;
+    const matchesMethod = !filterMethod || payment.payment_method?.toLowerCase() === filterMethod;
+    return matchesStatus && matchesMethod;
   });
 
-  const totalCollected = filtered
-    .filter(p => p.payment_status?.toLowerCase() === "paid")
-    .reduce((a, p) => a + Number(p.total_amount || 0), 0);
+  const totalPages = Math.max(1, Math.ceil(filteredPayments.length / PAGE_SIZE));
+  const paginatedPayments = filteredPayments.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const totalCollected = filteredPayments.reduce((sum, p) => sum + Number(p.amount_paid || 0), 0);
+  const totalOutstanding = filteredPayments.reduce((sum, p) => sum + Number(p.remaining_balance || 0), 0);
+  const paidCount = filteredPayments.filter(p => p.payment_status?.toLowerCase() === "paid").length;
+  const cancelledCount = filteredPayments.filter(p => p.payment_status?.toLowerCase() === "cancelled").length;
 
-  const totalOutstanding = filtered.reduce((a, p) => a + Number(p.remaining_balance || 0), 0);
-  const paidCount = filtered.filter(p => p.payment_status?.toLowerCase() === "paid").length;
-  const cancelledCount = filtered.filter(p => p.payment_status?.toLowerCase() === "cancelled").length;
+  const isCancelled = editForm.payment_status === "cancelled";
+  const isPaid = editForm.payment_status === "paid";
+  const isRejected = editForm.status === "rejected";
+  const isEditable = !isCancelled && !isPaid && !isRejected;
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const safePage = Math.min(currentPage, totalPages);
-  const paginated = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
-
-  function getPageNumbers()
-  {
-    const pages = [];
-    const windowSize = 1;
-
-    for (let i = 1; i <= totalPages; i++)
-    {
-      if (i === 1 || i === totalPages || Math.abs(i - safePage) <= windowSize)
-      {
-        pages.push(i);
-      }
-      else if (pages[pages.length - 1] !== "...")
-      {
-        pages.push("...");
-      }
-    }
-
-    return pages;
-  }
+  const activeServices = services.filter(s => s.service_status !== "not_performed");
 
   return (
-    <div className="users-content">
-      <div className="users-page-header"><h2>Payment</h2></div>
+    <div className="pay-root">
 
-      <div className="users-page-container">
-        <div className="payment-top-bar">
-          <div className="payment-search-wrap">
-            <svg className="payment-search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input className="payment-search-input" type="text" placeholder="Search patient name…" value={search} onChange={e => setSearch(e.target.value)}/>
+      <div className="pay-page-header">
+        <h2 className="pay-page-title">Payments</h2>
+        <span className="pay-total-badge">{filteredPayments.length} records</span>
+      </div>
+
+      <div className="pay-page-container">
+
+        <div className="pay-metrics">
+          <div className="pay-metric-card">
+            <span className="pay-metric-icon"><Icon icon="mdi:cash-multiple" aria-hidden="true" /></span>
+            <div className="pay-metric-body">
+              <span className="pay-metric-value">₱{totalCollected.toLocaleString()}</span>
+              <span className="pay-metric-label">Total Collected</span>
+              <span className="pay-metric-sub">{paidCount} paid records</span>
+            </div>
           </div>
+          <div className="pay-metric-card">
+            <span className="pay-metric-icon"><Icon icon="mdi:alert-circle-outline" aria-hidden="true" /></span>
+            <div className="pay-metric-body">
+              <span className="pay-metric-value pay-metric-value-danger">₱{totalOutstanding.toLocaleString()}</span>
+              <span className="pay-metric-label">Outstanding</span>
+              <span className="pay-metric-sub">Remaining balances</span>
+            </div>
+          </div>
+          <div className="pay-metric-card">
+            <span className="pay-metric-icon"><Icon icon="mdi:receipt-text-outline" aria-hidden="true" /></span>
+            <div className="pay-metric-body">
+              <span className="pay-metric-value">{filteredPayments.length}</span>
+              <span className="pay-metric-label">Total Records</span>
+              <span className="pay-metric-sub">Payment entries</span>
+            </div>
+          </div>
+          <div className="pay-metric-card">
+            <span className="pay-metric-icon"><Icon icon="mdi:close-circle-outline" aria-hidden="true" /></span>
+            <div className="pay-metric-body">
+              <span className="pay-metric-value">{cancelledCount}</span>
+              <span className="pay-metric-label">Cancelled</span>
+              <span className="pay-metric-sub">Cancelled records</span>
+            </div>
+          </div>
+        </div>
 
-          <select className="payment-filter-select" value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
-            <option value="">All statuses</option>
+        <div className="pay-toolbar">
+          <div className="pay-search-wrap">
+            <span className="pay-search-icon"><Icon icon="mdi:magnify" aria-hidden="true" /></span>
+            <input className="pay-search-input" placeholder="Search patient, method, or status…" value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }} />
+          </div>
+          <select className="pay-select" value={clinicFilter} onChange={(e) => { setClinicFilter(e.target.value); setCurrentPage(1); }}>
+            <option value="All">All Clinics</option>
+            <option value="Hagonoy">Hagonoy</option>
+            <option value="Paombong">Paombong</option>
+          </select>
+          <select className="pay-select" value={filterStatus} onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }}>
+            <option value="">All Statuses</option>
+            <option value="today">Today</option>
             <option value="paid">Paid</option>
             <option value="pending">Pending</option>
             <option value="cancelled">Cancelled</option>
           </select>
-
-          <select className="payment-filter-select" value={filterMethod} onChange={e => setFilterMethod(e.target.value)}>
-            <option value="">All methods</option>
+          <select className="pay-select" value={filterMethod} onChange={(e) => { setFilterMethod(e.target.value); setCurrentPage(1); }}>
+            <option value="">All Methods</option>
             <option value="gcash">GCash</option>
             <option value="cash">Cash</option>
-            <option value="mastercard">Mastercard</option>
             <option value="visa">Visa</option>
+            <option value="mastercard">Mastercard</option>
             <option value="jcb">JCB</option>
             <option value="card">Card</option>
           </select>
         </div>
 
-        <div className="payment-metrics">
-          <div className="payment-metric-card">
-            <div className="pmc-label">Total collected</div>
-            <div className="pmc-value">₱{totalCollected.toLocaleString()}</div>
-            <div className="pmc-sub">{paidCount} paid {paidCount === 1 ? "record" : "records"}</div>
-          </div>
-
-          <div className="payment-metric-card">
-            <div className="pmc-label">Outstanding</div>
-            <div className={`pmc-value ${totalOutstanding > 0 ? "pmc-value--danger" : ""}`}>₱{totalOutstanding.toLocaleString()}</div>
-            <div className="pmc-sub">{filtered.filter(p => Number(p.remaining_balance) > 0).length} with balance</div>
-          </div>
-
-          <div className="payment-metric-card">
-            <div className="pmc-label">Total records</div>
-            <div className="pmc-value">{filtered.length}</div>
-            <div className="pmc-sub">of {payments.length} total</div>
-          </div>
-
-          <div className="payment-metric-card">
-            <div className="pmc-label">Cancelled</div>
-            <div className="pmc-value">{cancelledCount}</div>
-            <div className="pmc-sub">{cancelledCount === 1 ? "record" : "records"}</div>
-          </div>
-        </div>
-
-        <div className="payment-table">
-          <div className="payment-table-header">
+        <div className="pay-table-wrap">
+          <div className="pay-table-header">
             <span>Patient</span>
+            <span>Clinic</span>
             <span>Invoice</span>
             <span>Amount</span>
             <span>Balance</span>
-            <span>Mode of payment</span>
+            <span>Method</span>
             <span>Status</span>
             <span></span>
           </div>
-
-          {paginated.length === 0 ? (
-            <div className="users-empty">No payments found.</div>
-          ) : (
-            paginated.map(p =>
+          {loadingPayments
+            ? <div className="pay-empty"><Spinner /></div>
+            : paginatedPayments.length === 0
+            ? <div className="pay-empty">No payments found.</div>
+            : paginatedPayments.map((p) =>
             {
               const palette = getAvatarPalette(p.guest_name || "");
+              const statusKey = p.status === "cancelled" && p.rejection_reason ? "rejected" : p.payment_status?.toLowerCase();
               return (
-                <div key={p.id} className={`payment-table-row ${highlightedId === p.id ? "highlight-payment" : ""}`}>
-                  <span className="payment-name-cell">
-                    <span className="payment-avatar" style={{ background: palette.bg, color: palette.color }}>
-                      {getInitials(p.guest_name)}
-                    </span>
-                    <span className="payment-name-text">{p.guest_name}</span>
+                <div key={p.id} className={`pay-table-row${highlightedId === p.id ? " pay-row-highlight" : ""}`}>
+                  <span className="pay-name-cell">
+                    <span className="pay-avatar" style={{ background: palette.bg, color: palette.color }}>{getInitials(p.guest_name)}</span>
+                    <span className="pay-name-text">{p.guest_name}</span>
                   </span>
-                  <span className="payment-invoice-text">{p.invoice}</span>
-                  <span className="payment-amount-text">₱{Number(p.total_amount).toLocaleString()}</span>
-                  <span className={Number(p.remaining_balance) > 0 ? "payment-balance--due" : "payment-balance--zero"}>
-                    ₱{Number(p.remaining_balance).toLocaleString()}
-                  </span>
+                  <span>{p.branch_id || "—"}</span>
+                  <span className="pay-mono">{p.invoice_number || "—"}</span>
+                  <span className="pay-mono">₱{Number(p.total_amount).toLocaleString()}</span>
+                  <span className="pay-mono">₱{Number(p.remaining_balance).toLocaleString()}</span>
+                  <span>{p.payment_method}</span>
+                  <span><span className={`pay-status-pill ${getStatusClass(p.payment_status || "")}`}>{p.status === "cancelled" && p.rejection_reason ? "Rejected" : formatStatus(p.payment_status)}</span></span>
                   <span>
-                    <span className="payment-method-chip">{normalizeMethod(p.payment_method)}</span>
-                  </span>
-                  <span>
-                    <span className={`payment-status payment-status-${p.payment_status?.toLowerCase()}`}>
-                      {p.payment_status}
-                    </span>
-                  </span>
-                  <span className="payment-row-actions">
-                    <button className="btn-edit-icon"
-                      onClick={(e) =>
-                      {
-                        e.stopPropagation();
-                        localStorage.removeItem("highlightPaymentId");
-                        setHighlightedId(null);
-                        handleEdit(p);
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    <button className="pay-edit-btn" onClick={(e) => { e.stopPropagation(); localStorage.removeItem("highlightPaymentId"); setHighlightedId(null); handleEdit(p); }} aria-label="Edit payment">
+                      <Icon icon="mdi:pencil-outline" aria-hidden="true" />
                     </button>
                   </span>
                 </div>
               );
             })
-          )}
+          }
         </div>
 
-        {filtered.length > 0 && (
-          <div className="payment-pagination">
-            <span className="payment-pagination-info">
-              Showing {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)} of {filtered.length}
-            </span>
+        <div className="pay-pagination">
+          <span className="pay-pagination-info">
+            Showing {Math.min((currentPage - 1) * PAGE_SIZE + 1, filteredPayments.length)}–{Math.min(currentPage * PAGE_SIZE, filteredPayments.length)} of {filteredPayments.length}
+          </span>
+          <div className="pay-pagination-controls">
+            <button className="pay-page-btn" disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>‹</button>
+            <span className="pay-page-info">Page {currentPage} / {totalPages}</span>
+            <button className="pay-page-btn" disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>›</button>
+          </div>
+        </div>
 
-            <div className="payment-pagination-controls">
-              <button
-                className="payment-page-btn"
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={safePage === 1}
-              >
-                ‹
-              </button>
+        {editingPayment && (
+          <div className="pay-modal-overlay" onClick={handleCancel}>
+            <div className="pay-modal" onClick={(e) => e.stopPropagation()}>
 
-              {getPageNumbers().map((page, idx) =>
-                page === "..." ? (
-                  <span key={`ellipsis-${idx}`} className="payment-page-ellipsis">…</span>
-                ) : (
-                  <button
-                    key={page}
-                    className={`payment-page-btn ${page === safePage ? "active" : ""}`}
-                    onClick={() => setCurrentPage(page)}
-                  >
-                    {page}
-                  </button>
-                )
-              )}
+              <div className="pay-modal-header">
+                <h3>Payment Details</h3>
+                <button className="pay-modal-close" onClick={handleCancel} aria-label="Close"><Icon icon="mdi:close" aria-hidden="true" /></button>
+              </div>
 
-              <button
-                className="payment-page-btn"
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={safePage === totalPages}
-              >
-                ›
-              </button>
+              <div className="pay-modal-body">
+                <div className="pay-modal-field">
+                  <label>Patient</label>
+                  <p className="pay-modal-readonly">{editForm.guest_name}</p>
+                </div>
+                <div className="pay-modal-field">
+                  <label>Payment Status</label>
+                  <p className={`pay-status-display ${editForm.payment_status?.toLowerCase()}`}>{editForm.payment_status}</p>
+                </div>
+                <div className="pay-modal-field">
+                  <label>Total Amount</label>
+                  <p className="pay-modal-readonly pay-modal-readonly-mono">₱{Number(editForm.total_amount || 0).toLocaleString()}</p>
+                </div>
+                <div className="pay-modal-field">
+                  <label>Amount Paid</label>
+                  <p className="pay-modal-readonly pay-modal-readonly-mono">₱{Number(editForm.amount_paid || 0).toLocaleString()}</p>
+                </div>
+                <div className="pay-modal-field">
+                  <label>Remaining Balance</label>
+                  <p className="pay-modal-readonly pay-modal-readonly-mono">₱{Number(editForm.remaining_balance || 0).toLocaleString()}</p>
+                </div>
+                <div className="pay-modal-field">
+                  <label>Mode of Payment</label>
+                  {isRejected
+                    ? <p className="pay-modal-readonly">{editForm.payment_method}</p>
+                    : (
+                      <select className="pay-modal-select" value={editForm.payment_method || ""} onChange={(e) => setEditForm({ ...editForm, payment_method: e.target.value })}>
+                        <option value="Cash">Cash</option>
+                        <option value="GCash">GCash</option>
+                        <option value="Card">Card</option>
+                      </select>
+                    )
+                  }
+                </div>
+
+                <div className="pay-modal-field pay-modal-field-full">
+                  <label>Services Availed</label>
+                  {loadingServices
+                    ? <div style={{ padding: "20px 0", display: "flex", justifyContent: "center" }}><Spinner /></div>
+                    : activeServices.length === 0
+                    ? <p className="pay-service-no-data">No services found.</p>
+                    : (
+                      <div className="pay-services-list">
+                        {activeServices.map((service) => (
+                          <div key={service.id} className="pay-service-item">
+                            <span className="pay-service-name">{service.service_name}</span>
+                            {isEditable && (
+                              <div className="pay-service-actions">
+                                <span className="pay-service-price">₱{Number(service.price).toLocaleString()}</span>
+                                {service.service_status === "not_performed"
+                                  ? <button className="pay-btn-performed" onClick={() => handlePerformed(service)}>Undo</button>
+                                  : <button className="pay-btn-not-performed" onClick={() => handleNotPerformed(service)}>Not Performed</button>
+                                }
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )
+                  }
+                </div>
+              </div>
+
+              <div className="pay-modal-footer">
+                {isEditable && (
+                  <select className="pay-modal-select" onChange={async (e) => { if (!e.target.value) return; try { await addServiceToPaymentApi(editingPayment.id, e.target.value); await handleEdit(editingPayment); await loadPayments(); } catch (error) { console.error(error); } }}>
+                    <option value="">+ Add Service</option>
+                    {allServices.map(s => <option key={s.id} value={s.id}>{s.name} — ₱{s.price}</option>)}
+                  </select>
+                )}
+
+                {isCancelled
+                  ? <button className="pay-btn pay-btn-green" onClick={handleReinstate}><Icon icon="mdi:restore" aria-hidden="true" />Reinstate</button>
+                  : isEditable && <button className="pay-btn pay-btn-danger" onClick={handleCancelPayment}><Icon icon="mdi:cancel" aria-hidden="true" />Cancel / No Show</button>
+                }
+
+                {!isCancelled && !isRejected && (
+                  isPaid
+                    ? <button className="pay-btn pay-btn-warning" onClick={handleUndoPaid}><Icon icon="mdi:undo" aria-hidden="true" />Undo Fully Paid</button>
+                    : <button className="pay-btn pay-btn-primary" onClick={handleMarkPaid}><Icon icon="mdi:check-circle-outline" aria-hidden="true" />Mark Fully Paid</button>
+                )}
+
+                <button className="pay-btn pay-btn-secondary" onClick={handleGenerateInvoice}><Icon icon="mdi:download-outline" aria-hidden="true" />Invoice PDF</button>
+
+                {isPaid && <button className="pay-btn pay-btn-secondary" onClick={handleGenerateOfficialReceipt}><Icon icon="mdi:receipt-text-outline" aria-hidden="true" />Official Receipt</button>}
+
+                <button className="pay-btn pay-btn-secondary" onClick={() => setShowReceipt(true)}><Icon icon="mdi:image-outline" aria-hidden="true" />Downpayment Receipt</button>
+
+                <button className="pay-btn pay-btn-secondary" onClick={handleCancel}><Icon icon="mdi:close" aria-hidden="true" />Close</button>
+              </div>
+
             </div>
+
+            {showReceipt && (
+              <div className="pay-modal-overlay" onClick={() => setShowReceipt(false)}>
+                <div className="pay-modal pay-receipt-modal" onClick={(e) => e.stopPropagation()}>
+                  <div className="pay-modal-header">
+                    <h3>Downpayment Receipt</h3>
+                    <button className="pay-modal-close" onClick={() => setShowReceipt(false)} aria-label="Close receipt"><Icon icon="mdi:close" aria-hidden="true" /></button>
+                  </div>
+                  <div className="pay-receipt-body">
+                    <img
+                      src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/receipts/${editForm.receipt_url}`}
+                      alt="Downpayment receipt"
+                      className="pay-receipt-img"
+                      onClick={() => window.open(`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/receipts/${editForm.receipt_url}`, "_blank")}
+                    />
+                  </div>
+                  <div className="pay-modal-footer">
+                    <a href={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/receipts/${editForm.receipt_url}`} download target="_blank" rel="noopener noreferrer" className="pay-btn pay-btn-primary"><Icon icon="mdi:download-outline" aria-hidden="true" />Download Receipt</a>
+                    <button className="pay-btn pay-btn-secondary" onClick={() => setShowReceipt(false)}><Icon icon="mdi:close" aria-hidden="true" />Close</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
           </div>
         )}
       </div>
-
-      {editingPayment && (
-        <div className="modal-overlay" onClick={handleCancel}>
-          <div className="payment-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <div className="modal-header-left">
-                <span className="modal-avatar" style={{ background: getAvatarPalette(editForm.guest_name || "").bg, color: getAvatarPalette(editForm.guest_name || "").color,}}>
-                  {getInitials(editForm.guest_name)}
-                </span>
-
-                <div>
-                  <h3>{editForm.guest_name}</h3>
-                  <span className="modal-invoice-tag">{editForm.invoice}</span>
-                </div>
-              </div>
-
-              <span className={`payment-status payment-status-${editForm.payment_status?.toLowerCase()}`}>
-                {editForm.payment_status}
-              </span>
-            </div>
-
-            <div className="modal-body">
-              <div className="modal-field">
-                <label>Total amount</label>
-                <p className="modal-readonly">₱{Number(editForm.total_amount || 0).toLocaleString()}</p>
-              </div>
-
-              <div className="modal-field">
-                <label>Amount paid</label>
-                <p className="modal-readonly">₱{Number(editForm.amount_paid || 0).toLocaleString()}</p>
-              </div>
-
-              <div className="modal-field">
-                <label>Remaining balance</label>
-                <p className={`modal-readonly ${Number(editForm.remaining_balance) > 0 ? "modal-readonly--danger" : ""}`}>
-                  ₱{Number(editForm.remaining_balance || 0).toLocaleString()}
-                </p>
-              </div>
-
-              <div className="modal-field">
-                <label>Mode of payment</label>
-                <select className="modal-input" value={editForm.payment_method || ""} onChange={(e) => setEditForm({ ...editForm, payment_method: e.target.value })}>
-                  <option value="Cash">Cash</option>
-                  <option value="GCash">GCash</option>
-                  <option value="Card">Card</option>
-                </select>
-              </div>
-
-              {services.length > 0 && (
-                <div className="modal-field modal-field--full">
-                  <label>Services</label>
-                  <div className="services-list">
-                    {services.map(service => (
-                      <div key={service.id} className="service-item">
-                        <span>{service.name}</span>
-                        <div className="service-actions">
-                          <strong>₱{Number(service.price).toLocaleString()}</strong>
-                          {editForm.payment_status !== "cancelled" && editForm.payment_status !== "paid" && (
-                            service.performed
-                              ? <button className="btn-not-performed" onClick={() => handleNotPerformed(service)}>Mark not performed</button>
-                              : <button className="btn-performed" onClick={() => handlePerformed(service)}>Mark performed</button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="modal-footer">
-              {editForm.payment_status !== "cancelled" && editForm.payment_status !== "paid" && (
-                <select className="modal-input" onChange={async (e) =>
-                  {
-                    if (!e.target.value) return;
-                    
-                    try
-                    {
-                      await addServiceToPaymentApi(editingPayment.id, e.target.value);
-                      await handleEdit(editingPayment);
-                      await loadPayments();
-                    }
-                    catch (error) { console.error(error); }
-                  }}
-                >
-                  <option value="">+ Add service</option>
-                  {allServices.map(service => (
-                    <option key={service.id} value={service.id}>
-                      {service.name} — ₱{service.price}
-                    </option>
-                  ))}
-                </select>
-              )}
-
-              {editForm.payment_status === "cancelled" ? (
-                <button className="btn-reinstate" onClick={handleReinstate}>Reinstate appointment</button>
-              ) : (
-                editForm.payment_status !== "paid" &&
-                <button className="btn-cancel-payment" onClick={handleCancelPayment}>Cancel / No show</button>
-              )}
-
-              {editForm.payment_status !== "cancelled" && (
-                editForm.payment_status === "paid"
-                  ? <button className="btn-warning" onClick={handleUndoPaid}>Undo fully paid</button>
-                  : <button className="btn-save" onClick={handleMarkPaid}>Mark fully paid</button>
-              )}
-
-              <button className="btn-cancel-edit" onClick={handleCancel}>Close</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

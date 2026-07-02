@@ -4,6 +4,7 @@ import "../styles/Topbar.css";
 import { supabase } from "../lib/supabase";
 import { getProfileApi } from "../api/profile";
 import { Icon } from "@iconify/react";
+import WalkInAppointmentModal from "./WalkInAppointmentModal";
 
 function useWindowWidth()
 {
@@ -27,6 +28,8 @@ function Topbar({ onMobileMenuClick, isMobile })
   const [showOverflow,     setShowOverflow]     = useState(false);
   const [avatarUrl,        setAvatarUrl]        = useState("");
   const [fullName,         setFullName]         = useState("");
+  const [showWalkInModal,  setShowWalkInModal]  = useState(false);
+
 
   const navigate = useNavigate();
   const role     = localStorage.getItem("role");
@@ -34,6 +37,7 @@ function Topbar({ onMobileMenuClick, isMobile })
 
   const notifHidden     = width <= 600;
   const showOverflowBtn = width <= 900;
+
 
   useEffect(() =>
   {
@@ -87,11 +91,19 @@ function Topbar({ onMobileMenuClick, isMobile })
 
         <div className="topnav-topbar-left">
           {isMobile && <button className="topnav-hamburger-btn" onClick={onMobileMenuClick} title="Menu"><span /><span /><span /></button>}
-          <div className="topnav-search-box">
-            <span className="topnav-search-icon"><Icon icon="glyphs-poly:search-1" width="25" height="25" /></span>
-            <input type="text" placeholder="Search Patient Here" />
-          </div>
-          <button className="topnav-new-patient-btn" onClick={() => navigate("/patients/new")}><span>+</span><span className="topnav-btn-label"> New Patient</span></button>
+          <button className="topnav-new-patient-btn" onClick={() => navigate("/patients/new")}>
+            <span>+</span>
+            <span className="topnav-btn-label"> 
+              New Patient
+            </span>
+          </button>
+
+          <button className="topnav-walkin-btn" onClick={() => setShowWalkInModal(true)}>
+            <span>+</span>
+            <span className="topnav-btn-label">
+              Make Appointment
+            </span>
+          </button>
         </div>
 
         <div className="topnav-topbar-right">
@@ -160,6 +172,8 @@ function Topbar({ onMobileMenuClick, isMobile })
           </div>
         </div>
       )}
+      
+      <WalkInAppointmentModal open={showWalkInModal} onClose={() => setShowWalkInModal(false)}/>
     </>
   );
 }
