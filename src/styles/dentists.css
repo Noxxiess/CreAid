@@ -2477,6 +2477,70 @@
   height: 16px;
   flex-shrink: 0;
 }
+.dentists-info-section-card
+{
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.dentists-info-section-title
+{
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dentists-info-grid
+{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+.dentists-info-field
+{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dentists-info-field-wide
+{
+  grid-column: 1 / -1;
+}
+.dentists-info-label
+{
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.dentists-info-value
+{
+  font-size: 0.88rem;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-xs);
+  padding: 8px 12px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+}
+.dentists-info-mono
+{
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+}
 @media (max-width: 768px)
 {
   .dentists-mobile-bar

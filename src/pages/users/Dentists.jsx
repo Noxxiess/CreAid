@@ -626,10 +626,105 @@ function Dentists()
 
               <div className="dentists-detail-tabs">
                 <button className={`dentists-tab-btn${activeTab === "overview" ? " dentists-tab-active" : ""}`} onClick={() => setActiveTab("overview")}><Icon icon="mdi:view-dashboard-outline" aria-hidden="true" />Overview</button>
+                <button className={`dentists-tab-btn${activeTab === "info" ? " dentists-tab-active" : ""}`} onClick={() => setActiveTab("info")}><Icon icon="mdi:account-outline" aria-hidden="true" />Info</button>
                 <button className={`dentists-tab-btn${activeTab === "patients" ? " dentists-tab-active" : ""}`} onClick={() => setActiveTab("patients")}><Icon icon="mdi:account-group-outline" aria-hidden="true" />Patients</button>
                 <button className={`dentists-tab-btn${activeTab === "schedule" ? " dentists-tab-active" : ""}`} onClick={() => setActiveTab("schedule")}><Icon icon="mdi:calendar-clock-outline" aria-hidden="true" />Schedule</button>
                 <button className={`dentists-tab-btn${activeTab === "forms" ? " dentists-tab-active" : ""}`} onClick={() => setActiveTab("forms")}><Icon icon="mdi:file-document-edit-outline" aria-hidden="true" />Forms</button>
               </div>
+
+              {activeTab === "info" && (
+                <div className="dentists-tab-panel">
+
+                  <div className="dentists-info-section-card">
+                    <div className="dentists-info-section-title">
+                      <IconText icon="mdi:account-outline">Personal Information</IconText>
+                    </div>
+                    <div className="dentists-info-grid">
+                      <div className="dentists-info-field">
+                        <span className="dentists-info-label">Full Name</span>
+                        <span className="dentists-info-value">{`${selectedDentist.last_name}, ${selectedDentist.first_name}${selectedDentist.middle_name ? " " + selectedDentist.middle_name : ""}` || "—"}</span>
+                      </div>
+                      <div className="dentists-info-field">
+                        <span className="dentists-info-label">Birthdate</span>
+                        <span className="dentists-info-value">{selectedDentist.birthdate || "—"}</span>
+                      </div>
+                      <div className="dentists-info-field">
+                        <span className="dentists-info-label">Sex</span>
+                        <span className="dentists-info-value">{selectedDentist.sex || "—"}</span>
+                      </div>
+                      <div className="dentists-info-field dentists-info-field-wide">
+                        <span className="dentists-info-label">Address</span>
+                        <span className="dentists-info-value">{selectedDentist.address || "—"}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="dentists-info-section-card">
+                    <div className="dentists-info-section-title">
+                      <IconText icon="mdi:briefcase-outline">Employment Information</IconText>
+                    </div>
+                    <div className="dentists-info-grid">
+                      <div className="dentists-info-field">
+                        <span className="dentists-info-label">Position</span>
+                        <span className="dentists-info-value">{selectedDentist.position || "—"}</span>
+                      </div>
+                      <div className="dentists-info-field">
+                        <span className="dentists-info-label">Employee ID</span>
+                        <span className="dentists-info-value dentists-info-mono">{selectedDentist.employee_id || "—"}</span>
+                      </div>
+                      <div className="dentists-info-field">
+                        <span className="dentists-info-label">Date Hired</span>
+                        <span className="dentists-info-value">{selectedDentist.date_hired || "—"}</span>
+                      </div>
+                      <div className="dentists-info-field">
+                        <span className="dentists-info-label">Employment Status</span>
+                        <span className="dentists-info-value">{selectedDentist.employment_status || "—"}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="dentists-info-section-card">
+                    <div className="dentists-info-section-title">
+                      <IconText icon="mdi:certificate-outline">Professional Information</IconText>
+                    </div>
+                    <div className="dentists-info-grid">
+                      <div className="dentists-info-field">
+                        <span className="dentists-info-label">PRC License Number</span>
+                        <span className="dentists-info-value dentists-info-mono">{selectedDentist.prc_license_number || "—"}</span>
+                      </div>
+                      <div className="dentists-info-field">
+                        <span className="dentists-info-label">Specialization</span>
+                        <span className="dentists-info-value">{selectedDentist.specialization || "—"}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="dentists-info-section-card">
+                    <div className="dentists-info-section-title">
+                      <IconText icon="mdi:shield-account-outline">Account Information</IconText>
+                    </div>
+                    <div className="dentists-info-grid">
+                      <div className="dentists-info-field">
+                        <span className="dentists-info-label">Username</span>
+                        <span className="dentists-info-value dentists-info-mono">{selectedDentist.username || "—"}</span>
+                      </div>
+                      <div className="dentists-info-field">
+                        <span className="dentists-info-label">Email</span>
+                        <span className="dentists-info-value">{selectedDentist.email || "—"}</span>
+                      </div>
+                      <div className="dentists-info-field">
+                        <span className="dentists-info-label">Contact Number</span>
+                        <span className="dentists-info-value dentists-info-mono">{selectedDentist.contact_number || "—"}</span>
+                      </div>
+                      <div className="dentists-info-field">
+                        <span className="dentists-info-label">Password</span>
+                        <span className="dentists-info-value">••••••••••</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              )}
 
               {activeTab === "overview" && (
                 <div className="dentists-tab-panel">

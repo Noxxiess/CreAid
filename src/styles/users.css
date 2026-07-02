@@ -732,3 +732,11 @@
   gap: 8px;
   margin-top: 6px;
 }
+.pagination-ellipsis
+{
+  font-size: 13px;
+  color: #b0aac8;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+}
