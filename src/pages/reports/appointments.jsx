@@ -181,11 +181,7 @@ const Appointments = () =>
               disabled={currentPage === 1}
             >‹</button>
             {renderPagination()}
-            <button
-              className={`appoint-page-btn${currentPage >= totalPages ? " appoint-page-disabled" : ""}`}
-              onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
-              disabled={currentPage >= totalPages}
-            >›</button>
+            <button className={`appoint-page-btn${currentPage >= totalPages ? " appoint-page-disabled" : ""}`} onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)} disabled={currentPage >= totalPages}>›</button>
           </div>
         </div>
       </div>

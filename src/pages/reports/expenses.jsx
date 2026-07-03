@@ -9,7 +9,7 @@ import
 }
 from "../../api/expenses";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5; 
 
 const BLANK_FORM =
 {
