@@ -26,7 +26,7 @@ import Dentists from "./pages/users/Dentists";
 import Daily from "./pages/reports/Daily";
 import Collections from "./pages/reports/Collections";
 import Appointments from "./pages/reports/Appointments";
-import Expenses from "./pages/reports/Expenses";
+import Expenses from "./pages/reports/expenses";
 import Layout from "./components/Layout";
 import PageLoader from "./components/Loading";
 import { supabase } from './lib/supabase';
