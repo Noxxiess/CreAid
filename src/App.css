@@ -59,6 +59,19 @@
   overflow: hidden;
   padding: 50px 40px;
 }
+
+.login-left::before 
+{
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(-45deg,
+    transparent,
+    transparent 22px,
+    rgba(255,255,255,0.018) 22px,
+    rgba(255,255,255,0.018) 23px
+  );
+}
 .login-logo-wrap 
 {
   position: relative;
